@@ -1,0 +1,12 @@
+*.s
+*.o
+*.chr
+*.bin
+*.lz4
+*.nes
+
+*-pal?.png
+
+link.log
+px-tools
+ft2-tools

@@ -1,0 +1,26 @@
+{
+    "configurations": [
+        {
+            "name": "cc65",
+            "includePath": [
+                "../cc65/include",
+                "${workspaceRoot}",
+                "${workspaceFolder}/ext/pixler/lib",
+                "${workspaceFolder}/ext/pixler/lib"
+            ],
+            "defines": [],
+            "intelliSenseMode": "clang-x64",
+            "browse": {
+                "path": [
+                    "../cc65/include",
+                    "pixler",
+                    "src",
+                    "${workspaceRoot}"
+                ],
+                "limitSymbolsToIncludedHeaders": true,
+                "databaseFilename": ""
+            }
+        }
+    ],
+    "version": 4
+}
