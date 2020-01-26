@@ -1,7 +1,7 @@
 .macpack generic
 
 .include "zeropage.inc"
-.import incsp1, incsp2
+.import incsp3
 .import __hextab, pusha
 
 .include "pixler.inc"
@@ -18,45 +18,59 @@ _tmp: .word 0
 
 .code
 
-.export _tmp_sprite
-.proc _tmp_sprite ; u8 x, u8 y
+.export _meta_spr
+.proc _meta_spr ; (u8 x, u8 y, u8 pal, void* meta) -> void
+sprx = tmp1
+spry = tmp2
+pal = tmp3
+meta = ptr1
+
+	sta meta+0
+	stx meta+1
+
+	ldy #2
+	lda (sp),y
+	sta sprx
+	
+	dey
+	lda (sp),y
+	sta spry
+	
+	dey
+	lda (sp),y
+	sta pal
+	
 	ldx px_sprite_cursor
+
+@loop:
+	lda (meta), y
+	cmp #$80
+	beq @return
+	add sprx
+	sta OAM_X, x
+	iny
 	
-	; Store chr.
-	sta OAM_CHR+ 0, x
-	sta OAM_CHR+ 4, x
-	sta OAM_CHR+ 8, x
-	sta OAM_CHR+12, x
+	lda (meta), y
+	add spry
+	sta OAM_Y, x
+	iny
 	
-	; Store attr.
-	lda #0
-	sta OAM_ATTR+ 0, x
-	sta OAM_ATTR+ 4, x
-	sta OAM_ATTR+ 8, x
-	sta OAM_ATTR+12, x
+	lda (meta), y
+	sta OAM_CHR, x
+	iny
 	
-	; Store x-values.
-	ldy #1
-	lda (sp), y
-	sta OAM_X+ 0, x
-	sta OAM_X+ 8, x
-	add #8
-	sta OAM_X+ 4, x
-	sta OAM_X+12, x
+	lda (meta), y
+	ora pal
+	sta OAM_ATTR, x
+	iny
 	
-	; Store y-values.
-	ldy #0
-	lda (sp), y
-	sta OAM_Y+ 0, x
-	sta OAM_Y+ 4, x
-	add #8
-	sta OAM_Y+ 8, x
-	sta OAM_Y+12, x
-	
-	; Increment sprite cursor.
-	txa
-	add #16
-	sta px_sprite_cursor
-	
-	jmp incsp2
+	inx
+	inx
+	inx
+	inx
+	jmp @loop
+
+@return:
+	stx px_sprite_cursor
+	jmp incsp3
 .endproc
