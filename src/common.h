@@ -14,8 +14,6 @@ extern u8 ix, iy, idx, tmp;
 #pragma zpsym("idx");
 #pragma zpsym("tmp");
 
-void debug_hex(u16 value);
-
 // audio.s declarations:
 typedef struct {} AudioChunk;
 extern const AudioChunk MUSIC[];

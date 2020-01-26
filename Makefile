@@ -6,7 +6,13 @@ CC = $(CC65_ROOT)/bin/cc65
 AS = $(CC65_ROOT)/bin/ca65
 LD = $(CC65_ROOT)/bin/ld65
 
-CFLAGS += -t nes -Oirs --register-space 16 -I ext/pixler/lib
+CFLAGS += \
+	-t nes -Oirs \
+	--register-space 16 \
+	-I ext/pixler/lib \
+
+ASMINC = \
+	-I ext/pixler/lib
 
 SRC = \
 	src/main.c \
@@ -25,9 +31,8 @@ CHR = \
 SONGS = \
 	audio/after_the_rain.txt \
 
-
 default: $(ROM)
-
+rom: $(ROM)
 
 PX_TOOLS_PATH = ext/pixler/tools
 PX_LIB_PATH = ext/pixler/lib
@@ -43,8 +48,6 @@ FT2_TOOLS_PATH = ext/famitone2
 ft2-tools:
 	make -C $(FT2_TOOLS_PATH)
 	touch ft2-tools
-
-rom: $(ROM)
 
 run-mac: rom
 	open -a Nestopia $(ROM)

@@ -56,6 +56,8 @@ void fade_from_black(const u8* palette, u8 delay){
 	darken(palette, 0);
 }
 
+void tmp_sprite(u8 x, u8 y, u8 chr);
+
 static Gamestate splash_screen(void){
 	register u8 x = 32, y = 32;
 	register s16 sin = 0, cos = 0x3FFF;
@@ -78,7 +80,7 @@ static Gamestate splash_screen(void){
 		if(JOY_BTN_A(pad1.press)) sound_play(SOUND_JUMP);
 		
 		// Draw a sprite.
-		px_spr(x, y, PX_SPR_BEHIND, 'o');
+		tmp_sprite(x, y, 'O');
 		
 		PX.scroll_y = 480 + (sin >> 9);
 		sin += cos >> 6;

@@ -1,9 +1,11 @@
-.include "zeropage.inc"
+.macpack generic
 
+.include "zeropage.inc"
+.import incsp1, incsp2
 .import __hextab, pusha
 
-.import _px_buffer_data
-.importzp PX_buffer
+.include "pixler.inc"
+.importzp px_sprite_cursor
 
 .zeropage
 
@@ -16,46 +18,45 @@ _tmp: .word 0
 
 .code
 
-.proc hex_digit
-	pha
-	lsr
-	lsr
-	lsr
-	lsr
-	tax
-	lda __hextab, x
-	sta (PX_buffer), y
-	iny
+.export _tmp_sprite
+.proc _tmp_sprite ; u8 x, u8 y
+	ldx px_sprite_cursor
 	
-	pla
-	and #$F
-	tax
-	lda __hextab, x
-	sta (PX_buffer), y
-	iny
+	; Store chr.
+	sta OAM_CHR+ 0, x
+	sta OAM_CHR+ 4, x
+	sta OAM_CHR+ 8, x
+	sta OAM_CHR+12, x
 	
-	rts
-.endproc
-
-.export _debug_hex
-.proc _debug_hex
-	addr = $2000 + 1 + 1*32
+	; Store attr.
+	lda #0
+	sta OAM_ATTR+ 0, x
+	sta OAM_ATTR+ 4, x
+	sta OAM_ATTR+ 8, x
+	sta OAM_ATTR+12, x
 	
-	sta sreg+0
-	stx sreg+1
+	; Store x-values.
+	ldy #1
+	lda (sp), y
+	sta OAM_X+ 0, x
+	sta OAM_X+ 8, x
+	add #8
+	sta OAM_X+ 4, x
+	sta OAM_X+12, x
 	
-	lda #4
-	jsr pusha
-	lda #<addr
-	ldx #>addr
-	jsr _px_buffer_data
-	
-	
+	; Store y-values.
 	ldy #0
-	lda sreg+1
-	jsr hex_digit
-	lda sreg+0
-	jsr hex_digit
+	lda (sp), y
+	sta OAM_Y+ 0, x
+	sta OAM_Y+ 4, x
+	add #8
+	sta OAM_Y+ 8, x
+	sta OAM_Y+12, x
 	
-	rts
+	; Increment sprite cursor.
+	txa
+	add #16
+	sta px_sprite_cursor
+	
+	jmp incsp2
 .endproc
