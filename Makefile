@@ -12,7 +12,7 @@ CFLAGS += \
 	-I ext/pixler/lib \
 
 ASMINC = \
-	-I ext/pixler/lib
+	-I ext/pixler/lib \
 
 SRC = \
 	src/main.c \
@@ -23,7 +23,9 @@ ASM = \
 	audio/audio.s \
 	ext/famitone2/famitone2.s \
 
-OBJS = $(SRC:.c=.o) $(ASM:.s=.o)
+OBJS = \
+	$(SRC:.c=.o) \
+	$(ASM:.s=.o) \
 
 CHR = \
 	chr/0.png \
@@ -53,7 +55,8 @@ run-mac: rom
 	open -a Nestopia $(ROM)
 
 run-linux: rom
-	nestopia -w -l 1 -n -s 2 -t $(ROM)
+	mesen $(ROM)
+#	nestopia -w -l 1 -n -s 2 -t $(ROM)
 
 run-win: rom
 	../Mesen/Mesen.exe $(ROM)
