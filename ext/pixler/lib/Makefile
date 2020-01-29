@@ -36,7 +36,7 @@ px.lib: $(OBJS)
 	$(AR) r $@ $^
 
 %.o: %.s
-	$(AS) $< -o $@
+	$(AS) -g $< -o $@
 
 clean:
 	-rm $(OBJS) px.lib

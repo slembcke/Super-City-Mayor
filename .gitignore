@@ -4,6 +4,7 @@
 *.bin
 *.lz4
 *.nes
+*.dbg
 
 *-pal?.png
 

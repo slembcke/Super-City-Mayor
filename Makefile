@@ -62,13 +62,16 @@ run-win: rom
 	../Mesen/Mesen.exe $(ROM)
 
 $(ROM): ld65.cfg $(OBJS) $(PX_LIB)
-	$(LD) -C ld65.cfg $(OBJS) $(PX_LIB) nes.lib -m link.log -o $@
-	
+	$(LD) -C ld65.cfg --dbgfile $(ROM:.nes=.dbg) $(OBJS) $(PX_LIB) nes.lib -m link.log -o $@
+
 %.s: %.c
-	$(CC) $(CFLAGS) $< --add-source $(INCLUDE) -o $@
+	$(CC) -g $(CFLAGS) $< --add-source $(INCLUDE) -o $@
+
+%.s %.o: %.c
+	$(CC65_ROOT)/bin/cl65 -c -g $(CFLAGS) $(INCLUDE) $< -o $@
 
 %.o: %.s
-	$(AS) $< $(ASMINC) -o $@
+	$(AS) -g $< $(ASMINC) -o $@
 
 %.chr: %.png px-tools
 	$(PX_TOOLS_PATH)/png2chr $< $@
@@ -110,6 +113,3 @@ clean:
 	make -C $(FT2_TOOLS_PATH) clean
 
 .phony: default rom tiles clean
-
-# Cancel built in rule for .c files.
-%.o: %.c

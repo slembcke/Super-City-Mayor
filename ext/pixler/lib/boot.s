@@ -29,8 +29,8 @@
 	cld ; Disable decimal mode.
 	
 	; Disable interrupts for the APU.
-	lda #APU_FRAME_COUNTER_IRQ_INHIBIT
-	sta APU_FRAME_COUNTER
+	lda #$40 ; Disable IRQ bit.
+	sta APU_PAD2
 	
 	; Disable/reset the PPU
 	lda #0
