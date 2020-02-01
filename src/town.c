@@ -15,11 +15,16 @@ static const u8 PALETTE[] = {
 };
 
 static const u8 META_TILES[] = {
+	'.', '.', '.', '.',
 	'a', 'b', 'c', 'd',
+	'1', '2', '3', '4',
+	'w', 'x', 'y', 'z',
+	'A', 'B', 'C', 'D',
 };
 
 static const u8 CITY_BLOCKS[16*15] = {
-	1, 2, 3, 4,
+	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
+	0, 1, 0, 2, 0, 3, 0, 4,
 };
 
 static const u16 ROW_ADDR[] = {
@@ -51,16 +56,27 @@ Gamestate gameplay_screen(void){
 		px_addr(NT_ADDR(0, 0, 0));
 		px_fill(1024, 0);
 		
-		ix = 8, iy = 8;
-		idx = 0 << 2;
-		addr = ROW_ADDR[iy] + 2*ix;
-		
-		px_addr(addr);
-		PPU.vram.data = (META_TILES + 0)[idx];
-		PPU.vram.data = (META_TILES + 1)[idx];
-		px_addr(addr + 32);
-		PPU.vram.data = (META_TILES + 2)[idx];
-		PPU.vram.data = (META_TILES + 3)[idx];
+		for(iy = 0; iy < 15; ++iy){
+			for(ix = 0; ix < 16; ++ix){
+				idx = 16*iy + ix;
+				idx = CITY_BLOCKS[idx] << 2;
+				addr = ROW_ADDR[iy] + 2*ix;
+				
+				px_addr(addr);
+				PPU.vram.data = (META_TILES + 0)[idx];
+				PPU.vram.data = (META_TILES + 1)[idx];
+				px_addr(addr + 32);
+				PPU.vram.data = (META_TILES + 2)[idx];
+				PPU.vram.data = (META_TILES + 3)[idx];
+				
+				// px_buffer_data(2, addr);
+				// PX.buffer[0] = (META_TILES + 0)[idx];
+				// PX.buffer[1] = (META_TILES + 1)[idx];
+				// px_buffer_data(2, addr + 32);
+				// PX.buffer[0] = (META_TILES + 2)[idx];
+				// PX.buffer[1] = (META_TILES + 3)[idx];
+			}
+		}
 	} px_ppu_sync_enable();
 	
 	while(true){
@@ -68,6 +84,8 @@ Gamestate gameplay_screen(void){
 		
 		if(JOY_START(pad1.press)) break;
 		
+		// PX.scroll_x = 0;
+		// PX.scroll_y = 0;
 		px_spr_end();
 		px_wait_nmi();
 	}
