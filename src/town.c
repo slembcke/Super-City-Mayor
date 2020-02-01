@@ -174,6 +174,32 @@ static u8 META[][2][17] =
  }
 };
 
+#define REPAIR_SCORE 100
+
+u8 Score[2] = 
+{
+   0,
+   0
+};
+
+void paint_score()
+{
+   // PLAYER 1
+   px_spr(16,  16, 0, '0');
+   px_spr(8,  16, 0, '0');
+   px_spr(0,  16, 0, '0');
+   px_buffer_blit(NT_ADDR(0,3,2),"21",2);
+
+   // PLAYER 2
+   if ( NumPlayers == 2 )
+   {
+      px_spr(232,  16, 0, '0');
+      px_spr(224,  16, 0, '0');
+      px_spr(216,  16, 0, '0');
+      px_buffer_blit(NT_ADDR(0,30,2),"56",2);
+   }
+}
+
 u8 collision_check(u8 x, u8 y) {
 
 	//check requested move location
@@ -208,7 +234,7 @@ Gamestate gameplay_screen(void){
 		
 		px_addr(NT_ADDR(0, 0, 0));
 		px_blit(1024, GAMEPLAY_TILEMAP);
-		
+      
 		for(iy = 0; iy < 15; ++iy){
 			for(ix = 0; ix < 16; ++ix){
 				// Calculate tile index.
@@ -229,6 +255,8 @@ Gamestate gameplay_screen(void){
    
 	while(true){
 		read_gamepads();
+		
+      paint_score();
 		
 //PLAYER 1 REPAIRS
 		if(JOY_BTN_A (pad1.value)) {
