@@ -1,5 +1,6 @@
 #include "pixler.h"
 #include "common.h"
+#include "main.h"
 
 #define BG_COLOR 0x1D
 static const u8 PALETTE[] = {
@@ -182,7 +183,7 @@ Gamestate gameplay_screen(void){
 	music_stop();
 	
 	px_ppu_sync_disable();{
-		px_buffer_blit(PAL_ADDR, PALETTE, sizeof(PALETTE));
+//		px_buffer_blit(PAL_ADDR, PALETTE, sizeof(PALETTE));
 		
 		px_addr(NT_ADDR(0, 0, 0));
 		px_fill(32*30, '.');
@@ -228,12 +229,16 @@ Gamestate gameplay_screen(void){
 		
 	} px_ppu_sync_enable();
 	
-	ix = 0xAB;
-	
+   fade_from_black(PALETTE,4);
+   
 	while(true){
 		read_gamepads();
 		
-		if(JOY_START(pad1.press)) break;
+		if(JOY_START(pad1.press)) 
+      {
+         fade_to_black(PALETTE,4);
+         break;
+      }
 
 		x = player1x;
 		y = player1y;

@@ -5,7 +5,11 @@
 		.word 0 ; terminator
 .endmacro
 
-.rodata
+.segment "PRG0"
 
-inclz4 _CHR0, "chr/0.lz4"
+.export _CHR0
+_CHR0:
+.incbin "chr/0.chr"
+.incbin "chr/Tileset.chr"
+
 inclz4 _MAP_SPLASH, "map/splash.lz4"
