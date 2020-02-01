@@ -87,6 +87,36 @@ static const u16 ROW_ADDR[] = {
 static u8 META_MASK[] = {0x03, 0x0C, 0x30, 0xC0};
 static u8 PAL[] = {0x00, 0x55, 0xAA, 0xFF};
 
+static void load_metatile(u8 x, u8 y, u8 tile){
+	static u16 addr;
+	static u8 mask, pal;
+	
+	// Load the attribute quadrant mask and palette.
+	idx = 2*(y & 1) + (x & 1);
+	mask = META_MASK[idx];
+	idx = META_TILE_PAL[tile];
+	pal = PAL[idx];
+	
+	// Calculate atrrib table byte index.
+	idx = 4*(y & 0xE) + x/2;
+	tmp = ATTRIB_TABLE[idx];
+	tmp = (tmp & ~mask) | (pal & mask);
+	ATTRIB_TABLE[idx] = tmp;
+	
+	px_buffer_data(1, AT_ADDR(0) + idx);
+	PX.buffer[0] = tmp;
+	
+	// Load metatile.
+	tile *= 4;
+	addr = ROW_ADDR[y] + 2*x;
+	px_buffer_data(2, addr);
+	PX.buffer[0] = (META_TILES + 0)[tile];
+	PX.buffer[1] = (META_TILES + 1)[tile];
+	px_buffer_data(2, addr + 32);
+	PX.buffer[0] = (META_TILES + 2)[tile];
+	PX.buffer[1] = (META_TILES + 3)[tile];
+}
+
 /*
 static const u8 META[] = {
 	-8, -8, 0xD0, 0,
@@ -166,9 +196,6 @@ static u8 META[][2][17] =
 
 
 Gamestate gameplay_screen(void){
-	static u16 addr;
-	static u8 tile, mask, pal;
-	
 	register u8 player1x = 32, player1y = 32;
 	register u8 x, y;
 
@@ -193,34 +220,9 @@ Gamestate gameplay_screen(void){
 			for(ix = 0; ix < 16; ++ix){
 				// Calculate tile index.
 				idx = 16*iy + ix;
-				tile = CITY_BLOCKS[idx];
+				idx = CITY_BLOCKS[idx];
 				
-				if(tile == 0) continue;
-				
-				// Load the attribute quadrant mask and palette.
-				idx = 2*(iy & 1) + (ix & 1);
-				mask = META_MASK[idx];
-				idx = META_TILE_PAL[tile];
-				pal = PAL[idx];
-				
-				// Calculate atrrib table byte index.
-				idx = 4*(iy & 0xE) + ix/2;
-				tmp = ATTRIB_TABLE[idx];
-				tmp = (tmp & ~mask) | (pal & mask);
-				ATTRIB_TABLE[idx] = tmp;
-				
-				px_buffer_data(1, AT_ADDR(0) + idx);
-				PX.buffer[0] = tmp;
-				
-				// Load metatile.
-				tile *= 4;
-				addr = ROW_ADDR[iy] + 2*ix;
-				px_buffer_data(2, addr);
-				PX.buffer[0] = (META_TILES + 0)[tile];
-				PX.buffer[1] = (META_TILES + 1)[tile];
-				px_buffer_data(2, addr + 32);
-				PX.buffer[0] = (META_TILES + 2)[tile];
-				PX.buffer[1] = (META_TILES + 3)[tile];
+				if(idx != 0) load_metatile(ix, iy, idx);
 			}
 			
 			// Buffer only one row at a time to avoid overflows.
