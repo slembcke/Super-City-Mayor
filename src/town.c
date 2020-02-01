@@ -2,19 +2,6 @@
 #include "common.h"
 #include "main.h"
 
-#define BG_COLOR 0x1D
-static const u8 PALETTE[] = {
-	BG_COLOR, 0x00, 0x10, 0x20,
-	BG_COLOR, 0x06, 0x16, 0x26,
-	BG_COLOR, 0x09, 0x19, 0x29,
-	BG_COLOR, 0x01, 0x11, 0x21,
-	
-	BG_COLOR, 0x00, 0x10, 0x20,
-	BG_COLOR, 0x06, 0x16, 0x26,
-	BG_COLOR, 0x09, 0x19, 0x29,
-	BG_COLOR, 0x01, 0x11, 0x21,
-};
-
 static const u8 META_TILES[] = {
 	'.', '.', '.', '.',
 	'W', 'W', 'W', 'W',
@@ -213,32 +200,31 @@ Gamestate gameplay_screen(void){
 //		px_buffer_blit(PAL_ADDR, PALETTE, sizeof(PALETTE));
 		
 		px_addr(NT_ADDR(0, 0, 0));
-		px_fill(32*30, '.');
-		px_fill(64, 0);
+		px_blit(1024, GAMEPLAY_TILEMAP);
 		
-		for(iy = 0; iy < 15; ++iy){
-			for(ix = 0; ix < 16; ++ix){
-				// Calculate tile index.
-				idx = 16*iy + ix;
-				idx = CITY_BLOCKS[idx];
+		// for(iy = 0; iy < 15; ++iy){
+		// 	for(ix = 0; ix < 16; ++ix){
+		// 		// Calculate tile index.
+		// 		idx = 16*iy + ix;
+		// 		idx = CITY_BLOCKS[idx];
 				
-				if(idx != 0) load_metatile(ix, iy, idx);
-			}
+		// 		if(idx != 0) load_metatile(ix, iy, idx);
+		// 	}
 			
-			// Buffer only one row at a time to avoid overflows.
-			px_buffer_exec();
-		}
+		// 	// Buffer only one row at a time to avoid overflows.
+		// 	px_buffer_exec();
+		// }
 		
 	} px_ppu_sync_enable();
 	
-   fade_from_black(PALETTE,4);
+   fade_from_black(GAMEPLAY_PALETTE,4);
    
 	while(true){
 		read_gamepads();
 		
 		if(JOY_START(pad1.press)) 
       {
-         fade_to_black(PALETTE,4);
+         fade_to_black(GAMEPLAY_PALETTE,4);
          break;
       }
 

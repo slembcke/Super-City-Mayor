@@ -107,7 +107,7 @@ void main(void){
 	joy_install(nes_stdjoy_joy);
 	
 	// Set which tiles to use for the background and sprites.
-	px_bg_table(0);
+	px_bg_table(1);
 	px_spr_table(0);
 	
 	// Not using bank switching, but a good idea to set a reliable value at boot.
@@ -121,6 +121,9 @@ void main(void){
 //	px_lz4_to_vram(CHR_ADDR(0, 0), CHR0);
    px_addr(CHR_ADDR(0,0));
    px_blit(0x1000,CHR0);
+	 
+   px_addr(CHR_ADDR(1,0));
+   px_blit(0x1000, GAMEPLAY_CHR);
 	
 	sound_init(SOUNDS);
 	music_init(MUSIC);
