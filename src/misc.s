@@ -12,13 +12,16 @@
 ; TODO export as u8 and u16?
 .exportzp _iz, _ix, _iy, _idx, _tmp
 .exportzp _player1x, _player1y
+.exportzp _player2x, _player2y
 _ix: .word 0
 _iy: .word 0
 _iz: .word 0
 _idx: .word 0
 _tmp: .word 0
-_player1x: .word 0
-_player1y: .word 0
+_player1x: .byte 0
+_player1y: .byte 0
+_player2x: .byte 0
+_player2y: .byte 0
 
 .code
 

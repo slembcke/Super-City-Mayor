@@ -181,13 +181,25 @@ static u8 META[][2][17] =
  }
 };
 
+u8 collision_check(u8 x, u8 y) {
+
+		//check requested move location
+		iz = MAP_BLOCK_AT(x,y);
+		idx = CITY_BLOCKS[iz];// & NON_WALKABLE_BIT;
+}
+
 
 Gamestate gameplay_screen(void){
+	static u16 addr;
+	
 	register u8 player1x = 32, player1y = 32;
+	register u8 player2x = 128, player2y = 32;
+
 	register u8 x, y;
 
-   register u8 a = 0, d = 1;
-   register u8 f = 0, b = 0;
+   register u8 a1 = 0, d1 = 1 , b1 = 0;
+   register u8 f = 0;  //don't think this is used.?
+   register u8 a2 = 0, d2 = 1, b2 = 0;
 
 	PX.scroll_x = 0;
 	PX.scroll_y = 0;
@@ -222,11 +234,11 @@ Gamestate gameplay_screen(void){
 	while(true){
 		read_gamepads();
 		
-		if(JOY_START(pad1.press)) 
-      {
+//PLAYER 1
+		if(JOY_START(pad1.press)) {
          fade_to_black(GAMEPLAY_PALETTE,4);
-         break;
-      }
+			break;
+		}
 
 		x = player1x;
 		y = player1y;
@@ -235,57 +247,113 @@ Gamestate gameplay_screen(void){
 		//if(JOY_DOWN (pad1.value)) y += 1;
 		//if(JOY_UP   (pad1.value)) y -= 1;
 
+
+
 		if(JOY_LEFT (pad1.value))
       {
-         if ( x&8 ) a++;
-         d = 1;
-         a = (x>>3)&1;    
+         if ( x&8 ) a1++;
+         d1 = 1;
+         a1 = (x>>3)&1;    
          x -= 1;
-         if ( x < 5 ) b++;
+         if ( x < 5 ) b1++;
       }
 		else if(JOY_RIGHT (pad1.value))
       {
-         if ( x&8 ) a++;
-         d = 0;
-         a = (x>>3)&1;    
+         if ( x&8 ) a1++;
+         d1 = 0;
+         a1 = (x>>3)&1;    
          x += 1;
-         if ( x > 250 ) b++;
+         if ( x > 250 ) b1++;
       }
 		else if(JOY_UP   (pad1.value))
       {
-         if ( y&8 ) a++;
-         d = 2;
-         a = (y>>3)&1;    
+         if ( y&8 ) a1++;
+         d1 = 2;
+         a1 = (y>>3)&1;    
          y -= 1;
-         if ( y < 5 ) b++;
+         if ( y < 5 ) b1++;
       }
 		else if(JOY_DOWN (pad1.value))
       {
-         if ( y&8 ) a++;
-         d = 3;
-         a = (y>>3)&1;    
+         if ( y&8 ) a1++;
+         d1 = 3;
+         a1 = (y>>3)&1;    
          y += 1;
-         if ( y > 235 ) b++;
+         if ( y > 235 ) b1++;
       }
 		
-		//check requested move location
-		iz = MAP_BLOCK_AT(x,y);
-		idx = CITY_BLOCKS[iz];// & NON_WALKABLE_BIT;
+
+		idx = collision_check(x, y);
 
 		
 		// Draw a sprite.
 		if(idx&WALL) {
 			//blocked
 			//meta_spr(player1x, player1y, 1, META);
-      			meta_spr(player1x, player1y, 1, META[d][a]);
+      			meta_spr(player1x, player1y, 1, META[d1][a1]);
 		}
 		else {
 			//allowed update player location to requested
 			player1x = x;
 			player1y = y;
 			//meta_spr(player1x, player1y, 2, META);
-      			meta_spr(player1x, player1y, 2, META[d][a]);
+      			meta_spr(player1x, player1y, 2, META[d1][a1]);
 		}
+
+
+//PLAYER 2
+		x = player2x;
+		y = player2y;
+
+		if(JOY_LEFT (pad2.value))
+      {
+         if ( x&8 ) a2++;
+         d2 = 1;
+         a2 = (x>>3)&1;    
+         x -= 1;
+         if ( x < 5 ) b2++;
+      }
+		else if(JOY_RIGHT (pad2.value))
+      {
+         if ( x&8 ) a2++;
+         d2 = 0;
+         a2 = (x>>3)&1;    
+         x += 1;
+         if ( x > 250 ) b2++;
+      }
+		else if(JOY_UP   (pad2.value))
+      {
+         if ( y&8 ) a2++;
+         d2 = 2;
+         a2 = (y>>3)&1;    
+         y -= 1;
+         if ( y < 5 ) b2++;
+      }
+		else if(JOY_DOWN (pad2.value))
+      {
+         if ( y&8 ) a2++;
+         d2 = 3;
+         a2 = (y>>3)&1;    
+         y += 1;
+         if ( y > 235 ) b2++;
+      }
+		
+
+		idx = collision_check(x, y);
+
+		
+		// Draw a sprite.
+		if(idx&WALL) {
+			//blocked
+      			meta_spr(player2x, player2y, 1, META[d2][a2]);
+		}
+		else {
+			//allowed update player location to requested
+			player2x = x;
+			player2y = y;
+      			meta_spr(player2x, player2y, 3, META[d2][a2]);
+		}
+
 
 		// PX.scroll_x = 0;
 		// PX.scroll_y = 0;
