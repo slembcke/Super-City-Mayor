@@ -16,16 +16,23 @@ static const u8 PALETTE[] = {
 
 static const u8 META_TILES[] = {
 	'.', '.', '.', '.',
-	'a', 'b', 'c', 'd',
-	'1', '2', '3', '4',
-	'w', 'x', 'y', 'z',
-	'A', 'B', 'C', 'D',
+	'W', 'W', 'W', 'W',
+	'R', 'R', 'R', 'R',
+	'G', 'G', 'G', 'G',
+	'B', 'B', 'B', 'B',
+};
+
+static const u8 META_TILE_PAL[] = {
+	0, 0, 1, 2, 3,
 };
 
 static const u8 CITY_BLOCKS[16*15] = {
-	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
-	0, 1, 0, 2, 0, 3, 0, 4,
+	1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
+	1, 1, 0, 2, 0, 3, 0, 4, 0, 1, 2, 3, 4, 0, 0, 0,
+	0, 1, 2, 3, 4, 0, 0, 0, 1, 2, 3, 4, 0, 0, 1, 2,
 };
+
+static u8 ATTRIB_TABLE[64];
 
 static const u16 ROW_ADDR[] = {
 	NT_ADDR(0, 0,  0),
@@ -45,8 +52,12 @@ static const u16 ROW_ADDR[] = {
 	NT_ADDR(0, 0, 28),
 };
 
+static u8 META_MASK[] = {0x03, 0x0C, 0x30, 0xC0};
+static u8 PAL[] = {0x00, 0x55, 0xAA, 0xFF};
+
 Gamestate gameplay_screen(void){
 	static u16 addr;
+	static u8 tile;
 	
 	music_stop();
 	
@@ -54,38 +65,51 @@ Gamestate gameplay_screen(void){
 		px_buffer_blit(PAL_ADDR, PALETTE, sizeof(PALETTE));
 		
 		px_addr(NT_ADDR(0, 0, 0));
-		px_fill(1024, 0);
+		px_fill(32*30, '.');
+		px_fill(64, 0);
 		
 		for(iy = 0; iy < 15; ++iy){
 			for(ix = 0; ix < 16; ++ix){
+				// Calculate tile index.
 				idx = 16*iy + ix;
-				idx = CITY_BLOCKS[idx] << 2;
+				tile = CITY_BLOCKS[idx] << 2;
+				
+				if(tile == 0) continue;
+				
 				addr = ROW_ADDR[iy] + 2*ix;
+				px_buffer_data(2, addr);
+				PX.buffer[0] = (META_TILES + 0)[tile];
+				PX.buffer[1] = (META_TILES + 1)[tile];
+				px_buffer_data(2, addr + 32);
+				PX.buffer[0] = (META_TILES + 2)[tile];
+				PX.buffer[1] = (META_TILES + 3)[tile];
 				
-				px_addr(addr);
-				PPU.vram.data = (META_TILES + 0)[idx];
-				PPU.vram.data = (META_TILES + 1)[idx];
-				px_addr(addr + 32);
-				PPU.vram.data = (META_TILES + 2)[idx];
-				PPU.vram.data = (META_TILES + 3)[idx];
+				// Calculate atrrib table bit index.
+				idx = 4*(iy & 0xE) + ix/2;
+				px_buffer_data(1, AT_ADDR(0) + idx);
 				
-				// px_buffer_data(2, addr);
-				// PX.buffer[0] = (META_TILES + 0)[idx];
-				// PX.buffer[1] = (META_TILES + 1)[idx];
-				// px_buffer_data(2, addr + 32);
-				// PX.buffer[0] = (META_TILES + 2)[idx];
-				// PX.buffer[1] = (META_TILES + 3)[idx];
+				tmp = META_TILE_PAL[tile >> 2];
+				tmp = PAL[tmp];
+				idx = 2*(iy & 1) + (ix & 1);
+				tmp &= META_MASK[idx];
+				PX.buffer[0] = tmp;
 			}
+			
+			// Buffer only one row at a time to avoid overflows.
+			px_buffer_exec();
 		}
+		
 	} px_ppu_sync_enable();
+	
+	ix = 0xAB;
 	
 	while(true){
 		read_gamepads();
 		
 		if(JOY_START(pad1.press)) break;
 		
-		// PX.scroll_x = 0;
-		// PX.scroll_y = 0;
+		PX.scroll_x = 0;
+		PX.scroll_y = 0;
 		px_spr_end();
 		px_wait_nmi();
 	}

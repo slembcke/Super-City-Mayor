@@ -4,37 +4,23 @@
 	"version": "2.0.0",
 	"tasks": [
 		{
-			"label": "run-mac",
-			"type": "shell",
-			"command": "make -j4 run-mac",
-			"group": "build",
-			"problemMatcher": []
-		},
-		{
 			"label": "run-linux",
 			"type": "shell",
-			"command": "make -j4 run-linux",
-			"group": "build",
-			"problemMatcher": []
-		},
-		{
-			"label": "run-win",
-			"type": "shell",
-			"command": "make -j4 run-win",
+			"command": "make -f scott.mk -j4 run-linux",
 			"group": "build",
 			"problemMatcher": []
 		},
 		{
 			"label": "rom",
 			"type": "shell",
-			"command": "make -j4 rom",
+			"command": "make -f scott.mk -j4 rom",
 			"group": "build",
 			"problemMatcher": []
 		},
 		{
 			"label": "clean",
 			"type": "shell",
-			"command": "make clean",
+			"command": "make -f scott.mk clean",
 			"group": "build",
 			"problemMatcher": []
 		}
