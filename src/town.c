@@ -20,9 +20,12 @@ static const u8 META_TILES[] = {
 	'R', 'R', 'R', 'R',
 	'G', 'G', 'G', 'G',
 	'B', 'B', 'B', 'B',
+	'5', '5', '5', '5',
+	'6', '6', '6', '6',
+	'7', '7', '7', '7',
 };
 
-static const u8 META_TILE_PAL[] = {
+static const u8 META_TILE_PAL[64] = {
 	0, 0, 1, 2, 3,
 };
 
@@ -43,18 +46,18 @@ static const u8 META_TILE_PAL[] = {
 #define MAP_BLOCK_AT(x, y) ((y & 0xF0)| (x >> 4))
 
 static const u8 CITY_BLOCKS[16*15] = {
+	1, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
+	3, 4, 0, 3, 0, 5, 0, 7, 0, 0, 0, 0, 0, 0, 0, 0,
 	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
+	0, 1, 0, 1, 2, 5, 0, 7, 0, 0, 0, 0, 0, 0, 0, 0,
+	0, 0, 0, 3, 4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
 	0, 1, 0, 3, 0, 5, 0, 7, 0, 0, 0, 0, 0, 0, 0, 0,
 	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
 	0, 1, 0, 3, 0, 5, 0, 7, 0, 0, 0, 0, 0, 0, 0, 0,
 	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
 	0, 1, 0, 3, 0, 5, 0, 7, 0, 0, 0, 0, 0, 0, 0, 0,
 	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
-	0, 1, 0, 3, 0, 5, 0, 7, 0, 0, 0, 0, 0, 0, 0, 0,
-	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
-	0, 1, 0, 3, 0, 5, 0, 7, 0, 0, 0, 0, 0, 0, 0, 0,
-	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
-	0, 1, 0, 3, 0, 5, 0, 7, 0, 0, 0, 0, 0, 0, 0, 0,
+	0, 1, 0, 2, 0, 3, 0, 4, 0, 0, 0, 0, 0, 0, 0, 0,
 	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
 	0, 1, 0, 3, 0, 5, 0, 7, 0, 0, 0, 0, 0, 0, 0, 0,
 	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
@@ -163,7 +166,7 @@ static u8 META[][2][17] =
 
 Gamestate gameplay_screen(void){
 	static u16 addr;
-	static u8 tile;
+	static u8 tile, mask, pal;
 	
 	register u8 player1x = 32, player1y = 32;
 	register u8 x, y;
@@ -189,10 +192,27 @@ Gamestate gameplay_screen(void){
 			for(ix = 0; ix < 16; ++ix){
 				// Calculate tile index.
 				idx = 16*iy + ix;
-				tile = CITY_BLOCKS[idx] << 2;
+				tile = CITY_BLOCKS[idx];
 				
 				if(tile == 0) continue;
 				
+				// Load the attribute quadrant mask and palette.
+				idx = 2*(iy & 1) + (ix & 1);
+				mask = META_MASK[idx];
+				idx = META_TILE_PAL[tile];
+				pal = PAL[idx];
+				
+				// Calculate atrrib table byte index.
+				idx = 4*(iy & 0xE) + ix/2;
+				tmp = ATTRIB_TABLE[idx];
+				tmp = (tmp & ~mask) | (pal & mask);
+				ATTRIB_TABLE[idx] = tmp;
+				
+				px_buffer_data(1, AT_ADDR(0) + idx);
+				PX.buffer[0] = tmp;
+				
+				// Load metatile.
+				tile *= 4;
 				addr = ROW_ADDR[iy] + 2*ix;
 				px_buffer_data(2, addr);
 				PX.buffer[0] = (META_TILES + 0)[tile];
@@ -200,16 +220,6 @@ Gamestate gameplay_screen(void){
 				px_buffer_data(2, addr + 32);
 				PX.buffer[0] = (META_TILES + 2)[tile];
 				PX.buffer[1] = (META_TILES + 3)[tile];
-				
-				// Calculate atrrib table bit index.
-				idx = 4*(iy & 0xE) + ix/2;
-				px_buffer_data(1, AT_ADDR(0) + idx);
-				
-				tmp = META_TILE_PAL[tile >> 2];
-				tmp = PAL[tmp];
-				idx = 2*(iy & 1) + (ix & 1);
-				tmp &= META_MASK[idx];
-				PX.buffer[0] = tmp;
 			}
 			
 			// Buffer only one row at a time to avoid overflows.
