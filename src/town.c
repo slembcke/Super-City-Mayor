@@ -13,27 +13,30 @@ static const u8 META_TILES[] = {
 	0xE4, 0xE5, 0xF4, 0xF5, 2,
 };
 
-#define MAP_BLOCK_AT(x, y) ((y & 0xF0)| (x >> 4))
+#define MAP_BLOCK_AT(x, y) ((y & 0xF0)| (x >> 4))	//pixel based
+#define MAP_BLOCK_AT_GRID(x, y) ((y << 4)| (x))	//grid based
 
 #define META_BITS 0x1F
 #define NON_WALKABLE_BIT 0x80
+#define ACTION_ALLOWED_BIT 0x40 //ie set when building damaged & player can fix
 
-#define _ 0
-#define B (1 | NON_WALKABLE_BIT)
-#define W NON_WALKABLE_BIT
+#define _ 0	//street
+#define B (1 | NON_WALKABLE_BIT)	//fixed building
+#define D (2 | ACTION_ALLOWED_BIT | NON_WALKABLE_BIT)  //damaged building
+#define W NON_WALKABLE_BIT	
 
 static const u8 CITY_BLOCKS[16*15] = {
 	_, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _,
 	W, W, W, W, W, W, W, W, W, W, W, W, W, W, W, W, 
 	W, _, _, _, _, _, _, _, _, _, _, _, _, _, _, W,
 	_, _, B, _, B, _, B, B, _, B, B, B, _, B, _, _,
-	W, _, B, _, _, _, _, _, _, _, _, _, _, _, _, W,
+	W, _, D, _, _, _, _, _, _, _, _, _, _, _, _, W,
 	W, _, B, _, B, B, B, _, B, B, _, B, _, B, _, W,
 	_, _, _, _, B, _, _, _, B, B, _, _, _, B, _, _,
-	W, _, B, _, _, _, B, _, _, _, _, B, _, B, _, W,
-	W, _, B, _, B, _, B, _, _, B, _, _, _, B, _, W,
+	W, _, D, _, _, _, B, _, _, _, _, B, _, B, _, W,
+	W, _, D, _, B, _, B, _, _, B, _, _, _, B, _, W,
 	_, _, _, _, B, _, _, _, B, B, _, B, _, _, _, _,
-	W, _, B, _, B, B, B, _, _, B, _, B, _, B, _, W,
+	W, _, D, _, B, B, B, _, _, B, _, B, _, B, _, W,
 	W, _, B, _, _, _, _, _, _, _, _, B, _, _, _, W,
 	_, _, B, _, B, _, B, B, _, B, _, B, _, B, _, _,
 	W, _, _, _, _, _, _, _, _, _, _, _, _, _, _, W,
@@ -42,6 +45,7 @@ static const u8 CITY_BLOCKS[16*15] = {
 
 #undef _
 #undef B
+#undef D
 
 static u8 ATTRIB_TABLE[64];
 
@@ -232,14 +236,27 @@ Gamestate gameplay_screen(void){
 		
 //PLAYER 1 REPAIRS
 		if(JOY_BTN_A (pad1.value)) {
+			//map player position to city grid
+			x = player1x>>4;
+			y = player1y>>4;
+
+			//change to cell player is facing
 			if (dir1 == FACE_L)
-				load_metatile((player1x>>4)-1, (player1y>>4), 2);
+				x--;
 			else if (dir1 == FACE_R)
-				load_metatile((player1x>>4)+1, (player1y>>4), 2);
+				x++;
 			else if (dir1 == FACE_D)
-				load_metatile((player1x>>4), (player1y>>4)+1, 2);
+				y++;
 			else if (dir1 == FACE_U)
-				load_metatile((player1x>>4), (player1y>>4)-1, 2);
+				y--;
+
+			//is the building damaged?
+			idx = MAP_BLOCK_AT_GRID(x,y); //idx = 16*y + x;
+			if (CITY_BLOCKS[idx] & ACTION_ALLOWED_BIT) {
+				//update the building
+				load_metatile(x, y, 1);
+			}
+
 		}	
 		
 //PLAYER 1 MOVEMENT
@@ -313,14 +330,26 @@ Gamestate gameplay_screen(void){
       {
 //PLAYER 2 REPAIRS
 		if(JOY_BTN_A (pad2.value)) {
+			//map player position to city grid
+			x = player2x>>4;
+			y = player2y>>4;
+
+			//change to cell player is facing
 			if (dir2 == FACE_L)
-				load_metatile((player2x>>4)-1, (player2y>>4), 2);
+				x--;
 			else if (dir2 == FACE_R)
-				load_metatile((player2x>>4)+1, (player2y>>4), 2);
+				x++;
 			else if (dir2 == FACE_D)
-				load_metatile((player2x>>4), (player2y>>4)+1, 2);
+				y++;
 			else if (dir2 == FACE_U)
-				load_metatile((player2x>>4), (player2y>>4)-1, 2);
+				y--;
+
+			//is the building damaged?
+			idx = MAP_BLOCK_AT_GRID(x,y); //idx = 16*y + x;
+			if (CITY_BLOCKS[idx] & ACTION_ALLOWED_BIT) {
+				//update the building
+				load_metatile(x, y, 1);
+			}
 		}	
 
 //PLAYER 2 MOVEMENT
