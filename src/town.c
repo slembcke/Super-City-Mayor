@@ -13,41 +13,31 @@ static const u8 META_TILES[] = {
 	0xE4, 0xE5, 0xF4, 0xF5, 2,
 };
 
-//#define BUTTON_BIT 0x04
-#define NON_WALKABLE_BIT 0x01
-//#define STORAGE_BIT 0x10
-//#define FULL_BIT 0x20
-
-//#define MPTY 0x00
-//#define SBUT (BUTTON_BIT | 0x00)
-//#define DBUT (BUTTON_BIT | 0x01)
-//#define RBUT (BUTTON_BIT | 0x02)
-//#define GBUT (BUTTON_BIT | 0x03)
-#define WALL (NON_WALKABLE_BIT)
-//#define STOR (NON_WALKABLE_BIT | STORAGE_BIT)
-//#define FULL (NON_WALKABLE_BIT | STORAGE_BIT | FULL_BIT)
-
 #define MAP_BLOCK_AT(x, y) ((y & 0xF0)| (x >> 4))
 
+#define META_BITS 0x1F
+#define NON_WALKABLE_BIT 0x80
+
 #define _ 0
-#define B 1
+#define B (1 | NON_WALKABLE_BIT)
+#define W NON_WALKABLE_BIT
 
 static const u8 CITY_BLOCKS[16*15] = {
 	_, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _,
-	_, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _,
-	_, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _,
+	W, W, W, W, W, W, W, W, W, W, W, W, W, W, W, W, 
+	W, _, _, _, _, _, _, _, _, _, _, _, _, _, _, W,
 	_, _, B, _, B, _, B, B, _, B, B, B, _, B, _, _,
-	_, _, B, _, _, _, _, _, _, _, _, _, _, _, _, _,
-	_, _, B, _, B, B, B, _, B, B, _, B, _, B, _, _,
+	W, _, B, _, _, _, _, _, _, _, _, _, _, _, _, W,
+	W, _, B, _, B, B, B, _, B, B, _, B, _, B, _, W,
 	_, _, _, _, B, _, _, _, B, B, _, _, _, B, _, _,
-	_, _, B, _, _, _, B, _, _, _, _, B, _, B, _, _,
-	_, _, B, _, B, _, B, _, _, B, _, _, _, B, _, _,
+	W, _, B, _, _, _, B, _, _, _, _, B, _, B, _, W,
+	W, _, B, _, B, _, B, _, _, B, _, _, _, B, _, W,
 	_, _, _, _, B, _, _, _, B, B, _, B, _, _, _, _,
-	_, _, B, _, B, B, B, _, _, B, _, B, _, B, _, _,
-	_, _, B, _, _, _, _, _, _, _, _, B, _, _, _, _,
+	W, _, B, _, B, B, B, _, _, B, _, B, _, B, _, W,
+	W, _, B, _, _, _, _, _, _, _, _, B, _, _, _, W,
 	_, _, B, _, B, _, B, B, _, B, _, B, _, B, _, _,
-	_, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _,
-	_, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _,
+	W, _, _, _, _, _, _, _, _, _, _, _, _, _, _, W,
+	W, W, W, W, W, W, W, W, W, W, W, W, W, W, W, W, 
 };
 
 #undef _
@@ -193,8 +183,6 @@ u8 collision_check(u8 x, u8 y) {
 
 
 Gamestate gameplay_screen(void){
-	static u16 addr;
-	
 	register u8 player1x = 32, player1y = 32;
 	register u8 player2x = 128, player2y = 32;
 
@@ -221,9 +209,10 @@ Gamestate gameplay_screen(void){
 			for(ix = 0; ix < 16; ++ix){
 				// Calculate tile index.
 				idx = 16*iy + ix;
-				idx = CITY_BLOCKS[idx];
+				tmp = CITY_BLOCKS[idx];
+				tmp &= META_BITS;
 				
-				if(idx != 0) load_metatile(ix, iy, idx);
+				if(tmp != 0) load_metatile(ix, iy, tmp);
 			}
 			
 			// Buffer only one row at a time to avoid overflows.
@@ -290,7 +279,7 @@ Gamestate gameplay_screen(void){
 
 		
 		// Draw a sprite.
-		if(idx&WALL) {
+		if(idx & NON_WALKABLE_BIT) {
 			//blocked
 			//meta_spr(player1x, player1y, 1, META);
       			meta_spr(player1x, player1y, 1, META[d1][a1]);
@@ -346,7 +335,7 @@ Gamestate gameplay_screen(void){
 
 		
 		// Draw a sprite.
-		if(idx&WALL) {
+		if(idx & NON_WALKABLE_BIT) {
 			//blocked
       			meta_spr(player2x, player2y, 1, META[d2][a2]);
 		}
