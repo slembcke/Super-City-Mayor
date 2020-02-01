@@ -70,11 +70,15 @@ void fade_to_black(const u8* palette, u8 delay){
 void meta_spr(u8 x, u8 y, u8 pal, const u8* data);
 
 Gamestate splash_screen(void){
-	register s16 sin = 0, cos = 0x3FFF;
+//	register s16 sin = 0, cos = 0x3FFF;
+   
+   iy = 240;
 	
 	px_ppu_sync_disable();{
 		// Load the splash tilemap into nametable 0.
 		px_lz4_to_vram(NT_ADDR(0, 0, 0), MAP_SPLASH);
+      PX.scroll_x = 256;
+      PX.scroll_y = iy;
 	} px_ppu_sync_enable();
 	
 	music_play(0);
@@ -92,12 +96,23 @@ Gamestate splash_screen(void){
          break;
       }
 
-		PX.scroll_y = 480 + (sin >> 9);
-		sin += cos >> 6;
-		cos -= sin >> 6;
+//		PX.scroll_y = 480 + (sin >> 9);
+//		sin += cos >> 6;
+//		cos -= sin >> 6;
 		
 		px_spr_end();
 		px_wait_nmi();
+      
+      if ( iy > 0 )
+      {
+         iy -= 2;
+         PX.scroll_y = iy;
+      }
+      else
+      {
+         px_buffer_inc_h();
+         px_buffer_blit(NT_ADDR(1,8,7),"SUPER CITY MAYOR",16);
+      }
 	}
    return gameplay_screen();
 }
