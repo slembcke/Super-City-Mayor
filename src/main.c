@@ -56,17 +56,91 @@ void fade_from_black(const u8* palette, u8 delay){
 	darken(palette, 0);
 }
 
-static const u8 META[] = {
-	-8, -8, 0xD0, 0,
-	 0, -8, 0xD1, 0,
-	-8,  0, 0xD2, 0,
-	 0,  0, 0xD3, 0,
+void fade_to_black(const u8* palette, u8 delay){
+	darken(palette, 1);
+	px_wait_frames(delay);
+	darken(palette, 2);
+	px_wait_frames(delay);
+	darken(palette, 3);
+	px_wait_frames(delay);
+	darken(palette, 4);
+}
+
+void meta_spr(u8 x, u8 y, u8 pal, const u8* data);
+static u8 META[][2][17] = 
+{
+ {
+   {
+	-8, -8, 0xE0, 0,
+	 0, -8, 0xE1, 0,
+	-8,  0, 0xE2, 0,
+	 0,  0, 0xE3, 0,
 	128,
+   },
+   {
+	-8, -8, 0xE4, 0,
+	 0, -8, 0xE5, 0,
+	-8,  0, 0xE6, 0,
+	 0,  0, 0xE7, 0,
+	128,
+   }
+ },
+ {
+   {
+	0, -8, 0xE0, 0x40,
+	-8, -8, 0xE1, 0x40,
+	0,  0, 0xE2, 0x40,
+	-8,  0, 0xE3, 0x40,
+	128,
+   },
+   {
+	0, -8, 0xE4, 0x40,
+	-8, -8, 0xE5, 0x40,
+	0,  0, 0xE6, 0x40,
+	-8,  0, 0xE7, 0x40,
+	128,
+   }
+ },
+ {
+   {
+	-8, -8, 0xEC, 0,
+	0, -8, 0xED, 0,
+	-8,  0, 0xEE, 0,
+	0,  0, 0xEF, 0,
+	128,
+   },
+   {
+	-8, -8, 0xEC, 0,
+	0, -8, 0xED, 0,
+	-8,  0, 0xF2, 0,
+	0,  0, 0xF3, 0,
+	128,
+   }
+ },
+ {
+   {
+	-8, -8, 0xF0, 0,
+	0, -8, 0xF1, 0,
+	-8,  0, 0xEE, 0,
+	0,  0, 0xEF, 0,
+	128,
+   },
+   {
+	-8, -8, 0xF0, 0,
+	0, -8, 0xF1, 0,
+	-8,  0, 0xF2, 0,
+	0,  0, 0xF3, 0,
+	128,
+   }
+ }
 };
+
 
 Gamestate splash_screen(void){
 	register u8 x = 32, y = 32;
 	register s16 sin = 0, cos = 0x3FFF;
+   register u8 a = 0, d = 1;
+   register u8 f = 0, b = 0;
 	
 	px_ppu_sync_disable();{
 		// Load the splash tilemap into nametable 0.
@@ -79,14 +153,41 @@ Gamestate splash_screen(void){
 	
 	while(true){
 		read_gamepads();
-		if(JOY_LEFT (pad1.value)) x -= 1;
-		if(JOY_RIGHT(pad1.value)) x += 1;
-		if(JOY_DOWN (pad1.value)) y += 1;
-		if(JOY_UP   (pad1.value)) y -= 1;
-		if(JOY_BTN_A(pad1.press)) sound_play(SOUND_JUMP);
-		
+		if(JOY_LEFT (pad1.value))
+      {
+         if ( x&8 ) a++;
+         d = 1;
+         a = (x>>3)&1;    
+         x -= 1;
+         if ( x < 5 ) b++;
+      }
+		else if(JOY_RIGHT (pad1.value))
+      {
+         if ( x&8 ) a++;
+         d = 0;
+         a = (x>>3)&1;    
+         x += 1;
+         if ( x > 250 ) b++;
+      }
+		else if(JOY_UP   (pad1.value))
+      {
+         if ( y&8 ) a++;
+         d = 2;
+         a = (y>>3)&1;    
+         y -= 1;
+         if ( y < 5 ) b++;
+      }
+		else if(JOY_DOWN (pad1.value))
+      {
+         if ( y&8 ) a++;
+         d = 3;
+         a = (y>>3)&1;    
+         y += 1;
+         if ( y > 235 ) b++;
+      }
+      
 		// Draw a sprite.
-		meta_spr(x, y, 2, META);
+      meta_spr(x, y, 1, META[d][a]);
 		
 		PX.scroll_y = 480 + (sin >> 9);
 		sin += cos >> 6;
@@ -94,9 +195,14 @@ Gamestate splash_screen(void){
 		
 		px_spr_end();
 		px_wait_nmi();
-	}
 	
-	return splash_screen();
+		if(JOY_BTN_A(pad1.press)) 
+      {
+         sound_play(SOUND_JUMP);
+         break; // go to gameplay_screen
+		}
+	}
+   return gameplay_screen();
 }
 
 void main(void){
@@ -120,7 +226,6 @@ void main(void){
 	sound_init(SOUNDS);
 	music_init(MUSIC);
 	
-	gameplay_screen();
 	// Jump to the splash screen state.
 	splash_screen();
 }

@@ -1,6 +1,5 @@
 *.s
 *.o
-*.chr
 *.bin
 *.lz4
 *.nes

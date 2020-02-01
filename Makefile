@@ -1,10 +1,10 @@
 PROJECT_NAME = GGJ20
 ROM = $(PROJECT_NAME).nes
 
-CC = $(CC65_ROOT)/cc65
-CL = $(CC65_ROOT)/cl65
-AS = $(CC65_ROOT)/ca65
-LD = $(CC65_ROOT)/ld65
+CC65_ROOT = `pwd`/ext/cc65
+CC = $(CC65_ROOT)/bin/cc65
+AS = $(CC65_ROOT)/bin/ca65
+LD = $(CC65_ROOT)/bin/ld65
 
 CFLAGS += \
 	-t nes -Oirs \
@@ -51,9 +51,6 @@ OBJS = \
 	$(SRC:.c=.o) \
 	$(ASM:.s=.o) \
 
-CHR = \
-	chr/0.png \
-
 SONGS = \
 	audio/after_the_rain.txt \
 
@@ -61,6 +58,10 @@ default: $(ROM)
 rom: $(ROM)
 
 PX_TOOLS_PATH = ext/pixler/tools
+
+cc65:
+	make -C ext/cc65 bin
+	make -C ext/cc65 nes
 
 px-tools:
 	make -C $(PX_TOOLS_PATH)
