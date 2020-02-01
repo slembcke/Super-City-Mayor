@@ -51,9 +51,6 @@ OBJS = \
 	$(SRC:.c=.o) \
 	$(ASM:.s=.o) \
 
-CHR = \
-	chr/0.png \
-
 SONGS = \
 	audio/after_the_rain.txt \
 

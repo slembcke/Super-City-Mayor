@@ -120,7 +120,6 @@ void main(void){
 	sound_init(SOUNDS);
 	music_init(MUSIC);
 	
-	gameplay_screen();
 	// Jump to the splash screen state.
 	splash_screen();
 }
