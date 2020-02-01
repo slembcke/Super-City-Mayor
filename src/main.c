@@ -17,61 +17,6 @@ static const u8 PALETTE[] = {
 	BG_COLOR, 0x01, 0x11, 0x21,
 };
 
-#define BUTTON_BIT 0x04
-#define NON_WALKABLE_BIT 0x08
-#define STORAGE_BIT 0x10
-#define FULL_BIT 0x20
-
-#define MPTY 0x00
-#define SBUT (BUTTON_BIT | 0x00)
-#define DBUT (BUTTON_BIT | 0x01)
-#define RBUT (BUTTON_BIT | 0x02)
-#define GBUT (BUTTON_BIT | 0x03)
-#define WALL (NON_WALKABLE_BIT)
-#define STOR (NON_WALKABLE_BIT | STORAGE_BIT)
-#define FULL (NON_WALKABLE_BIT | STORAGE_BIT | FULL_BIT)
-
-// Uff, running out of time. Gotta just cram this in.
-//static u8 MAP[] = {
-////  0     1     2     3     4     5     6     7     8     9     A     B     C     D     E     F
-//	WALL, WALL, WALL, WALL, WALL, WALL, WALL, WALL, WALL, WALL, WALL, WALL, WALL, WALL, WALL, WALL, // 0
-//	WALL, FULL, MPTY, MPTY, MPTY, MPTY, MPTY, MPTY, MPTY, MPTY, MPTY, STOR, WALL, WALL, STOR, WALL, // 1
-//	WALL, FULL, MPTY, MPTY, MPTY, MPTY, MPTY, MPTY, MPTY, MPTY, MPTY, MPTY, WALL, WALL, STOR, WALL, // 2
-//	WALL, FULL, MPTY, RBUT, MPTY, WALL, WALL, WALL, WALL, WALL, MPTY, MPTY, WALL, WALL, STOR, WALL, // 3
-//	WALL, FULL, MPTY, MPTY, MPTY, WALL, STOR, MPTY, MPTY, WALL, SBUT, MPTY, WALL, WALL, STOR, WALL, // 4
-//	WALL, FULL, MPTY, MPTY, MPTY, WALL, WALL, MPTY, MPTY, WALL, WALL, WALL, WALL, WALL, STOR, WALL, // 5
-//	WALL, FULL, MPTY, MPTY, MPTY, WALL, STOR, MPTY, MPTY, MPTY, MPTY, MPTY, WALL, WALL, STOR, WALL, // 6
-//	WALL, WALL, MPTY, MPTY, MPTY, MPTY, MPTY, MPTY, MPTY, MPTY, MPTY, MPTY, WALL, WALL, STOR, WALL, // 7
-//	WALL, WALL, MPTY, MPTY, MPTY, MPTY, MPTY, MPTY, MPTY, MPTY, MPTY, MPTY, MPTY, MPTY, STOR, WALL, // 8
-//	WALL, WALL, MPTY, MPTY, MPTY, MPTY, MPTY, WALL, WALL, MPTY, MPTY, MPTY, MPTY, MPTY, STOR, WALL, // 9
-//	WALL, WALL, MPTY, MPTY, MPTY, MPTY, MPTY, STOR, WALL, MPTY, MPTY, MPTY, MPTY, MPTY, STOR, WALL, // A
-//	WALL, WALL, MPTY, MPTY, MPTY, MPTY, MPTY, WALL, WALL, MPTY, MPTY, MPTY, MPTY, MPTY, STOR, WALL, // B
-//	WALL, WALL, MPTY, MPTY, MPTY, WALL, WALL, WALL, WALL, MPTY, MPTY, MPTY, MPTY, MPTY, STOR, WALL, // C
-//	WALL, WALL, MPTY, MPTY, MPTY, WALL, DBUT, MPTY, MPTY, MPTY, MPTY, GBUT, MPTY, MPTY, STOR, WALL, // D
-//	WALL, WALL, WALL, WALL, WALL, WALL, WALL, WALL, WALL, WALL, WALL, WALL, WALL, WALL, WALL, WALL, // E
-//};
-static u8 MAP[] = {
-//  0     1     2     3     4     5     6     7     8     9     A     B     C     D     E     F
-	WALL, WALL, WALL, WALL, WALL, WALL, WALL, WALL, WALL, WALL, WALL, WALL, WALL, WALL, WALL, WALL, // 0
-	WALL, MPTY, MPTY, MPTY, MPTY, MPTY, MPTY, MPTY, MPTY, MPTY, MPTY, MPTY, WALL, WALL, MPTY, WALL, // 1
-	WALL, MPTY, MPTY, MPTY, MPTY, MPTY, MPTY, MPTY, MPTY, MPTY, MPTY, MPTY, WALL, WALL, MPTY, WALL, // 2
-	WALL, MPTY, MPTY, MPTY, MPTY, WALL, WALL, WALL, WALL, WALL, MPTY, MPTY, WALL, WALL, MPTY, WALL, // 3
-	WALL, MPTY, MPTY, MPTY, MPTY, WALL, MPTY, MPTY, MPTY, WALL, MPTY, MPTY, WALL, WALL, MPTY, WALL, // 4
-	WALL, MPTY, MPTY, MPTY, MPTY, WALL, WALL, MPTY, MPTY, WALL, WALL, WALL, WALL, WALL, MPTY, WALL, // 5
-	WALL, MPTY, MPTY, MPTY, MPTY, WALL, MPTY, MPTY, MPTY, MPTY, MPTY, MPTY, WALL, WALL, MPTY, WALL, // 6
-	WALL, WALL, MPTY, MPTY, MPTY, MPTY, MPTY, MPTY, MPTY, MPTY, MPTY, MPTY, WALL, WALL, MPTY, WALL, // 7
-	WALL, WALL, MPTY, MPTY, MPTY, MPTY, MPTY, MPTY, MPTY, MPTY, MPTY, MPTY, MPTY, MPTY, MPTY, WALL, // 8
-	WALL, WALL, MPTY, MPTY, MPTY, MPTY, MPTY, WALL, WALL, MPTY, MPTY, MPTY, MPTY, MPTY, MPTY, WALL, // 9
-	WALL, WALL, MPTY, MPTY, MPTY, MPTY, MPTY, MPTY, WALL, MPTY, MPTY, MPTY, MPTY, MPTY, MPTY, WALL, // A
-	WALL, WALL, MPTY, MPTY, MPTY, MPTY, MPTY, WALL, WALL, MPTY, MPTY, MPTY, MPTY, MPTY, MPTY, WALL, // B
-	WALL, WALL, MPTY, MPTY, MPTY, WALL, WALL, WALL, WALL, MPTY, MPTY, MPTY, MPTY, MPTY, MPTY, WALL, // C
-	WALL, WALL, MPTY, MPTY, MPTY, WALL, MPTY, MPTY, MPTY, MPTY, MPTY, MPTY, MPTY, MPTY, MPTY, WALL, // D
-	WALL, WALL, WALL, WALL, WALL, WALL, WALL, WALL, WALL, WALL, WALL, WALL, WALL, WALL, WALL, WALL, // E
-};
-
-#define MAP_BLOCK_AT(x, y) ((y & 0xF0)| (x >> 4))
-
-
 Gamepad pad1, pad2;
 
 void read_gamepads(void){
@@ -111,7 +56,6 @@ void fade_from_black(const u8* palette, u8 delay){
 	darken(palette, 0);
 }
 
-void meta_spr(u8 x, u8 y, u8 pal, const u8* data);
 static const u8 META[] = {
 	-8, -8, 0xD0, 0,
 	 0, -8, 0xD1, 0,
@@ -120,9 +64,8 @@ static const u8 META[] = {
 	128,
 };
 
-static Gamestate splash_screen(void){
-	register u8 player1x = 32, player1y = 32;
-	register u8 x, y;
+Gamestate splash_screen(void){
+	register u8 x = 32, y = 32;
 	register s16 sin = 0, cos = 0x3FFF;
 	
 	px_ppu_sync_disable();{
@@ -135,38 +78,15 @@ static Gamestate splash_screen(void){
 	fade_from_black(PALETTE, 4);
 	
 	while(true){
-
-		x = player1x;
-		y = player1y;
-
 		read_gamepads();
 		if(JOY_LEFT (pad1.value)) x -= 1;
 		if(JOY_RIGHT(pad1.value)) x += 1;
 		if(JOY_DOWN (pad1.value)) y += 1;
 		if(JOY_UP   (pad1.value)) y -= 1;
 		if(JOY_BTN_A(pad1.press)) sound_play(SOUND_JUMP);
-
-		//collision detection
-		//ix = (player1x >> 8);
-		//iy = (player1y >> 8) - 4;
-
-		iz = MAP_BLOCK_AT(x,y);
-		idx = MAP[iz];// & NON_WALKABLE_BIT;
-
 		
 		// Draw a sprite.
-		//if(idx) {
-		if(idx&WALL) {
-			//blocked
-			meta_spr(player1x, player1y, 1, META);
-		}
-		else {
-			//allowed
-			meta_spr(player1x, player1y, 2, META);
-			player1x = x;
-			player1y = y;
-		}
-		
+		meta_spr(x, y, 2, META);
 		
 		PX.scroll_y = 480 + (sin >> 9);
 		sin += cos >> 6;
@@ -200,6 +120,7 @@ void main(void){
 	sound_init(SOUNDS);
 	music_init(MUSIC);
 	
+	gameplay_screen();
 	// Jump to the splash screen state.
 	splash_screen();
 }
