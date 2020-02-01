@@ -59,6 +59,10 @@ rom: $(ROM)
 
 PX_TOOLS_PATH = ext/pixler/tools
 
+cc65:
+	make -C ext/cc65 bin
+	make -C ext/cc65 nes
+
 px-tools:
 	make -C $(PX_TOOLS_PATH)
 	touch px-tools
