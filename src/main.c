@@ -85,8 +85,6 @@ Gamestate splash_screen(void){
 		if(JOY_UP   (pad1.value)) y -= 1;
 		if(JOY_BTN_A(pad1.press)) sound_play(SOUND_JUMP);
 		
-		if(JOY_START(pad1.press)) return gameplay_screen();
-		
 		// Draw a sprite.
 		meta_spr(x, y, 2, META);
 		
@@ -97,7 +95,7 @@ Gamestate splash_screen(void){
 		px_spr_end();
 		px_wait_nmi();
 	}
-	\
+	
 	return splash_screen();
 }
 
@@ -122,6 +120,7 @@ void main(void){
 	sound_init(SOUNDS);
 	music_init(MUSIC);
 	
+	gameplay_screen();
 	// Jump to the splash screen state.
 	splash_screen();
 }
