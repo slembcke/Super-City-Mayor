@@ -56,18 +56,88 @@ void fade_from_black(const u8* palette, u8 delay){
 	darken(palette, 0);
 }
 
+void fade_to_black(const u8* palette, u8 delay){
+	darken(palette, 1);
+	px_wait_frames(delay);
+	darken(palette, 2);
+	px_wait_frames(delay);
+	darken(palette, 3);
+	px_wait_frames(delay);
+	darken(palette, 4);
+}
+
 void meta_spr(u8 x, u8 y, u8 pal, const u8* data);
-static const u8 META[] = {
-	-8, -8, 0xD0, 0,
-	 0, -8, 0xD1, 0,
-	-8,  0, 0xD2, 0,
-	 0,  0, 0xD3, 0,
+static u8 META_R[][17] = {
+   {
+	-8, -8, 0xE0, 0,
+	 0, -8, 0xE1, 0,
+	-8,  0, 0xE2, 0,
+	 0,  0, 0xE3, 0,
 	128,
+   },
+   {
+	-8, -8, 0xE4, 0,
+	 0, -8, 0xE5, 0,
+	-8,  0, 0xE6, 0,
+	 0,  0, 0xE7, 0,
+	128,
+   }
 };
+static u8 META_L[][17] = {
+   {
+	0, -8, 0xE0, 0x40,
+	-8, -8, 0xE1, 0x40,
+	0,  0, 0xE2, 0x40,
+	-8,  0, 0xE3, 0x40,
+	128,
+   },
+   {
+	0, -8, 0xE4, 0x40,
+	-8, -8, 0xE5, 0x40,
+	0,  0, 0xE6, 0x40,
+	-8,  0, 0xE7, 0x40,
+	128,
+   }
+};
+static u8 META_U[][17] = {
+   {
+	-8, -8, 0xEC, 0,
+	0, -8, 0xED, 0,
+	-8,  0, 0xEE, 0,
+	0,  0, 0xEF, 0,
+	128,
+   },
+   {
+	-8, -8, 0xEC, 0,
+	0, -8, 0xED, 0,
+	-8,  0, 0xF2, 0,
+	0,  0, 0xF3, 0,
+	128,
+   }
+};
+static u8 META_D[][17] = {
+   {
+	-8, -8, 0xF0, 0,
+	0, -8, 0xF1, 0,
+	-8,  0, 0xEE, 0,
+	0,  0, 0xEF, 0,
+	128,
+   },
+   {
+	-8, -8, 0xF0, 0,
+	0, -8, 0xF1, 0,
+	-8,  0, 0xF2, 0,
+	0,  0, 0xF3, 0,
+	128,
+   }
+};
+
 
 static Gamestate splash_screen(void){
 	register u8 x = 32, y = 32;
 	register s16 sin = 0, cos = 0x3FFF;
+   register u8 a = 0, d = 1;
+   register u8 f = 0, b = 0;
 	
 	px_ppu_sync_disable();{
 		// Load the splash tilemap into nametable 0.
@@ -80,14 +150,60 @@ static Gamestate splash_screen(void){
 	
 	while(true){
 		read_gamepads();
-		if(JOY_LEFT (pad1.value)) x -= 1;
-		if(JOY_RIGHT(pad1.value)) x += 1;
-		if(JOY_DOWN (pad1.value)) y += 1;
-		if(JOY_UP   (pad1.value)) y -= 1;
-		if(JOY_BTN_A(pad1.press)) sound_play(SOUND_JUMP);
-		
+		if(JOY_LEFT (pad1.value))
+      {
+         if ( x&8 ) a++;
+         d = 0;
+         a = (x>>3)&1;    
+         x -= 1;
+         if ( x < 5 ) b++;
+      }
+		else if(JOY_RIGHT (pad1.value))
+      {
+         if ( x&8 ) a++;
+         d = 1;
+         a = (x>>3)&1;    
+         x += 1;
+         if ( x > 250 ) b++;
+      }
+		else if(JOY_UP   (pad1.value))
+      {
+         if ( y&8 ) a++;
+         d = 2;
+         a = (y>>3)&1;    
+         y -= 1;
+         if ( y < 5 ) b++;
+      }
+		else if(JOY_DOWN (pad1.value))
+      {
+         if ( y&8 ) a++;
+         d = 3;
+         a = (y>>3)&1;    
+         y += 1;
+         if ( y > 235 ) b++;
+      }
+		if(JOY_BTN_A(pad1.press)) 
+      {
+         sound_play(SOUND_JUMP);
+		}
+      
 		// Draw a sprite.
-		meta_spr(x, y, 2, META);
+      if ( d == 0 )
+      {
+         meta_spr(x, y, 1, META_L[a]);
+      }
+      else if ( d == 1 )
+      {
+         meta_spr(x, y, 1, META_R[a]);
+      }
+      else if ( d == 2 )
+      {
+         meta_spr(x, y, 1, META_U[a]);
+      }
+      else if ( d == 3 )
+      {
+         meta_spr(x, y, 1, META_D[a]);
+      }
 		
 		PX.scroll_y = 480 + (sin >> 9);
 		sin += cos >> 6;
