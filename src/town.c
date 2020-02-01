@@ -3,18 +3,14 @@
 #include "main.h"
 
 static const u8 META_TILES[] = {
-	'.', '.', '.', '.',
-	'W', 'W', 'W', 'W',
-	'R', 'R', 'R', 'R',
-	'G', 'G', 'G', 'G',
-	'B', 'B', 'B', 'B',
-	'5', '5', '5', '5',
-	'6', '6', '6', '6',
-	'7', '7', '7', '7',
-};
-
-static const u8 META_TILE_PAL[64] = {
-	0, 0, 1, 2, 3,
+	0x00, 0x00, 0x00, 0x00, 0,
+	0xE4, 0xE5, 0xF4, 0xF5, 2,
+	0xE4, 0xE5, 0xF4, 0xF5, 2,
+	0xE4, 0xE5, 0xF4, 0xF5, 2,
+	0xE4, 0xE5, 0xF4, 0xF5, 2,
+	0xE4, 0xE5, 0xF4, 0xF5, 2,
+	0xE4, 0xE5, 0xF4, 0xF5, 2,
+	0xE4, 0xE5, 0xF4, 0xF5, 2,
 };
 
 //#define BUTTON_BIT 0x04
@@ -33,23 +29,29 @@ static const u8 META_TILE_PAL[64] = {
 
 #define MAP_BLOCK_AT(x, y) ((y & 0xF0)| (x >> 4))
 
+#define _ 0
+#define B 1
+
 static const u8 CITY_BLOCKS[16*15] = {
-	1, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
-	3, 4, 0, 3, 0, 5, 0, 7, 0, 0, 0, 0, 0, 0, 0, 0,
-	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
-	0, 1, 0, 1, 2, 5, 0, 7, 0, 0, 0, 0, 0, 0, 0, 0,
-	0, 0, 0, 3, 4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
-	0, 1, 0, 3, 0, 5, 0, 7, 0, 0, 0, 0, 0, 0, 0, 0,
-	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
-	0, 1, 0, 3, 0, 5, 0, 7, 0, 0, 0, 0, 0, 0, 0, 0,
-	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
-	0, 1, 0, 3, 0, 5, 0, 7, 0, 0, 0, 0, 0, 0, 0, 0,
-	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
-	0, 1, 0, 2, 0, 3, 0, 4, 0, 0, 0, 0, 0, 0, 0, 0,
-	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
-	0, 1, 0, 3, 0, 5, 0, 7, 0, 0, 0, 0, 0, 0, 0, 0,
-	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
+	_, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _,
+	_, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _,
+	_, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _,
+	_, _, B, _, B, _, B, B, _, B, B, B, _, B, _, _,
+	_, _, B, _, _, _, _, _, _, _, _, _, _, _, _, _,
+	_, _, B, _, B, B, B, _, B, B, _, B, _, B, _, _,
+	_, _, _, _, B, _, _, _, B, B, _, _, _, B, _, _,
+	_, _, B, _, _, _, B, _, _, _, _, B, _, B, _, _,
+	_, _, B, _, B, _, B, _, _, B, _, _, _, B, _, _,
+	_, _, _, _, B, _, _, _, B, B, _, B, _, _, _, _,
+	_, _, B, _, B, B, B, _, _, B, _, B, _, B, _, _,
+	_, _, B, _, _, _, _, _, _, _, _, B, _, _, _, _,
+	_, _, B, _, B, _, B, B, _, B, _, B, _, B, _, _,
+	_, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _,
+	_, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _,
 };
+
+#undef _
+#undef B
 
 static u8 ATTRIB_TABLE[64];
 
@@ -78,10 +80,12 @@ static void load_metatile(u8 x, u8 y, u8 tile){
 	static u16 addr;
 	static u8 mask, pal;
 	
+	tile *= 5;
+	
 	// Load the attribute quadrant mask and palette.
 	idx = 2*(y & 1) + (x & 1);
 	mask = META_MASK[idx];
-	idx = META_TILE_PAL[tile];
+	idx = (META_TILES + 4)[tile];
 	pal = PAL[idx];
 	
 	// Calculate atrrib table byte index.
@@ -94,7 +98,6 @@ static void load_metatile(u8 x, u8 y, u8 tile){
 	PX.buffer[0] = tmp;
 	
 	// Load metatile.
-	tile *= 4;
 	addr = ROW_ADDR[y] + 2*x;
 	px_buffer_data(2, addr);
 	PX.buffer[0] = (META_TILES + 0)[tile];
@@ -214,18 +217,18 @@ Gamestate gameplay_screen(void){
 		px_addr(NT_ADDR(0, 0, 0));
 		px_blit(1024, GAMEPLAY_TILEMAP);
 		
-		// for(iy = 0; iy < 15; ++iy){
-		// 	for(ix = 0; ix < 16; ++ix){
-		// 		// Calculate tile index.
-		// 		idx = 16*iy + ix;
-		// 		idx = CITY_BLOCKS[idx];
+		for(iy = 0; iy < 15; ++iy){
+			for(ix = 0; ix < 16; ++ix){
+				// Calculate tile index.
+				idx = 16*iy + ix;
+				idx = CITY_BLOCKS[idx];
 				
-		// 		if(idx != 0) load_metatile(ix, iy, idx);
-		// 	}
+				if(idx != 0) load_metatile(ix, iy, idx);
+			}
 			
-		// 	// Buffer only one row at a time to avoid overflows.
-		// 	px_buffer_exec();
-		// }
+			// Buffer only one row at a time to avoid overflows.
+			px_buffer_exec();
+		}
 		
 	} px_ppu_sync_enable();
 	
