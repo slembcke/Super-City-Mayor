@@ -11,4 +11,5 @@
 _CHR0:
 .incbin "chr/0.chr"
 .incbin "chr/Tileset.chr"
+
 inclz4 _MAP_SPLASH, "map/splash.lz4"
