@@ -10,11 +10,15 @@
 .zeropage
 
 ; TODO export as u8 and u16?
-.exportzp _ix, _iy, _idx, _tmp
+.exportzp _iz, _ix, _iy, _idx, _tmp
+.exportzp _player1x, _player1y
 _ix: .word 0
 _iy: .word 0
+_iz: .word 0
 _idx: .word 0
 _tmp: .word 0
+_player1x: .word 0
+_player1y: .word 0
 
 .code
 
