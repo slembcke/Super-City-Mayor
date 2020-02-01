@@ -1,7 +1,7 @@
 PROJECT_NAME = GGJ20
 ROM = $(PROJECT_NAME).nes
 
-CC65_ROOT = `pwd`/../cc65
+CC65_ROOT = `pwd`/ext/cc65
 CC = $(CC65_ROOT)/bin/cc65
 AS = $(CC65_ROOT)/bin/ca65
 LD = $(CC65_ROOT)/bin/ld65
@@ -41,6 +41,10 @@ PX_LIB_PATH = ext/pixler/lib
 PX_LIB = $(PX_LIB_PATH)/px.lib
 $(PX_LIB):
 	make CC65_ROOT=$(CC65_ROOT) -C $(PX_LIB_PATH)
+
+cc65:
+	make -C ext/cc65 bin
+	make -C ext/cc65 nes
 
 px-tools:
 	make -C $(PX_TOOLS_PATH)
