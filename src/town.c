@@ -203,7 +203,7 @@ u8 collision_check(u8 x, u8 y) {
 
 
 Gamestate gameplay_screen(void){
-	static u16 addr;
+	//static u16 addr; don't think this is used.?
 	
 	register u8 player1x = 32, player1y = 32;
 	register u8 player2x = 128, player2y = 32;
