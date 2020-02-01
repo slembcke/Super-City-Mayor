@@ -8,9 +8,13 @@ extern u8 CHR0[];
 extern u8 MAP_SPLASH[];
 
 // misc.s declarations:
-extern u8 ix, iy, idx, tmp;
+extern u8 iz, ix, iy, idx, tmp;
+extern u8 player1x, player1y;
+#pragma zpsym("player1x");
+#pragma zpsym("player1y");
 #pragma zpsym("ix");
 #pragma zpsym("iy");
+#pragma zpsym("iz");
 #pragma zpsym("idx");
 #pragma zpsym("tmp");
 
