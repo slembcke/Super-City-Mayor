@@ -303,60 +303,61 @@ Gamestate gameplay_screen(void){
       			meta_spr(player1x, player1y, 2, META[d1][a1]);
 		}
 
-
-//PLAYER 2
-		x = player2x;
-		y = player2y;
-
-		if(JOY_LEFT (pad2.value))
+      if ( NumPlayers == 2 )
       {
-         if ( x&8 ) a2++;
-         d2 = 1;
-         a2 = (x>>3)&1;    
-         x -= 1;
-         if ( x < 5 ) b2++;
-      }
-		else if(JOY_RIGHT (pad2.value))
-      {
-         if ( x&8 ) a2++;
-         d2 = 0;
-         a2 = (x>>3)&1;    
-         x += 1;
-         if ( x > 250 ) b2++;
-      }
-		else if(JOY_UP   (pad2.value))
-      {
-         if ( y&8 ) a2++;
-         d2 = 2;
-         a2 = (y>>3)&1;    
-         y -= 1;
-         if ( y < 5 ) b2++;
-      }
-		else if(JOY_DOWN (pad2.value))
-      {
-         if ( y&8 ) a2++;
-         d2 = 3;
-         a2 = (y>>3)&1;    
-         y += 1;
-         if ( y > 235 ) b2++;
-      }
-		
+   //PLAYER 2
+         x = player2x;
+         y = player2y;
 
-		idx = collision_check(x, y);
+         if(JOY_LEFT (pad2.value))
+         {
+            if ( x&8 ) a2++;
+            d2 = 1;
+            a2 = (x>>3)&1;    
+            x -= 1;
+            if ( x < 5 ) b2++;
+         }
+         else if(JOY_RIGHT (pad2.value))
+         {
+            if ( x&8 ) a2++;
+            d2 = 0;
+            a2 = (x>>3)&1;    
+            x += 1;
+            if ( x > 250 ) b2++;
+         }
+         else if(JOY_UP   (pad2.value))
+         {
+            if ( y&8 ) a2++;
+            d2 = 2;
+            a2 = (y>>3)&1;    
+            y -= 1;
+            if ( y < 5 ) b2++;
+         }
+         else if(JOY_DOWN (pad2.value))
+         {
+            if ( y&8 ) a2++;
+            d2 = 3;
+            a2 = (y>>3)&1;    
+            y += 1;
+            if ( y > 235 ) b2++;
+         }
+         
 
-		
-		// Draw a sprite.
-		if(idx&WALL) {
-			//blocked
-      			meta_spr(player2x, player2y, 1, META[d2][a2]);
-		}
-		else {
-			//allowed update player location to requested
-			player2x = x;
-			player2y = y;
-      			meta_spr(player2x, player2y, 3, META[d2][a2]);
-		}
+         idx = collision_check(x, y);
 
+         
+         // Draw a sprite.
+         if(idx&WALL) {
+            //blocked
+                  meta_spr(player2x, player2y, 1, META[d2][a2]);
+         }
+         else {
+            //allowed update player location to requested
+            player2x = x;
+            player2y = y;
+                  meta_spr(player2x, player2y, 3, META[d2][a2]);
+         }
+      }
 
 		// PX.scroll_x = 0;
 		// PX.scroll_y = 0;

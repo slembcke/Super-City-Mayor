@@ -18,6 +18,8 @@ static const u8 PALETTE[] = {
 	BG_COLOR, 0x01, 0x11, 0x21,
 };
 
+u8 NumPlayers = 1;
+
 Gamepad pad1, pad2;
 
 void read_gamepads(void){
@@ -71,6 +73,9 @@ void meta_spr(u8 x, u8 y, u8 pal, const u8* data);
 
 Gamestate splash_screen(void){
 //	register s16 sin = 0, cos = 0x3FFF;
+   static u16 c = 300;
+   
+   NumPlayers = 1;
    
    iy = 240;
 	
@@ -78,7 +83,15 @@ Gamestate splash_screen(void){
 		// Load the splash tilemap into nametable 0.
 		px_lz4_to_vram(NT_ADDR(0, 0, 0), MAP_SPLASH);
       PX.scroll_x = 256;
-      PX.scroll_y = iy;
+      if ( c )
+      {
+         PX.scroll_y = iy;
+      }
+      else
+      {
+         PX.scroll_y = 0;
+      }
+      px_inc_h();
 	} px_ppu_sync_enable();
 	
 	music_play(0);
@@ -89,30 +102,40 @@ Gamestate splash_screen(void){
 	while(true){
       
 		read_gamepads();
-				
-		if(JOY_START(pad1.press)) 
-      {
-         fade_to_black(PALETTE,4);
-         break;
-      }
 
 //		PX.scroll_y = 480 + (sin >> 9);
 //		sin += cos >> 6;
 //		cos -= sin >> 6;
-		
+      
+      if ( c > 0 )
+      {
+         c -= 2;
+         if ( iy > 0 )
+         {
+            iy -= 2;
+            PX.scroll_y = iy;
+         }
+      }
+		else
+      {
+         px_buffer_blit(NT_ADDR(1,8,7),"SUPER CITY MAYOR",16);
+         px_buffer_blit(NT_ADDR(1,12,22),"1 PLAYER",8);
+         px_buffer_blit(NT_ADDR(1,12,24),"2 PLAYER",8);
+         px_spr(80,  175+((NumPlayers-1)*16), 0, '>');
+         if(JOY_START(pad1.press)) 
+         {
+            fade_to_black(PALETTE,4);
+            break;
+         }
+      }
+
+		if(JOY_SELECT(pad1.press)) 
+      {
+         NumPlayers = 3-NumPlayers;
+      }
+
 		px_spr_end();
 		px_wait_nmi();
-      
-      if ( iy > 0 )
-      {
-         iy -= 2;
-         PX.scroll_y = iy;
-      }
-      else
-      {
-         px_buffer_inc_h();
-         px_buffer_blit(NT_ADDR(1,8,7),"SUPER CITY MAYOR",16);
-      }
 	}
    return gameplay_screen();
 }
