@@ -176,28 +176,19 @@ static u8 META[][2][17] =
 
 #define REPAIR_SCORE 100
 
-u8 Score[2] = 
-{
-   0,
-   0
-};
+u8 Score = 0;
 
 void paint_score()
 {
-   // PLAYER 1
-   px_spr(16,  16, 0, '0');
-   px_spr(8,  16, 0, '0');
-   px_spr(0,  16, 0, '0');
-   px_buffer_blit(NT_ADDR(0,3,2),"21",2);
+   u8 temp = Score;
 
-   // PLAYER 2
-   if ( NumPlayers == 2 )
-   {
-      px_spr(232,  16, 0, '0');
-      px_spr(224,  16, 0, '0');
-      px_spr(216,  16, 0, '0');
-      px_buffer_blit(NT_ADDR(0,30,2),"56",2);
-   }
+   px_spr(128,  16, 1, '0'+((u8)temp%10));
+   temp /= 10;
+   px_spr(120,  16, 1, '0'+(u8)temp%10);
+   temp /= 10;
+   px_spr(112,  16, 1, '0'+(u8)temp);
+   px_spr(136,  16, 1, '0');
+   px_spr(144,  16, 1, '0');
 }
 
 u8 collision_check(u8 x, u8 y) {
@@ -283,7 +274,7 @@ Gamestate gameplay_screen(void){
 		//if(JOY_DOWN (pad1.value)) y += 1;
 		//if(JOY_UP   (pad1.value)) y -= 1;
 
-
+Score++;
 
 		if(JOY_LEFT (pad1.value))
       {
@@ -335,7 +326,6 @@ Gamestate gameplay_screen(void){
 			//meta_spr(player1x, player1y, 2, META);
       			meta_spr(player1x, player1y, 2, META[dir1][a1]);
 		}
-
 
       if ( NumPlayers == 2 )
       {
