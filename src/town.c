@@ -5,7 +5,7 @@
 static const u8 META_TILES[] = {
 	0x00, 0x00, 0x00, 0x00, 0,
 	0xE4, 0xE5, 0xF4, 0xF5, 2,
-	0xE4, 0xE5, 0xF4, 0xF5, 2,
+	0xE4, 0xE5, 0xF4, 0xF5, 1,
 	0xE4, 0xE5, 0xF4, 0xF5, 2,
 	0xE4, 0xE5, 0xF4, 0xF5, 2,
 	0xE4, 0xE5, 0xF4, 0xF5, 2,
@@ -176,11 +176,15 @@ static u8 META[][2][17] =
 
 u8 collision_check(u8 x, u8 y) {
 
-		//check requested move location
-		iz = MAP_BLOCK_AT(x,y);
-		idx = CITY_BLOCKS[iz];// & NON_WALKABLE_BIT;
+	//check requested move location
+	iz = MAP_BLOCK_AT(x,y);
+	return CITY_BLOCKS[iz];// & NON_WALKABLE_BIT;
 }
 
+#define FACE_U	2
+#define FACE_D	3
+#define FACE_L	1
+#define FACE_R	0
 
 Gamestate gameplay_screen(void){
 	register u8 player1x = 32, player1y = 32;
@@ -188,9 +192,9 @@ Gamestate gameplay_screen(void){
 
 	register u8 x, y;
 
-   register u8 a1 = 0, d1 = 1 , b1 = 0;
+   register u8 a1 = 0, dir1 = 1 , b1 = 0;
    register u8 f = 0;  //don't think this is used.?
-   register u8 a2 = 0, d2 = 1, b2 = 0;
+   register u8 a2 = 0, dir2 = 1, b2 = 0;
 
 	PX.scroll_x = 0;
 	PX.scroll_y = 0;
@@ -226,7 +230,19 @@ Gamestate gameplay_screen(void){
 	while(true){
 		read_gamepads();
 		
-//PLAYER 1
+//PLAYER 1 REPAIRS
+		if(JOY_BTN_A (pad1.value)) {
+			if (dir1 == FACE_L)
+				load_metatile((player1x>>4)-1, (player1y>>4), 2);
+			else if (dir1 == FACE_R)
+				load_metatile((player1x>>4)+1, (player1y>>4), 2);
+			else if (dir1 == FACE_D)
+				load_metatile((player1x>>4), (player1y>>4)+1, 2);
+			else if (dir1 == FACE_U)
+				load_metatile((player1x>>4), (player1y>>4)-1, 2);
+		}	
+		
+//PLAYER 1 MOVEMENT
 		if(JOY_START(pad1.press)) {
          fade_to_black(GAMEPLAY_PALETTE,4);
 			break;
@@ -244,7 +260,7 @@ Gamestate gameplay_screen(void){
 		if(JOY_LEFT (pad1.value))
       {
          if ( x&8 ) a1++;
-         d1 = 1;
+         dir1 = 1;
          a1 = (x>>3)&1;    
          x -= 1;
          if ( x < 5 ) b1++;
@@ -252,7 +268,7 @@ Gamestate gameplay_screen(void){
 		else if(JOY_RIGHT (pad1.value))
       {
          if ( x&8 ) a1++;
-         d1 = 0;
+         dir1 = 0;
          a1 = (x>>3)&1;    
          x += 1;
          if ( x > 250 ) b1++;
@@ -260,7 +276,7 @@ Gamestate gameplay_screen(void){
 		else if(JOY_UP   (pad1.value))
       {
          if ( y&8 ) a1++;
-         d1 = 2;
+         dir1 = 2;
          a1 = (y>>3)&1;    
          y -= 1;
          if ( y < 5 ) b1++;
@@ -268,7 +284,7 @@ Gamestate gameplay_screen(void){
 		else if(JOY_DOWN (pad1.value))
       {
          if ( y&8 ) a1++;
-         d1 = 3;
+         dir1 = 3;
          a1 = (y>>3)&1;    
          y += 1;
          if ( y > 235 ) b1++;
@@ -282,27 +298,39 @@ Gamestate gameplay_screen(void){
 		if(idx & NON_WALKABLE_BIT) {
 			//blocked
 			//meta_spr(player1x, player1y, 1, META);
-      			meta_spr(player1x, player1y, 1, META[d1][a1]);
+      			meta_spr(player1x, player1y, 1, META[dir1][a1]);
 		}
 		else {
 			//allowed update player location to requested
 			player1x = x;
 			player1y = y;
 			//meta_spr(player1x, player1y, 2, META);
-      			meta_spr(player1x, player1y, 2, META[d1][a1]);
+      			meta_spr(player1x, player1y, 2, META[dir1][a1]);
 		}
 
 
       if ( NumPlayers == 2 )
       {
-         //PLAYER 2
+//PLAYER 2 REPAIRS
+		if(JOY_BTN_A (pad2.value)) {
+			if (dir2 == FACE_L)
+				load_metatile((player2x>>4)-1, (player2y>>4), 2);
+			else if (dir2 == FACE_R)
+				load_metatile((player2x>>4)+1, (player2y>>4), 2);
+			else if (dir2 == FACE_D)
+				load_metatile((player2x>>4), (player2y>>4)+1, 2);
+			else if (dir2 == FACE_U)
+				load_metatile((player2x>>4), (player2y>>4)-1, 2);
+		}	
+
+//PLAYER 2 MOVEMENT
          x = player2x;
          y = player2y;
 
          if(JOY_LEFT (pad2.value))
          {
             if ( x&8 ) a2++;
-            d2 = 1;
+            dir2 = 1;
             a2 = (x>>3)&1;    
             x -= 1;
             if ( x < 5 ) b2++;
@@ -310,7 +338,7 @@ Gamestate gameplay_screen(void){
          else if(JOY_RIGHT (pad2.value))
          {
             if ( x&8 ) a2++;
-            d2 = 0;
+            dir2 = 0;
             a2 = (x>>3)&1;    
             x += 1;
             if ( x > 250 ) b2++;
@@ -318,7 +346,7 @@ Gamestate gameplay_screen(void){
          else if(JOY_UP   (pad2.value))
          {
             if ( y&8 ) a2++;
-            d2 = 2;
+            dir2 = 2;
             a2 = (y>>3)&1;    
             y -= 1;
             if ( y < 5 ) b2++;
@@ -326,7 +354,7 @@ Gamestate gameplay_screen(void){
          else if(JOY_DOWN (pad2.value))
          {
             if ( y&8 ) a2++;
-            d2 = 3;
+            dir2 = 3;
             a2 = (y>>3)&1;    
             y += 1;
             if ( y > 235 ) b2++;
@@ -339,13 +367,13 @@ Gamestate gameplay_screen(void){
          // Draw a sprite.
          if(idx & NON_WALKABLE_BIT) {
             //blocked
-                  meta_spr(player2x, player2y, 1, META[d2][a2]);
+                  meta_spr(player2x, player2y, 1, META[dir2][a2]);
          }
          else {
             //allowed update player location to requested
             player2x = x;
             player2y = y;
-                  meta_spr(player2x, player2y, 3, META[d2][a2]);
+                  meta_spr(player2x, player2y, 3, META[dir2][a2]);
          }
       }
 
