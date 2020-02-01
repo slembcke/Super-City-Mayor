@@ -71,33 +71,33 @@ static u8 META[][2][17] =
 {
  {
    {
-	-8, -8, 0xE0, 0,
-	 0, -8, 0xE1, 0,
-	-8,  0, 0xE2, 0,
-	 0,  0, 0xE3, 0,
-	128,
-   },
-   {
 	-8, -8, 0xE4, 0,
 	 0, -8, 0xE5, 0,
 	-8,  0, 0xE6, 0,
 	 0,  0, 0xE7, 0,
 	128,
+   },
+   {
+	-8, -8, 0xE8, 0,
+	 0, -8, 0xE9, 0,
+	-8,  0, 0xEA, 0,
+	 0,  0, 0xEB, 0,
+	128,
    }
  },
  {
-   {
-	0, -8, 0xE0, 0x40,
-	-8, -8, 0xE1, 0x40,
-	0,  0, 0xE2, 0x40,
-	-8,  0, 0xE3, 0x40,
-	128,
-   },
    {
 	0, -8, 0xE4, 0x40,
 	-8, -8, 0xE5, 0x40,
 	0,  0, 0xE6, 0x40,
 	-8,  0, 0xE7, 0x40,
+	128,
+   },
+   {
+	0, -8, 0xE8, 0x40,
+	-8, -8, 0xE9, 0x40,
+	0,  0, 0xEA, 0x40,
+	-8,  0, 0xEB, 0x40,
 	128,
    }
  },
@@ -221,7 +221,9 @@ void main(void){
 	px_wait_nmi();
 	
 	// Decompress the tileset into character memory.
-	px_lz4_to_vram(CHR_ADDR(0, 0), CHR0);
+//	px_lz4_to_vram(CHR_ADDR(0, 0), CHR0);
+   px_addr(CHR_ADDR(0,0));
+   px_blit(0x1000,CHR0);
 	
 	sound_init(SOUNDS);
 	music_init(MUSIC);
