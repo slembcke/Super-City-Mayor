@@ -52,4 +52,11 @@ extern Gamepad pad1, pad2;
 void read_gamepads(void);
 void wait_noinput(void);
 
+void meta_spr(u8 x, u8 y, u8 pal, const u8* data);
+
+// Gamestates
+
+Gamestate splash_screen(void);
+Gamestate gameplay_screen(void);
+
 #endif _COMMON_H

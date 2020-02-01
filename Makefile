@@ -16,19 +16,40 @@ ASMINC = \
 
 SRC = \
 	src/main.c \
+	src/town.c \
 
 ASM = \
 	src/data.s \
 	src/misc.s \
 	audio/audio.s \
 	ext/famitone2/famitone2.s \
+	ext/pixler/lib/set_mask_nmi.s \
+	ext/pixler/lib/coroutine.s \
+	ext/pixler/lib/rand8.s \
+	ext/pixler/lib/boot.s \
+	ext/pixler/lib/zeropage.s \
+	ext/pixler/lib/nmi.s \
+	ext/pixler/lib/wait_frames.s \
+	ext/pixler/lib/uxrom.s \
+	ext/pixler/lib/buffer.s \
+	ext/pixler/lib/buffer_inc.s \
+	ext/pixler/lib/buffer_color.s \
+	ext/pixler/lib/buffer_data.s \
+	ext/pixler/lib/buffer_blit.s \
+	ext/pixler/lib/inc.s \
+	ext/pixler/lib/fill.s \
+	ext/pixler/lib/blit.s \
+	ext/pixler/lib/str.s \
+	ext/pixler/lib/sprite.s \
+	ext/pixler/lib/lz4.s \
+	ext/pixler/lib/lz4_to_vram.s \
+	ext/pixler/lib/lz4_to_ram.s \
+	ext/pixler/lib/profile.s \
+	ext/pixler/lib/debug_hex.s \
 
 OBJS = \
 	$(SRC:.c=.o) \
 	$(ASM:.s=.o) \
-
-CHR = \
-	chr/0.png \
 
 SONGS = \
 	audio/after_the_rain.txt \
@@ -37,10 +58,6 @@ default: $(ROM)
 rom: $(ROM)
 
 PX_TOOLS_PATH = ext/pixler/tools
-PX_LIB_PATH = ext/pixler/lib
-PX_LIB = $(PX_LIB_PATH)/px.lib
-$(PX_LIB):
-	make CC65_ROOT=$(CC65_ROOT) -C $(PX_LIB_PATH)
 
 cc65:
 	make -C ext/cc65 bin
@@ -55,12 +72,8 @@ ft2-tools:
 	make -C $(FT2_TOOLS_PATH)
 	touch ft2-tools
 
-run-mac: rom
-	open -a Nestopia $(ROM)
-
 run-linux: rom
 	mesen $(ROM)
-#	nestopia -w -l 1 -n -s 2 -t $(ROM)
 
 run-win: rom
 	../Mesen/Mesen.exe $(ROM)
@@ -72,7 +85,7 @@ $(ROM): ld65.cfg $(OBJS) $(PX_LIB)
 	$(CC) -g $(CFLAGS) $< --add-source $(INCLUDE) -o $@
 
 %.s %.o: %.c
-	$(CC65_ROOT)/bin/cl65 -c -g $(CFLAGS) $(INCLUDE) $< -o $@
+	$(CL) -c -g $(CFLAGS) $(INCLUDE) $< -o $@
 
 %.o: %.s
 	$(AS) -g $< $(ASMINC) -o $@
@@ -93,13 +106,7 @@ $(ROM): ld65.cfg $(OBJS) $(PX_LIB)
 
 src/data.o: $(CHR:.png=.lz4) map/splash.lz4
 
-tiles: chr/0.chr
-	$(PX_TOOLS_PATH)/chr2png "1D 00 10 20" chr/0.chr chr/0-pal0.png
-	$(PX_TOOLS_PATH)/chr2png "1D 06 16 26" chr/0.chr chr/0-pal1.png
-	$(PX_TOOLS_PATH)/chr2png "1D 09 19 29" chr/0.chr chr/0-pal2.png
-	$(PX_TOOLS_PATH)/chr2png "1D 01 11 21" chr/0.chr chr/0-pal3.png
-
-audio/sounds.s: audio/sounds.nsf ft2-tools
+audio/sounds.s: audio/sounds.nsf
 	$(FT2_TOOLS_PATH)/nsf2data $< -ca65 -ntsc
 
 audio/%.s: audio/%.txt ft2-tools
@@ -108,12 +115,6 @@ audio/%.s: audio/%.txt ft2-tools
 audio/audio.o: $(SONGS:.txt=.s) audio/sounds.s
 
 clean:
-	-rm $(OBJS) $(CHR:.png=.chr) $(CHR:.png=.lz4)
-	-rm $(SONGS:.txt=.s)
-	-rm px-tools
-	make -C $(PX_TOOLS_PATH) clean
-	make -C $(PX_LIB_PATH) clean
-	-rm ft2-tools
-	make -C $(FT2_TOOLS_PATH) clean
+	-rm $(ROM) $(OBJS)
 
 .phony: default rom tiles clean

@@ -67,7 +67,9 @@ void fade_to_black(const u8* palette, u8 delay){
 }
 
 void meta_spr(u8 x, u8 y, u8 pal, const u8* data);
-static u8 META_R[][17] = {
+static u8 META[][2][17] = 
+{
+ {
    {
 	-8, -8, 0xE0, 0,
 	 0, -8, 0xE1, 0,
@@ -82,8 +84,8 @@ static u8 META_R[][17] = {
 	 0,  0, 0xE7, 0,
 	128,
    }
-};
-static u8 META_L[][17] = {
+ },
+ {
    {
 	0, -8, 0xE0, 0x40,
 	-8, -8, 0xE1, 0x40,
@@ -98,8 +100,8 @@ static u8 META_L[][17] = {
 	-8,  0, 0xE7, 0x40,
 	128,
    }
-};
-static u8 META_U[][17] = {
+ },
+ {
    {
 	-8, -8, 0xEC, 0,
 	0, -8, 0xED, 0,
@@ -114,8 +116,8 @@ static u8 META_U[][17] = {
 	0,  0, 0xF3, 0,
 	128,
    }
-};
-static u8 META_D[][17] = {
+ },
+ {
    {
 	-8, -8, 0xF0, 0,
 	0, -8, 0xF1, 0,
@@ -130,10 +132,11 @@ static u8 META_D[][17] = {
 	0,  0, 0xF3, 0,
 	128,
    }
+ }
 };
 
 
-static Gamestate splash_screen(void){
+Gamestate splash_screen(void){
 	register u8 x = 32, y = 32;
 	register s16 sin = 0, cos = 0x3FFF;
    register u8 a = 0, d = 1;
@@ -153,7 +156,7 @@ static Gamestate splash_screen(void){
 		if(JOY_LEFT (pad1.value))
       {
          if ( x&8 ) a++;
-         d = 0;
+         d = 1;
          a = (x>>3)&1;    
          x -= 1;
          if ( x < 5 ) b++;
@@ -161,7 +164,7 @@ static Gamestate splash_screen(void){
 		else if(JOY_RIGHT (pad1.value))
       {
          if ( x&8 ) a++;
-         d = 1;
+         d = 0;
          a = (x>>3)&1;    
          x += 1;
          if ( x > 250 ) b++;
@@ -182,28 +185,9 @@ static Gamestate splash_screen(void){
          y += 1;
          if ( y > 235 ) b++;
       }
-		if(JOY_BTN_A(pad1.press)) 
-      {
-         sound_play(SOUND_JUMP);
-		}
       
 		// Draw a sprite.
-      if ( d == 0 )
-      {
-         meta_spr(x, y, 1, META_L[a]);
-      }
-      else if ( d == 1 )
-      {
-         meta_spr(x, y, 1, META_R[a]);
-      }
-      else if ( d == 2 )
-      {
-         meta_spr(x, y, 1, META_U[a]);
-      }
-      else if ( d == 3 )
-      {
-         meta_spr(x, y, 1, META_D[a]);
-      }
+      meta_spr(x, y, 1, META[d][a]);
 		
 		PX.scroll_y = 480 + (sin >> 9);
 		sin += cos >> 6;
@@ -211,9 +195,14 @@ static Gamestate splash_screen(void){
 		
 		px_spr_end();
 		px_wait_nmi();
-	}
 	
-	return splash_screen();
+		if(JOY_BTN_A(pad1.press)) 
+      {
+         sound_play(SOUND_JUMP);
+         break; // go to gameplay_screen
+		}
+	}
+   return gameplay_screen();
 }
 
 void main(void){
