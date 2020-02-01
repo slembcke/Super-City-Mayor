@@ -56,7 +56,6 @@ void fade_from_black(const u8* palette, u8 delay){
 	darken(palette, 0);
 }
 
-void meta_spr(u8 x, u8 y, u8 pal, const u8* data);
 static const u8 META[] = {
 	-8, -8, 0xD0, 0,
 	 0, -8, 0xD1, 0,
@@ -65,7 +64,7 @@ static const u8 META[] = {
 	128,
 };
 
-static Gamestate splash_screen(void){
+Gamestate splash_screen(void){
 	register u8 x = 32, y = 32;
 	register s16 sin = 0, cos = 0x3FFF;
 	
@@ -86,6 +85,8 @@ static Gamestate splash_screen(void){
 		if(JOY_UP   (pad1.value)) y -= 1;
 		if(JOY_BTN_A(pad1.press)) sound_play(SOUND_JUMP);
 		
+		if(JOY_START(pad1.press)) return gameplay_screen();
+		
 		// Draw a sprite.
 		meta_spr(x, y, 2, META);
 		
@@ -96,7 +97,7 @@ static Gamestate splash_screen(void){
 		px_spr_end();
 		px_wait_nmi();
 	}
-	
+	\
 	return splash_screen();
 }
 

@@ -16,6 +16,7 @@ ASMINC = \
 
 SRC = \
 	src/main.c \
+	src/town.c \
 
 ASM = \
 	src/data.s \
