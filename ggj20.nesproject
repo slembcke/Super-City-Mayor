@@ -1,107 +1,108 @@
 <?xml version='1.0' encoding='UTF-8'?>
-<nesicideproject target="nes" version="0.3" title="AlterEgo">
- <properties compilerincludepaths=" -I ext/famitone2 -I ext/pixler/lib" cartridgeoutputname="alterego.nes" chrromoutputbasepath="." linkerconfigfile="ld65.cfg" linkeroutputbasepath="obj/nes" assemblerincludepaths=" -I ext/pixler/lib" debuginfoname="alterego.dbg" sourcesearchpaths="/Users/christopherpow/Projects/NES/nesicide/deps/cc65/libsrc/nes;/Users/christopherpow/Projects/NES/nesicide/deps/cc65/libsrc;../../../../../../Program Files (x86)/cc65-snapshot/libsrc/runtime;../../../../../../Program Files (x86)/cc65-snapshot/libsrc/common;ext/pixler/lib" sourcefilename="project_data.s" cartridgesavestatename="alterego.sav" outputname="alterego" chrromoutputname="tileset.chr" assemblerdefinedsymbols="" compileradditionaloptions="-Oi" outputbasepath="obj/nes" linkeradditionaldependencies="--lib nes.lib ext/pixler/lib/px.lib" assembleradditionaloptions="" chrrom="1" compilerdefinedsymbols="" customrulesfile="" linkeradditionaloptions="" linkeroutputname="alterego.prg" headerfilename="project_data.h">
+<nesicideproject version="0.3" target="nes" title="AlterEgo">
+ <properties compilerdefinedsymbols="" headerfilename="project_data.h" assemblerdefinedsymbols="" sourcefilename="project_data.s" assemblerincludepaths=" -I ext/pixler/lib" linkeradditionaloptions="" debuginfoname="alterego.dbg" linkeroutputbasepath="obj/nes" cartridgeoutputname="alterego.nes" outputname="alterego" outputbasepath="obj/nes" chrromoutputbasepath="." linkeradditionaldependencies="--lib nes.lib ext/pixler/lib/px.lib" sourcesearchpaths="/Users/christopherpow/Projects/NES/nesicide/deps/cc65/libsrc/nes;/Users/christopherpow/Projects/NES/nesicide/deps/cc65/libsrc;../../../../../../Program Files (x86)/cc65-snapshot/libsrc/runtime;../../../../../../Program Files (x86)/cc65-snapshot/libsrc/common;ext/pixler/lib" linkeroutputname="alterego.prg" compileradditionaloptions="-Oi" compilerincludepaths=" -I ext/famitone2 -I ext/pixler/lib" linkerconfigfile="ld65.cfg" cartridgesavestatename="alterego.sav" assembleradditionaloptions="" chrrom="1" customrulesfile="" chrromoutputname="tileset.chr">
   <tileproperties/>
   <palette>
-   <entry index="0" b="102" g="102" r="102"/>
-   <entry index="1" b="136" g="42" r="0"/>
-   <entry index="2" b="167" g="18" r="20"/>
-   <entry index="3" b="164" g="0" r="59"/>
-   <entry index="4" b="126" g="0" r="92"/>
-   <entry index="5" b="64" g="0" r="110"/>
-   <entry index="6" b="0" g="6" r="108"/>
-   <entry index="7" b="0" g="29" r="86"/>
-   <entry index="8" b="0" g="53" r="51"/>
-   <entry index="9" b="0" g="72" r="11"/>
-   <entry index="10" b="0" g="82" r="0"/>
-   <entry index="11" b="8" g="79" r="0"/>
-   <entry index="12" b="77" g="64" r="0"/>
-   <entry index="13" b="0" g="0" r="0"/>
-   <entry index="14" b="0" g="0" r="0"/>
-   <entry index="15" b="0" g="0" r="0"/>
-   <entry index="16" b="173" g="173" r="173"/>
-   <entry index="17" b="217" g="95" r="21"/>
-   <entry index="18" b="255" g="64" r="66"/>
-   <entry index="19" b="254" g="39" r="117"/>
-   <entry index="20" b="204" g="26" r="160"/>
-   <entry index="21" b="123" g="30" r="183"/>
-   <entry index="22" b="32" g="49" r="181"/>
-   <entry index="23" b="0" g="78" r="153"/>
-   <entry index="24" b="0" g="109" r="107"/>
-   <entry index="25" b="0" g="135" r="56"/>
-   <entry index="26" b="0" g="147" r="12"/>
-   <entry index="27" b="50" g="143" r="0"/>
-   <entry index="28" b="141" g="124" r="0"/>
-   <entry index="29" b="0" g="0" r="0"/>
-   <entry index="30" b="0" g="0" r="0"/>
-   <entry index="31" b="0" g="0" r="0"/>
-   <entry index="32" b="255" g="254" r="255"/>
-   <entry index="33" b="255" g="176" r="100"/>
-   <entry index="34" b="255" g="144" r="146"/>
-   <entry index="35" b="255" g="118" r="198"/>
-   <entry index="36" b="255" g="106" r="243"/>
-   <entry index="37" b="204" g="110" r="254"/>
-   <entry index="38" b="112" g="129" r="254"/>
-   <entry index="39" b="34" g="158" r="234"/>
-   <entry index="40" b="0" g="190" r="188"/>
-   <entry index="41" b="0" g="216" r="136"/>
-   <entry index="42" b="48" g="228" r="92"/>
-   <entry index="43" b="130" g="224" r="69"/>
-   <entry index="44" b="222" g="205" r="72"/>
-   <entry index="45" b="79" g="79" r="79"/>
-   <entry index="46" b="0" g="0" r="0"/>
-   <entry index="47" b="0" g="0" r="0"/>
-   <entry index="48" b="255" g="254" r="255"/>
-   <entry index="49" b="255" g="223" r="192"/>
-   <entry index="50" b="255" g="210" r="211"/>
-   <entry index="51" b="255" g="200" r="232"/>
-   <entry index="52" b="255" g="194" r="251"/>
-   <entry index="53" b="234" g="196" r="254"/>
-   <entry index="54" b="197" g="204" r="254"/>
-   <entry index="55" b="165" g="216" r="247"/>
-   <entry index="56" b="148" g="229" r="228"/>
-   <entry index="57" b="150" g="239" r="207"/>
-   <entry index="58" b="171" g="244" r="189"/>
-   <entry index="59" b="204" g="243" r="179"/>
-   <entry index="60" b="242" g="235" r="181"/>
-   <entry index="61" b="184" g="184" r="184"/>
-   <entry index="62" b="0" g="0" r="0"/>
-   <entry index="63" b="0" g="0" r="0"/>
+   <entry g="102" r="102" index="0" b="102"/>
+   <entry g="42" r="0" index="1" b="136"/>
+   <entry g="18" r="20" index="2" b="167"/>
+   <entry g="0" r="59" index="3" b="164"/>
+   <entry g="0" r="92" index="4" b="126"/>
+   <entry g="0" r="110" index="5" b="64"/>
+   <entry g="6" r="108" index="6" b="0"/>
+   <entry g="29" r="86" index="7" b="0"/>
+   <entry g="53" r="51" index="8" b="0"/>
+   <entry g="72" r="11" index="9" b="0"/>
+   <entry g="82" r="0" index="10" b="0"/>
+   <entry g="79" r="0" index="11" b="8"/>
+   <entry g="64" r="0" index="12" b="77"/>
+   <entry g="0" r="0" index="13" b="0"/>
+   <entry g="0" r="0" index="14" b="0"/>
+   <entry g="0" r="0" index="15" b="0"/>
+   <entry g="173" r="173" index="16" b="173"/>
+   <entry g="95" r="21" index="17" b="217"/>
+   <entry g="64" r="66" index="18" b="255"/>
+   <entry g="39" r="117" index="19" b="254"/>
+   <entry g="26" r="160" index="20" b="204"/>
+   <entry g="30" r="183" index="21" b="123"/>
+   <entry g="49" r="181" index="22" b="32"/>
+   <entry g="78" r="153" index="23" b="0"/>
+   <entry g="109" r="107" index="24" b="0"/>
+   <entry g="135" r="56" index="25" b="0"/>
+   <entry g="147" r="12" index="26" b="0"/>
+   <entry g="143" r="0" index="27" b="50"/>
+   <entry g="124" r="0" index="28" b="141"/>
+   <entry g="0" r="0" index="29" b="0"/>
+   <entry g="0" r="0" index="30" b="0"/>
+   <entry g="0" r="0" index="31" b="0"/>
+   <entry g="254" r="255" index="32" b="255"/>
+   <entry g="176" r="100" index="33" b="255"/>
+   <entry g="144" r="146" index="34" b="255"/>
+   <entry g="118" r="198" index="35" b="255"/>
+   <entry g="106" r="243" index="36" b="255"/>
+   <entry g="110" r="254" index="37" b="204"/>
+   <entry g="129" r="254" index="38" b="112"/>
+   <entry g="158" r="234" index="39" b="34"/>
+   <entry g="190" r="188" index="40" b="0"/>
+   <entry g="216" r="136" index="41" b="0"/>
+   <entry g="228" r="92" index="42" b="48"/>
+   <entry g="224" r="69" index="43" b="130"/>
+   <entry g="205" r="72" index="44" b="222"/>
+   <entry g="79" r="79" index="45" b="79"/>
+   <entry g="0" r="0" index="46" b="0"/>
+   <entry g="0" r="0" index="47" b="0"/>
+   <entry g="254" r="255" index="48" b="255"/>
+   <entry g="223" r="192" index="49" b="255"/>
+   <entry g="210" r="211" index="50" b="255"/>
+   <entry g="200" r="232" index="51" b="255"/>
+   <entry g="194" r="251" index="52" b="255"/>
+   <entry g="196" r="254" index="53" b="234"/>
+   <entry g="204" r="254" index="54" b="197"/>
+   <entry g="216" r="247" index="55" b="165"/>
+   <entry g="229" r="228" index="56" b="148"/>
+   <entry g="239" r="207" index="57" b="150"/>
+   <entry g="244" r="189" index="58" b="171"/>
+   <entry g="243" r="179" index="59" b="204"/>
+   <entry g="235" r="181" index="60" b="242"/>
+   <entry g="184" r="184" index="61" b="184"/>
+   <entry g="0" r="0" index="62" b="0"/>
+   <entry g="0" r="0" index="63" b="0"/>
   </palette>
  </properties>
  <inspectors>
   <symbolinspector/>
   <breakpoints>
-   <breakpoint enabled="0" target="0" item1="63889" item2="63889" conditiontype="0" itemMask="65535" condition="0" event="0" itemtype="0" item1absolute="14737" itemMaskExclusive="1" type="0" datatype="0" data="0"/>
+   <breakpoint datatype="0" conditiontype="0" item1absolute="14737" target="0" item1="63889" itemMaskExclusive="1" condition="0" data="0" itemMask="65535" type="0" enabled="0" itemtype="0" event="0" item2="63889"/>
   </breakpoints>
   <markers>
-   <marker state="2" startabsaddr="482" endabsaddr="639" index="0" startaddr="49634" endaddr="49791"/>
-   <marker state="0" startabsaddr="0" endabsaddr="0" index="1" startaddr="0" endaddr="0"/>
-   <marker state="0" startabsaddr="0" endabsaddr="0" index="2" startaddr="0" endaddr="0"/>
-   <marker state="0" startabsaddr="0" endabsaddr="0" index="3" startaddr="0" endaddr="0"/>
-   <marker state="0" startabsaddr="0" endabsaddr="0" index="4" startaddr="0" endaddr="0"/>
-   <marker state="0" startabsaddr="0" endabsaddr="0" index="5" startaddr="0" endaddr="0"/>
-   <marker state="0" startabsaddr="0" endabsaddr="0" index="6" startaddr="0" endaddr="0"/>
-   <marker state="0" startabsaddr="0" endabsaddr="0" index="7" startaddr="0" endaddr="0"/>
+   <marker startabsaddr="482" endabsaddr="639" startaddr="49634" index="0" state="2" endaddr="49791"/>
+   <marker startabsaddr="0" endabsaddr="0" startaddr="0" index="1" state="0" endaddr="0"/>
+   <marker startabsaddr="0" endabsaddr="0" startaddr="0" index="2" state="0" endaddr="0"/>
+   <marker startabsaddr="0" endabsaddr="0" startaddr="0" index="3" state="0" endaddr="0"/>
+   <marker startabsaddr="0" endabsaddr="0" startaddr="0" index="4" state="0" endaddr="0"/>
+   <marker startabsaddr="0" endabsaddr="0" startaddr="0" index="5" state="0" endaddr="0"/>
+   <marker startabsaddr="0" endabsaddr="0" startaddr="0" index="6" state="0" endaddr="0"/>
+   <marker startabsaddr="0" endabsaddr="0" startaddr="0" index="7" state="0" endaddr="0"/>
   </markers>
  </inspectors>
- <cartridge mapperNumber="2" hasBatteryBackedRam="0" mirrorMode="0" fourScreen="0"/>
+ <cartridge fourScreen="0" mirrorMode="0" mapperNumber="2" hasBatteryBackedRam="0"/>
  <project>
   <primitives>
    <attributetables/>
    <tiles/>
   </primitives>
   <sources>
-   <source path="audio/audio.s" uuid="{ac7afda4-d1f4-4abc-8bb0-9c1423a1f39b}" name="audio/audio.s"/>
-   <source path="ext/famitone2/famitone2.s" uuid="{3048b856-4fb7-4028-bea5-c03864298bc6}" name="ext/famitone2/famitone2.s"/>
-   <source path="src/common.h" uuid="{faf01e75-4c50-4d91-8e36-c59d6497a4c9}" name="src/common.h"/>
-   <source path="src/data.s" uuid="{7c9a3a95-fcb2-4070-97c1-89ab8cb21c82}" name="src/data.s"/>
-   <source path="src/main.c" uuid="{c27a81ad-d402-44c6-97c6-b408ee67cadc}" name="src/main.c"/>
-   <source path="src/misc.s" uuid="{c3ba8471-9010-4b5a-b3fa-0ca6288ebe95}" name="src/misc.s"/>
-   <source path="src/town.c" uuid="{b2b69161-76f3-43f9-93c7-f3f994975715}" name="src/town.c"/>
+   <source uuid="{ac7afda4-d1f4-4abc-8bb0-9c1423a1f39b}" name="audio/audio.s" path="audio/audio.s"/>
+   <source uuid="{3048b856-4fb7-4028-bea5-c03864298bc6}" name="ext/famitone2/famitone2.s" path="ext/famitone2/famitone2.s"/>
+   <source uuid="{faf01e75-4c50-4d91-8e36-c59d6497a4c9}" name="src/common.h" path="src/common.h"/>
+   <source uuid="{7c9a3a95-fcb2-4070-97c1-89ab8cb21c82}" name="src/data.s" path="src/data.s"/>
+   <source uuid="{c27a81ad-d402-44c6-97c6-b408ee67cadc}" name="src/main.c" path="src/main.c"/>
+   <source uuid="{c3ba8471-9010-4b5a-b3fa-0ca6288ebe95}" name="src/misc.s" path="src/misc.s"/>
+   <source uuid="{b2b69161-76f3-43f9-93c7-f3f994975715}" name="src/town.c" path="src/town.c"/>
+   <source uuid="{07609ca0-e6c6-4227-aefa-c9003917c815}" name="src/main.h" path="src/main.h"/>
   </sources>
   <binaryfiles>
-   <binaryfile path="chr/Tileset.chr" uuid="{ada92499-569a-4dad-bb6c-bce46bf6458d}" ysize="128" name="chr/Tileset.chr" xsize="256"/>
+   <binaryfile ysize="128" uuid="{ada92499-569a-4dad-bb6c-bce46bf6458d}" name="chr/Tileset.chr" xsize="256" path="chr/Tileset.chr"/>
   </binaryfiles>
   <graphicsbanks>
    <graphicsbank uuid="{39db3232-cb58-4909-b15d-a85167913a43}" name="GGJ20">

@@ -3,8 +3,9 @@
 
 #include "pixler.h"
 #include "common.h"
+#include "main.h"
 
-#define BG_COLOR 0x31
+#define BG_COLOR 0x1D
 static const u8 PALETTE[] = {
 	BG_COLOR, 0x00, 0x10, 0x20,
 	BG_COLOR, 0x06, 0x16, 0x26,
@@ -67,80 +68,9 @@ void fade_to_black(const u8* palette, u8 delay){
 }
 
 void meta_spr(u8 x, u8 y, u8 pal, const u8* data);
-static u8 META[][2][17] = 
-{
- {
-   {
-	-8, -8, 0xE4, 0,
-	 0, -8, 0xE5, 0,
-	-8,  0, 0xE6, 0,
-	 0,  0, 0xE7, 0,
-	128,
-   },
-   {
-	-8, -8, 0xE8, 0,
-	 0, -8, 0xE9, 0,
-	-8,  0, 0xEA, 0,
-	 0,  0, 0xEB, 0,
-	128,
-   }
- },
- {
-   {
-	0, -8, 0xE4, 0x40,
-	-8, -8, 0xE5, 0x40,
-	0,  0, 0xE6, 0x40,
-	-8,  0, 0xE7, 0x40,
-	128,
-   },
-   {
-	0, -8, 0xE8, 0x40,
-	-8, -8, 0xE9, 0x40,
-	0,  0, 0xEA, 0x40,
-	-8,  0, 0xEB, 0x40,
-	128,
-   }
- },
- {
-   {
-	-8, -8, 0xEC, 0,
-	0, -8, 0xED, 0,
-	-8,  0, 0xEE, 0,
-	0,  0, 0xEF, 0,
-	128,
-   },
-   {
-	-8, -8, 0xEC, 0,
-	0, -8, 0xED, 0,
-	-8,  0, 0xF2, 0,
-	0,  0, 0xF3, 0,
-	128,
-   }
- },
- {
-   {
-	-8, -8, 0xF0, 0,
-	0, -8, 0xF1, 0,
-	-8,  0, 0xEE, 0,
-	0,  0, 0xEF, 0,
-	128,
-   },
-   {
-	-8, -8, 0xF0, 0,
-	0, -8, 0xF1, 0,
-	-8,  0, 0xF2, 0,
-	0,  0, 0xF3, 0,
-	128,
-   }
- }
-};
-
 
 Gamestate splash_screen(void){
-	register u8 x = 32, y = 32;
 	register s16 sin = 0, cos = 0x3FFF;
-   register u8 a = 0, d = 1;
-   register u8 f = 0, b = 0;
 	
 	px_ppu_sync_disable();{
 		// Load the splash tilemap into nametable 0.
@@ -149,58 +79,25 @@ Gamestate splash_screen(void){
 	
 	music_play(0);
 	
+	px_spr_end();
 	fade_from_black(PALETTE, 4);
 	
 	while(true){
-		read_gamepads();
-		if(JOY_LEFT (pad1.value))
-      {
-         if ( x&8 ) a++;
-         d = 1;
-         a = (x>>3)&1;    
-         x -= 1;
-         if ( x < 5 ) b++;
-      }
-		else if(JOY_RIGHT (pad1.value))
-      {
-         if ( x&8 ) a++;
-         d = 0;
-         a = (x>>3)&1;    
-         x += 1;
-         if ( x > 250 ) b++;
-      }
-		else if(JOY_UP   (pad1.value))
-      {
-         if ( y&8 ) a++;
-         d = 2;
-         a = (y>>3)&1;    
-         y -= 1;
-         if ( y < 5 ) b++;
-      }
-		else if(JOY_DOWN (pad1.value))
-      {
-         if ( y&8 ) a++;
-         d = 3;
-         a = (y>>3)&1;    
-         y += 1;
-         if ( y > 235 ) b++;
-      }
       
-		// Draw a sprite.
-      meta_spr(x, y, 1, META[d][a]);
-		
+		read_gamepads();
+				
+		if(JOY_START(pad1.press)) 
+      {
+         fade_to_black(PALETTE,4);
+         break;
+      }
+
 		PX.scroll_y = 480 + (sin >> 9);
 		sin += cos >> 6;
 		cos -= sin >> 6;
 		
 		px_spr_end();
 		px_wait_nmi();
-	
-		if(JOY_BTN_A(pad1.press)) 
-      {
-         sound_play(SOUND_JUMP);
-         break; // go to gameplay_screen
-		}
 	}
    return gameplay_screen();
 }
