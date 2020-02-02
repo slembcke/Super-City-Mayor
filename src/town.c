@@ -7,12 +7,12 @@
 static const u8 META_TILES[] = {
 	0x00, 0x00, 0x00, 0x00, 0, // 0 road
 	0x00, 0x00, 0x00, 0x00, 0, // 1 road
-	0xE0, 0xE1, 0xF0, 0xF1, 1, // 2 fixed 1
-	0xE2, 0xE3, 0xF2, 0xF3, 0, // 3 damaged 1
+	0xE0, 0xE1, 0xF0, 0xF1, 2, // 2 fixed 1
+	0xE2, 0xE3, 0xF2, 0xF3, 1, // 3 damaged 1
 	0xE4, 0xE5, 0xF4, 0xF5, 2, // 4 fixed 2
-	0xE6, 0xE7, 0xF6, 0xF7, 0, // 5 damaged 2
+	0xE6, 0xE7, 0xF6, 0xF7, 1, // 5 damaged 2
 	0xE8, 0xE9, 0xF8, 0xF9, 3, // 6 fixed 3
-	0xEA, 0xEB, 0xFA, 0xFB, 0, // 7 damaged 3
+	0xEA, 0xEB, 0xFA, 0xFB, 1, // 7 damaged 3
 	0xE4, 0xE5, 0xF4, 0xF5, 3, // 8 resource
 	0xE4, 0xE5, 0xF4, 0xF5, 3, // 9 resource hub
 };
@@ -50,13 +50,13 @@ static const u8 MAP[16*15] = {
 	W, _, _, _, _, _, _, _, _, _, _, _, _, _, _, W,
 	_, _, A, _, B, _, B, B, _, B, B, C, _, B, _, _,
 	W, _, a, _, _, _, _, _, _, _, _, _, _, _, _, W,
-	W, _, B, _, A, C, B, _, A, B, _, A, _, B, _, W,
-	_, _, _, _, B, _, _, _, B, C, _, _, _, A, _, _,
+	W, _, B, _, A, c, B, _, A, B, _, A, _, B, _, W,
+	_, _, _, _, B, _, _, _, B, C, _, _, _, a, _, _,
 	W, _, C, _, _, _, A, _, _, _, _, B, _, B, _, W,
-	W, _, A, _, A, _, B, _, _, B, _, _, _, C, _, W,
+	W, _, A, _, A, _, B, _, _, b, _, _, _, C, _, W,
 	_, _, _, _, C, _, _, _, B, A, _, C, _, _, _, _,
 	W, _, C, _, B, A, B, _, _, C, _, A, _, B, _, W,
-	W, _, B, _, _, _, _, _, _, _, _, C, _, _, _, W,
+	W, _, B, _, _, _, _, _, _, _, _, c, _, _, _, W,
 	_, _, C, _, A, _, B, A, _, C, _, B, _, C, _, _,
 	W, _, _, _, _, _, _, _, _, _, _, _, _, _, _, W,
 	W, W, W, W, W, W, W, W, W, W, W, W, W, W, W, W, 
