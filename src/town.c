@@ -225,7 +225,6 @@ Gamestate gameplay_screen(void){
 	music_stop();
 	
 	px_ppu_sync_disable();{
-//		px_buffer_blit(PAL_ADDR, PALETTE, sizeof(PALETTE));
 		
 		px_addr(NT_ADDR(0, 0, 0));
 		px_blit(1024, GAMEPLAY_TILEMAP);
@@ -274,6 +273,7 @@ Gamestate gameplay_screen(void){
 			if (CITY_BLOCKS[idx] & ACTION_ALLOWED_BIT) {
 				//update the building
 				load_metatile(x, y, 1);
+            Score++;
 			}
 
 		}	
@@ -290,8 +290,6 @@ Gamestate gameplay_screen(void){
 		//if(JOY_RIGHT(pad1.value)) x += 1;
 		//if(JOY_DOWN (pad1.value)) y += 1;
 		//if(JOY_UP   (pad1.value)) y -= 1;
-
-Score++;
 
 		if(JOY_LEFT (pad1.value))
       {
@@ -367,6 +365,7 @@ Score++;
 			if (CITY_BLOCKS[idx] & ACTION_ALLOWED_BIT) {
 				//update the building
 				load_metatile(x, y, 1);
+            Score++;
 			}
 		}	
 
