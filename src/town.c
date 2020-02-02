@@ -23,10 +23,11 @@ static const u8 META_TILES[] = {
 #define _ 0	//street
 #define BUILDING (1 | NON_WALKABLE_BIT)	//fixed building
 #define B BUILDING
-#define D (2 | ACTION_ALLOWED_BIT | NON_WALKABLE_BIT)  //damaged building
+#define DESTROYED (2 | ACTION_ALLOWED_BIT | NON_WALKABLE_BIT)  //damaged building
+#define D DESTROYED
 #define W NON_WALKABLE_BIT	
 
-static const u8 CITY_BLOCKS[16*15] = {
+static u8 CITY_BLOCKS[16*15] = {
 	_, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _,
 	W, W, W, W, W, W, W, W, W, W, W, W, W, W, W, W, 
 	W, _, _, _, _, _, _, _, _, _, _, _, _, _, _, W,
@@ -106,16 +107,19 @@ static void load_metatile(u8 x, u8 y, u8 tile){
 static u8 gameplay_coro[32];
 
 static void break_building(void){
-	for(tmp = 0; tmp < 5; ++tmp){
+	while(true){
 		idx = rand8();
 		
-		if(idx >= sizeof(CITY_BLOCKS)) continue;
+		if(idx >= sizeof(CITY_BLOCKS)) goto yield;
 		
 		tmp = CITY_BLOCKS[idx];
 		if(tmp == BUILDING){
-			load_metatile(idx & 0xF, idx >> 4, 0);
+			CITY_BLOCKS[idx] = DESTROYED;
+			load_metatile(idx & 0xF, idx >> 4, DESTROYED & META_BITS);
 			return;
 		}
+		
+		yield: px_coro_yield(0);
 	}
 }
 
@@ -459,7 +463,7 @@ Gamestate gameplay_screen(void){
       }
 		
 		
-		// px_coro_resume(gameplay_coro, 0);
+		px_coro_resume(gameplay_coro, 0);
 
 		// PX.scroll_x = 0;
 		// PX.scroll_y = 0;
