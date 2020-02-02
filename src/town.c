@@ -213,8 +213,6 @@ Gamestate gameplay_screen(void){
 	countdown = ~0;
 	count_rate = 0;
 
-	music_stop();
-	
 	px_ppu_sync_disable();{
 		
 		px_addr(NT_ADDR(0, 0, 0));
