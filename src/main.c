@@ -151,7 +151,14 @@ Gamestate splash_screen(void){
    return gameplay_screen(240);
 }
 
+static void blit_string(u16 addr, const char* str){
+	px_buffer_blit(addr, str, strlen(str));
+}
+
 Gamestate lose_screen(void){
+	u8 timeout = 60;
+	bool show_start = true;
+	
 	music_stop();
 	
 	px_ppu_sync_disable();{
@@ -160,8 +167,8 @@ Gamestate lose_screen(void){
 		px_addr(NT_ADDR(0, 0, 0));
 		px_fill(1024, 0);
 		
-		px_addr(NT_ADDR(0, 4, 16));
-		px_str("You either won or lost?");
+		px_addr(NT_ADDR(0, 11, 14));
+		px_str("YOU LOST!");
 		
 		PX.scroll_x = 0;
 		PX.scroll_y = 0;
@@ -172,15 +179,52 @@ Gamestate lose_screen(void){
 		read_gamepads();
 		if(JOY_START(pad1.press | pad2.press)) break;
 		
-		PX.scroll_x = 0;
-		PX.scroll_y = 0;
+		if(--timeout == 0){
+			show_start = !show_start;
+			timeout = 30;
+			blit_string(NT_ADDR(0, 10, 16), show_start ? "press start" : "           ");
+		}
 		
-		px_spr_end();
 		px_wait_nmi();
 	}
 	
+	sound_play(SOUND_MATCH);
+	
 	fade_to_black(PALETTE, 4);
   return splash_screen();
+}
+
+Gamestate win_screen(void){
+	music_stop();
+	
+	px_ppu_sync_disable();{
+		px_buffer_blit(PAL_ADDR, PALETTE, sizeof(PALETTE));
+		
+		px_addr(NT_ADDR(0, 0, 0));
+		px_fill(1024, 0);
+		
+		px_addr(NT_ADDR(0, 6, 14));
+		px_str("Your approval rating");
+		px_addr(NT_ADDR(0, 10, 15));
+		px_str("is improving.");
+		
+		px_addr(NT_ADDR(0, 10, 18));
+		px_str("press start");
+		
+		PX.scroll_x = 0;
+		PX.scroll_y = 0;
+		px_spr_clear();
+	} px_ppu_sync_enable();
+	
+	while(true){
+		read_gamepads();
+		if(JOY_START(pad1.press | pad2.press)) break;
+		
+		px_wait_nmi();
+	}
+	
+	sound_play(SOUND_MATCH);
+  return gameplay_screen(240);
 }
 
 void main(void){
@@ -207,7 +251,7 @@ void main(void){
    px_blit(0x2000, GAMEPLAY_CHR);
 	
 	rand_seed = 31394;
-
+	
 	// Jump to the splash screen state.
 	splash_screen();
 }

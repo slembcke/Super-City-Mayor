@@ -137,6 +137,7 @@ static void break_building(void){
 		
 		tmp = CITY_BLOCKS[idx];
 		if(tmp & BUILDING_BITS){
+			sound_play(SOUND_DROP);
 			count_rate += RATE_PER_BUILDING;
 			
 			tmp |= (DESTROYED_BIT | ACTION_ALLOWED_BIT);
@@ -150,6 +151,7 @@ static void break_building(void){
 }
 
 static void fix_building(u8 idx){
+	sound_play(SOUND_MATCH);
 	count_rate -= RATE_PER_BUILDING;
 	
 	tmp = CITY_BLOCKS[idx];
