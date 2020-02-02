@@ -219,6 +219,8 @@ Gamestate gameplay_screen(void){
 		
 		px_addr(NT_ADDR(0, 0, 0));
 		px_blit(1024, GAMEPLAY_TILEMAP);
+		px_addr(NT_ADDR(0, 0, 2));
+      px_fill(32, 1);
       
 		for(iy = 0; iy < 15; ++iy){
 			for(ix = 0; ix < 16; ++ix){
@@ -243,8 +245,9 @@ Gamestate gameplay_screen(void){
 	while(true){
 		read_gamepads();
 		
+      px_spr(0,24,PX_SPR_BEHIND,145);
       paint_score();
-		
+      
 //PLAYER 1 REPAIRS
 		if(JOY_BTN_A (pad1.press)) {
 			//map player position to city grid
@@ -437,11 +440,9 @@ Gamestate gameplay_screen(void){
          a2 = 0;
          da2 = 1;
       }
-         
 
-         idx = collision_check(x, y);
-
-         
+      idx = collision_check(x, y);
+   
 		if(!(idx & NON_WALKABLE_BIT)) {
 			//allowed update player location to requested
 			player2x = x;
@@ -461,15 +462,24 @@ Gamestate gameplay_screen(void){
 			return splash_screen();
 		} else {
 			countdown -= count_rate;
-			px_spr(countdown >> 8, 32, 1, '0');
 		}
 		
 		px_coro_resume(gameplay_coro, 0);
 
-		// PX.scroll_x = 0;
-		// PX.scroll_y = 0;
 		px_spr_end();
+
+      // adjust scroll position to slide timer
+      PX.scroll_x = 0xff-(countdown>>8);
+      PX.scroll_y = 0;
 		px_wait_nmi();
+
+      // wait for sprite 0 hit to adjust back to normal playfield for game
+      while(PPU.status&0x40){}
+      while(!(PPU.status&0x40)){}
+      
+      PPU.scroll = 0;
+      PPU.scroll = 0;
+      PPU.control = 0x90;      
 	}
 	
 	return splash_screen();

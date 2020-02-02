@@ -72,24 +72,23 @@ void fade_to_black(const u8* palette, u8 delay){
 void meta_spr(u8 x, u8 y, u8 pal, const u8* data);
 
 Gamestate splash_screen(void){
-//	register s16 sin = 0, cos = 0x3FFF;
    static u16 c = 300;
    
    NumPlayers = 1;
    
-   iy = 240;
+   ix = 0;
 	
 	px_ppu_sync_disable();{
-		// Load the splash tilemap into nametable 0.
-		px_lz4_to_vram(NT_ADDR(0, 0, 0), MAP_SPLASH);
-      PX.scroll_x = 256;
+		// Load the splash tilemap into nametable 1.
+		px_lz4_to_vram(NT_ADDR(1, 0, 0), MAP_SPLASH);
+      PX.scroll_x = ix;
       if ( c )
       {
-         PX.scroll_y = iy;
+         PX.scroll_x = ix;
       }
       else
       {
-         PX.scroll_y = 0;
+         PX.scroll_x = 0;
       }
       px_inc_h();
 	} px_ppu_sync_enable();
@@ -105,17 +104,13 @@ Gamestate splash_screen(void){
 		
 		read_gamepads();
 
-//		PX.scroll_y = 480 + (sin >> 9);
-//		sin += cos >> 6;
-//		cos -= sin >> 6;
-      
       if ( c > 0 )
       {
          c -= 2;
-         if ( iy > 0 )
+         if ( ix < 253 )
          {
-            iy -= 2;
-            PX.scroll_y = iy;
+            ix += 2;
+            PX.scroll_x = ix;
          }
       }
 		else
