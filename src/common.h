@@ -12,12 +12,14 @@ extern u8 iz, ix, iy, idx, tmp;
 extern u8 player1x, player1y;
 extern u8 player2x, player2y;
 extern u8 player2item, player1item;
+extern u8 break_timeout;
 #pragma zpsym("player1x");
 #pragma zpsym("player1y");
 #pragma zpsym("player2x");
 #pragma zpsym("player2y");
 #pragma zpsym("player1item");
 #pragma zpsym("player2item");
+#pragma zpsym("break_timeout");
 #pragma zpsym("ix");
 #pragma zpsym("iy");
 #pragma zpsym("iz");
@@ -67,7 +69,7 @@ void meta_spr(u8 x, u8 y, u8 pal, const u8* data);
 // Gamestates
 
 Gamestate splash_screen(void);
-Gamestate gameplay_screen(void);
+Gamestate gameplay_screen(u8 difficulty);
 
 extern u8 GAMEPLAY_PALETTE[];
 extern u8 GAMEPLAY_CHR[];

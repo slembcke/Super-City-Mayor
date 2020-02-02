@@ -144,7 +144,8 @@ Gamestate splash_screen(void){
 		px_spr_end();
 		px_wait_nmi();
 	}
-   return gameplay_screen();
+
+   return gameplay_screen(240);
 }
 
 void main(void){
