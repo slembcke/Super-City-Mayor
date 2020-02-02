@@ -115,6 +115,11 @@ static void load_metatile(u8 x, u8 y, u8 tile){
 
 static u8 gameplay_coro[32];
 
+static u16 countdown = ~0;
+static u16 count_rate = 0;
+
+#define RATE_PER_BUILDING 3
+
 static void break_building(void){
 	while(true){
 		idx = rand8();
@@ -123,6 +128,8 @@ static void break_building(void){
 		
 		tmp = CITY_BLOCKS[idx];
 		if(tmp == BUILDING){
+			count_rate += RATE_PER_BUILDING;
+			
 			CITY_BLOCKS[idx] = DESTROYED;
 			load_metatile(idx & 0xF, idx >> 4, DESTROYED & META_BITS);
 			return;
@@ -130,6 +137,15 @@ static void break_building(void){
 		
 		yield: px_coro_yield(0);
 	}
+}
+
+static void fix_building(u8 idx){
+	count_rate -= RATE_PER_BUILDING;
+	
+	//update the building
+	CITY_BLOCKS[idx] = BUILDING;
+	load_metatile(idx & 0xF, idx >> 4, BUILDING & META_BITS);
+	Score++;
 }
 
 #define BUILDING_BREAK_TIMEOUT 120
@@ -185,7 +201,7 @@ Gamestate gameplay_screen(void){
    register u8 a1 = 0, dir1 = FACE_R, b1 = 0;
    register u8 f = 0;  //don't think this is used.?
    register u8 a2 = 0, dir2 = FACE_L, b2 = 0;
-
+	
 	PX.scroll_x = 0;
 	PX.scroll_y = 0;
 	px_spr_end();
@@ -194,6 +210,9 @@ Gamestate gameplay_screen(void){
 	px_coro_init(gameplay_coro_body, gameplay_coro, sizeof(gameplay_coro));
 	memset(ATTRIB_TABLE, 0, sizeof(ATTRIB_TABLE));
 	memcpy(CITY_BLOCKS, MAP, sizeof(MAP));
+	
+	countdown = ~0;
+	count_rate = 0;
 
 	music_stop();
 	
@@ -207,8 +226,10 @@ Gamestate gameplay_screen(void){
 				// Calculate tile index.
 				idx = 16*iy + ix;
 				tmp = CITY_BLOCKS[idx];
-				tmp &= META_BITS;
 				
+				if(tmp == DESTROYED) count_rate += RATE_PER_BUILDING;
+				
+				tmp &= META_BITS;
 				if(tmp != 0) load_metatile(ix, iy, tmp);
 			}
 			
@@ -260,10 +281,7 @@ Gamestate gameplay_screen(void){
 				} else {
 
 					if (player1item == RESOURCE) {
-						//update the building
-						CITY_BLOCKS[idx] = BUILDING;
-						load_metatile(x, y, 1);
-						Score++;
+						fix_building(idx);
 						player1item = NOITEM;
 					}
 				}
@@ -371,10 +389,7 @@ Gamestate gameplay_screen(void){
 
 				} else {
 					if (player2item == RESOURCE) {
-						//update the building
-						CITY_BLOCKS[idx] = BUILDING;
-						load_metatile(x, y, 1);
-						Score++;
+						fix_building(idx);
 						player2item = NOITEM;
 					}
 				}
@@ -435,6 +450,14 @@ Gamestate gameplay_screen(void){
 		}
       }
 		
+		if(count_rate == 0) return splash_screen();
+		
+		if(countdown < count_rate){
+			return splash_screen();
+		} else {
+			countdown -= count_rate;
+			px_spr(countdown >> 8, 32, 1, '0');
+		}
 		
 		px_coro_resume(gameplay_coro, 0);
 
