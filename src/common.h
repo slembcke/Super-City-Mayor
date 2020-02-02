@@ -72,6 +72,7 @@ Gamestate splash_screen(void);
 Gamestate gameplay_screen(u8 difficulty, u8 level);
 Gamestate lose_screen(void);
 Gamestate win_screen(u8 difficulty, u8 level);
+Gamestate ultimate_win_screen(void);
 
 extern u8 GAMEPLAY_PALETTE[];
 extern u8 GAMEPLAY_CHR[];
