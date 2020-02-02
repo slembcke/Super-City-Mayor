@@ -274,23 +274,23 @@ Gamestate gameplay_screen(void){
 			if (tmp & ACTION_ALLOWED_BIT) {
 
 				//resource or damaged?
-				if (tmp == RESOURCE_HUB) {
-					player1item = RESOURCE;
+				//if (tmp == RESOURCE_HUB) {
+				//	player1item = RESOURCE;
 
-				} else if (tmp == RESOURCE ) {
-					//remove resource by making building red for now
-					CITY_BLOCKS[idx] = BUILDING;
-					load_metatile(x, y, 1); 
-					//player has item 
-					player1item = RESOURCE;
+				//} else if (tmp == RESOURCE ) {
+				//	//remove resource by making building red for now
+				//	CITY_BLOCKS[idx] = BUILDING;
+				//	load_metatile(x, y, 1); 
+				//	//player has item 
+				//	player1item = RESOURCE;
 
-				} else {
+				//} else {
 
-					if (player1item == RESOURCE) {
+				//	if (player1item == RESOURCE) {
 						fix_building(idx);
-						player1item = NOITEM;
-					}
-				}
+				//		player1item = NOITEM;
+				//	}
+				//}
 			}
 
 		}	
@@ -385,22 +385,22 @@ Gamestate gameplay_screen(void){
 			if (tmp & ACTION_ALLOWED_BIT) {
 
 				//resource or damaged?
-				if (tmp == RESOURCE_HUB) {
-					player2item = RESOURCE;
+				//if (tmp == RESOURCE_HUB) {
+				//	player2item = RESOURCE;
 
-				} else if (tmp == RESOURCE ) {
-					//remove resource by making building red for now
-					CITY_BLOCKS[idx] = BUILDING;
-					load_metatile(x, y, 1); 
-					//player has item
-					player2item = RESOURCE;
+				//} else if (tmp == RESOURCE ) {
+				//	//remove resource by making building red for now
+				//	CITY_BLOCKS[idx] = BUILDING;
+				//	load_metatile(x, y, 1); 
+				//	//player has item
+				//	player2item = RESOURCE;
 
-				} else {
-					if (player2item == RESOURCE) {
+				//} else {
+				//	if (player2item == RESOURCE) {
 						fix_building(idx);
-						player2item = NOITEM;
-					}
-				}
+				//		player2item = NOITEM;
+				//	}
+				//}
 			}
 		}	
 
