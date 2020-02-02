@@ -135,7 +135,7 @@ static u16 count_rate = 0;
 
 #define RATE_PER_BUILDING 3
 
-static void break_building(void){
+static void break_building(bool should_yield){
 	while(true){
 		idx = rand8();
 		
@@ -152,7 +152,7 @@ static void break_building(void){
 			return;
 		}
 		
-		yield: px_coro_yield(0);
+		yield: if(should_yield) px_coro_yield(0);
 	}
 }
 
@@ -177,8 +177,7 @@ static uintptr_t gameplay_coro_body(uintptr_t){
 	timeout = break_timeout;
 	while(true){
 		if(--timeout == 0){
-			break_building();
-			//timeout = BUILDING_BREAK_TIMEOUT;
+			break_building(true);
 			timeout = break_timeout;
 		}
 		px_coro_yield(0);
@@ -235,7 +234,8 @@ Gamestate gameplay_screen(u8 difficulty){
 
    register u8 a1 = 0, da1 = 1, dir1 = FACE_R;
    register u8 a2 = 0, da2 = 1, dir2 = FACE_L;
-
+	
+	u8 broken_count = 10;
 	break_timeout = difficulty;
 
 	PX.scroll_x = 0;
@@ -246,6 +246,11 @@ Gamestate gameplay_screen(u8 difficulty){
 	px_coro_init(gameplay_coro_body, gameplay_coro, sizeof(gameplay_coro));
 	memset(ATTRIB_TABLE, 0, sizeof(ATTRIB_TABLE));
 	memcpy(CITY_BLOCKS, MAP, sizeof(MAP));
+	
+	while(broken_count > 0){
+		break_building(false);
+		broken_count--;
+	}
 	
 	countdown = ~0;
 	count_rate = 0;
