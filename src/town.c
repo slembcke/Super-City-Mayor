@@ -240,6 +240,8 @@ Gamestate gameplay_screen(void){
 	
    fade_from_black(GAMEPLAY_PALETTE,4);
    
+	music_play(0);
+	
 	while(true){
 		read_gamepads();
 		
@@ -479,6 +481,8 @@ Gamestate gameplay_screen(void){
       PPU.scroll = 0;
       PPU.control = 0x90;      
 	}
+   
+   music_stop();
 	
 	return splash_screen();
 }

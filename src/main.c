@@ -92,8 +92,6 @@ Gamestate splash_screen(void){
       px_inc_h();
 	} px_ppu_sync_enable();
 	
-	music_play(0);
-	
 	px_spr_end();
 	fade_from_black(PALETTE, 4);
 	
@@ -121,6 +119,7 @@ Gamestate splash_screen(void){
          if(JOY_START(pad1.press)) 
          {
             fade_to_black(PALETTE,4);
+            sound_play(SOUND_JUMP);
             break;
          }
       }
@@ -128,14 +127,17 @@ Gamestate splash_screen(void){
 		if(JOY_SELECT(pad1.press)) 
       {
          NumPlayers = 3-NumPlayers;
+         sound_play(SOUND_JUMP);
       }
 		if(JOY_UP(pad1.press)) 
       {
          NumPlayers = 3-NumPlayers;
+         sound_play(SOUND_JUMP);
       }
 		if(JOY_DOWN(pad1.press)) 
       {
          NumPlayers = 3-NumPlayers;
+         sound_play(SOUND_JUMP);
       }
       
 
