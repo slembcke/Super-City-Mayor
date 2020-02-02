@@ -19,7 +19,8 @@ static const u8 META_TILES[] = {
 #define NON_WALKABLE_BIT 0x80
 
 #define _ 0
-#define B (1 | NON_WALKABLE_BIT)
+#define BUILDING (1 | NON_WALKABLE_BIT)
+#define B BUILDING
 #define W NON_WALKABLE_BIT
 
 static const u8 CITY_BLOCKS[16*15] = {
@@ -42,6 +43,7 @@ static const u8 CITY_BLOCKS[16*15] = {
 
 #undef _
 #undef B
+#undef W
 
 static u8 ATTRIB_TABLE[64];
 
@@ -95,6 +97,37 @@ static void load_metatile(u8 x, u8 y, u8 tile){
 	px_buffer_data(2, addr + 32);
 	PX.buffer[0] = (META_TILES + 2)[tile];
 	PX.buffer[1] = (META_TILES + 3)[tile];
+}
+
+static u8 gameplay_coro[32];
+
+static void break_building(void){
+	for(tmp = 0; tmp < 5; ++tmp){
+		idx = rand8();
+		
+		if(idx >= sizeof(CITY_BLOCKS)) continue;
+		
+		tmp = CITY_BLOCKS[idx];
+		if(tmp == B){
+			load_metatile(idx & 0xF, idx >> 4, 0);
+			return;
+		}
+	}
+}
+
+static uintptr_t gameplay_coro_body(uintptr_t){
+	static u8 timeout = 60;
+	while(true){
+		if(--timeout == 0){
+			break_building();
+			timeout = 60;
+		}
+		px_coro_yield(0);
+	}
+	
+	while(true) px_coro_yield(0);
+	
+	return 0;
 }
 
 /*
@@ -200,6 +233,8 @@ Gamestate gameplay_screen(void){
 	PX.scroll_y = 0;
 	px_spr_end();
 	px_wait_nmi();
+	
+	px_coro_init(gameplay_coro_body, gameplay_coro, sizeof(gameplay_coro));
 
 	music_stop();
 	
@@ -376,7 +411,9 @@ Gamestate gameplay_screen(void){
                   meta_spr(player2x, player2y, 3, META[dir2][a2]);
          }
       }
-
+		
+		
+		// px_coro_resume(gameplay_coro, 0);
 
 		// PX.scroll_x = 0;
 		// PX.scroll_y = 0;
