@@ -243,80 +243,80 @@ const unsigned char metasprite_23_data[]={
 
 const unsigned char metasprite_24_data[]={
 
-	- 8,  0,0xe2,0|OAM_FLIP_V,
-	  0,  0,0xe3,0|OAM_FLIP_V,
-	  0,- 8,0xf3,1|OAM_FLIP_V,
-	- 8,- 8,0xf2,1|OAM_FLIP_V,
+	- 8,- 8,0xac,0,
+	  0,- 8,0xad,0,
+	  0,  0,0xcd,1,
+	- 8,  0,0xcc,1,
 	128
 
 };
 
 const unsigned char metasprite_25_data[]={
 
-	- 8,  0,0xe2,0|OAM_FLIP_V,
-	  0,  0,0xe3,0|OAM_FLIP_V,
-	  0,- 8,0xf3,1|OAM_FLIP_V,
-	- 8,- 8,0xf2,1|OAM_FLIP_V,
+	- 8,- 8,0xac,0,
+	  0,- 8,0xad,0,
+	  0,  0,0xbd,1,
+	- 8,  0,0xbc,1,
 	128
 
 };
 
 const unsigned char metasprite_26_data[]={
 
-	- 8,  0,0xe2,0|OAM_FLIP_V,
-	  0,  0,0xe3,0|OAM_FLIP_V,
-	  0,- 8,0xf3,1|OAM_FLIP_V,
-	- 8,- 8,0xf2,1|OAM_FLIP_V,
+	- 8,- 8,0xac,0,
+	  0,- 8,0xad,0,
+	- 7,  0,0xbd,1|OAM_FLIP_H,
+	  1,  0,0xbc,1|OAM_FLIP_H,
 	128
 
 };
 
 const unsigned char metasprite_27_data[]={
 
-	- 8,  0,0xe2,0|OAM_FLIP_V,
-	  0,  0,0xe3,0|OAM_FLIP_V,
-	  0,- 8,0xf3,1|OAM_FLIP_V,
-	- 8,- 8,0xf2,1|OAM_FLIP_V,
+	- 8,- 8,0xac,0,
+	  0,- 8,0xad,0,
+	- 7,  0,0xcd,1|OAM_FLIP_H,
+	  1,  0,0xcc,1|OAM_FLIP_H,
 	128
 
 };
 
 const unsigned char metasprite_28_data[]={
 
-	  0,  0,0xe2,0|OAM_FLIP_H|OAM_FLIP_V,
-	- 8,  0,0xe3,0|OAM_FLIP_H|OAM_FLIP_V,
-	- 8,- 8,0xf3,1|OAM_FLIP_H|OAM_FLIP_V,
-	  0,- 8,0xf2,1|OAM_FLIP_H|OAM_FLIP_V,
+	- 8,- 8,0xae,0,
+	  0,- 8,0xaf,0,
+	  0,  0,0xcf,1,
+	- 8,  0,0xce,1,
 	128
 
 };
 
 const unsigned char metasprite_29_data[]={
 
-	  0,  0,0xe2,0|OAM_FLIP_H|OAM_FLIP_V,
-	- 8,  0,0xe3,0|OAM_FLIP_H|OAM_FLIP_V,
-	- 8,- 8,0xf3,1|OAM_FLIP_H|OAM_FLIP_V,
-	  0,- 8,0xf2,1|OAM_FLIP_H|OAM_FLIP_V,
+	- 8,- 8,0xae,0,
+	  0,- 8,0xaf,0,
+	  0,  0,0xbf,1,
+	- 8,  0,0xbe,1,
 	128
 
 };
 
 const unsigned char metasprite_30_data[]={
 
-	  0,  0,0xe2,0|OAM_FLIP_H|OAM_FLIP_V,
-	- 8,  0,0xe3,0|OAM_FLIP_H|OAM_FLIP_V,
-	- 8,- 8,0xf3,1|OAM_FLIP_H|OAM_FLIP_V,
-	  0,- 8,0xf2,1|OAM_FLIP_H|OAM_FLIP_V,
+	- 8,- 8,0xae,0,
+	  0,- 8,0xaf,0,
+	- 9,  0,0xbf,1|OAM_FLIP_H,
+	- 1,  0,0xbe,1|OAM_FLIP_H,
 	128
 
 };
 
 const unsigned char metasprite_31_data[]={
 
-	  0,  0,0xe2,0|OAM_FLIP_H|OAM_FLIP_V,
-	- 8,  0,0xe3,0|OAM_FLIP_H|OAM_FLIP_V,
-	- 8,- 8,0xf3,1|OAM_FLIP_H|OAM_FLIP_V,
-	  0,- 8,0xf2,1|OAM_FLIP_H|OAM_FLIP_V,
+	- 8,- 8,0xae,0,
+	  0,- 8,0xaf,0,
+	- 9,  0,0xcf,1|OAM_FLIP_H,
+	- 1,  0,0xce,1|OAM_FLIP_H,
 	128
 
 };
