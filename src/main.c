@@ -81,14 +81,13 @@ Gamestate splash_screen(void){
 	px_ppu_sync_disable();{
 		// Load the splash tilemap into nametable 1.
 		px_lz4_to_vram(NT_ADDR(1, 0, 0), MAP_SPLASH);
-      PX.scroll_x = ix;
       if ( c )
       {
          PX.scroll_x = ix;
       }
       else
       {
-         PX.scroll_x = 0;
+         PX.scroll_x = 256;
       }
       px_inc_h();
 	} px_ppu_sync_enable();
