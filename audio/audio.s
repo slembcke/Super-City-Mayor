@@ -52,7 +52,19 @@
 
 .export _music_pause = FamiToneMusicPause
 .export _music_stop = FamiToneMusicStop
-.export _sound_play = FamiToneSfxPlay
+
+.export _sound_play
+.proc _sound_play
+	pha
+	ldy #1
+	jsr px_uxrom_select
+	
+	pla
+	jsr FamiToneSfxPlay
+	
+	ldy #0
+	jmp px_uxrom_select
+.endproc
 
 .export _px_nmi_callback
 .proc _px_nmi_callback
