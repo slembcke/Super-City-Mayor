@@ -21,11 +21,13 @@ static const u8 META_TILES[] = {
 #define ACTION_ALLOWED_BIT 0x40 //ie set when building damaged & player can fix
 
 #define _ 0	//street
-#define B (1 | NON_WALKABLE_BIT)	//fixed building
-#define D (2 | ACTION_ALLOWED_BIT | NON_WALKABLE_BIT)  //damaged building
+#define BUILDING (1 | NON_WALKABLE_BIT)	//fixed building
+#define B BUILDING
+#define DESTROYED (2 | ACTION_ALLOWED_BIT | NON_WALKABLE_BIT)  //damaged building
+#define D DESTROYED
 #define W NON_WALKABLE_BIT	
 
-static const u8 CITY_BLOCKS[16*15] = {
+static u8 CITY_BLOCKS[16*15] = {
 	_, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _,
 	W, W, W, W, W, W, W, W, W, W, W, W, W, W, W, W, 
 	W, _, _, _, _, _, _, _, _, _, _, _, _, _, _, W,
@@ -45,6 +47,7 @@ static const u8 CITY_BLOCKS[16*15] = {
 
 #undef _
 #undef B
+#undef W
 #undef D
 
 static u8 ATTRIB_TABLE[64];
@@ -99,6 +102,40 @@ static void load_metatile(u8 x, u8 y, u8 tile){
 	px_buffer_data(2, addr + 32);
 	PX.buffer[0] = (META_TILES + 2)[tile];
 	PX.buffer[1] = (META_TILES + 3)[tile];
+}
+
+static u8 gameplay_coro[32];
+
+static void break_building(void){
+	while(true){
+		idx = rand8();
+		
+		if(idx >= sizeof(CITY_BLOCKS)) goto yield;
+		
+		tmp = CITY_BLOCKS[idx];
+		if(tmp == BUILDING){
+			CITY_BLOCKS[idx] = DESTROYED;
+			load_metatile(idx & 0xF, idx >> 4, DESTROYED & META_BITS);
+			return;
+		}
+		
+		yield: px_coro_yield(0);
+	}
+}
+
+static uintptr_t gameplay_coro_body(uintptr_t){
+	static u8 timeout = 60;
+	while(true){
+		if(--timeout == 0){
+			break_building();
+			timeout = 60;
+		}
+		px_coro_yield(0);
+	}
+	
+	while(true) px_coro_yield(0);
+	
+	return 0;
 }
 
 /*
@@ -221,6 +258,8 @@ Gamestate gameplay_screen(void){
 	PX.scroll_y = 0;
 	px_spr_end();
 	px_wait_nmi();
+	
+	px_coro_init(gameplay_coro_body, gameplay_coro, sizeof(gameplay_coro));
 
 	music_stop();
 	
@@ -434,7 +473,9 @@ Gamestate gameplay_screen(void){
                   meta_spr(player2x, player2y, 3, META[dir2][a2]);
          }
       }
-
+		
+		
+		px_coro_resume(gameplay_coro, 0);
 
 		// PX.scroll_x = 0;
 		// PX.scroll_y = 0;

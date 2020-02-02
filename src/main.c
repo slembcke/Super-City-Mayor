@@ -100,7 +100,9 @@ Gamestate splash_screen(void){
 	fade_from_black(PALETTE, 4);
 	
 	while(true){
-      
+		// Randomize the seed based on player input.
+    rand_seed++;
+		
 		read_gamepads();
 
 //		PX.scroll_y = 480 + (sin >> 9);
@@ -166,6 +168,8 @@ void main(void){
 	sound_init(SOUNDS);
 	music_init(MUSIC);
 	
+	rand_seed = 31394;
+	gameplay_screen();
 	// Jump to the splash screen state.
 	splash_screen();
 }
