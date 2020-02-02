@@ -6,6 +6,8 @@
 .import FamiToneMusicStop
 .import FamiToneSfxPlay
 
+.import px_uxrom_select
+
 ; .code
 
 .export _music_init
@@ -35,18 +37,39 @@
 	rts
 .endproc
 
-.export _music_play = FamiToneMusicPlay
+.export _music_play
+.proc _music_play
+	pha
+	ldy #1
+	jsr px_uxrom_select
+	
+	pla
+	jsr FamiToneMusicPlay
+	
+	ldy #0
+	jmp px_uxrom_select
+.endproc
+
 .export _music_pause = FamiToneMusicPause
 .export _music_stop = FamiToneMusicStop
 .export _sound_play = FamiToneSfxPlay
 
-.export _px_nmi_callback = FamiToneUpdate
+.export _px_nmi_callback
+.proc _px_nmi_callback
+	ldy #1
+	jsr px_uxrom_select
+	
+	jsr FamiToneUpdate
+	
+	ldy #0
+	jmp px_uxrom_select
+.endproc
 
-.rodata
+.segment "PRG1"
 
 FT_DPCM_PTR = (FT_DPCM_OFF & $3fff) >> 6
 FT_DPCM_OFF:
-	.incbin "after_the_rain.dmc"
+;	.incbin "after_the_rain.dmc"
 
 .export _MUSIC
 _MUSIC:

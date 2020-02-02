@@ -1,6 +1,6 @@
 ;FamiTone2 v1.12
 
-.define FT_DPCM_ENABLE 1
+.define FT_DPCM_ENABLE 0
 
 .define FT_SFX_ENABLE 1
 FT_SFX_STREAMS = 2

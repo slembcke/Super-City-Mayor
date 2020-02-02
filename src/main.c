@@ -154,7 +154,10 @@ void main(void){
 	px_bg_table(1);
 	px_spr_table(0);
 	
-	// Not using bank switching, but a good idea to set a reliable value at boot.
+	px_uxrom_select(1);
+	sound_init(SOUNDS);
+	music_init(MUSIC);
+	
 	px_uxrom_select(0);
 	
 	// Black out the palette.
@@ -165,9 +168,6 @@ void main(void){
 //	px_lz4_to_vram(CHR_ADDR(0, 0), CHR0);
    px_addr(CHR_ADDR(0,0));
    px_blit(0x2000, GAMEPLAY_CHR);
-	
-	sound_init(SOUNDS);
-	music_init(MUSIC);
 	
 	rand_seed = 31394;
 
