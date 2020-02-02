@@ -68,6 +68,7 @@ void meta_spr(u8 x, u8 y, u8 pal, const u8* data);
 
 Gamestate splash_screen(void);
 Gamestate gameplay_screen(void);
+Gamestate lose_screen(void);
 
 extern u8 GAMEPLAY_PALETTE[];
 extern u8 GAMEPLAY_CHR[];

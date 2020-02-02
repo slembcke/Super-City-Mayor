@@ -473,10 +473,13 @@ Gamestate gameplay_screen(void){
 		}
       }
 		
-		if(count_rate == 0) return splash_screen();
-		
-		if(countdown < count_rate){
-			return splash_screen();
+		if(count_rate == 0){
+			// This means there are no buildings left causing countdowns.
+			// You win!
+			return lose_screen();
+		} else if(countdown < count_rate){
+			// Out of time, you lose!
+			return lose_screen();
 		} else {
 			countdown -= count_rate;
 		}

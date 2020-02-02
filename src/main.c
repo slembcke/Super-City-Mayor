@@ -79,6 +79,10 @@ Gamestate splash_screen(void){
    ix = 0;
 	
 	px_ppu_sync_disable();{
+		// Clear nametable 0
+		px_addr(NT_ADDR(0, 0, 0));
+		px_fill(1024, 0);
+		
 		// Load the splash tilemap into nametable 1.
 		px_lz4_to_vram(NT_ADDR(1, 0, 0), MAP_SPLASH);
       if ( c )
@@ -140,11 +144,42 @@ Gamestate splash_screen(void){
          sound_play(SOUND_JUMP);
       }
       
-
 		px_spr_end();
 		px_wait_nmi();
 	}
    return gameplay_screen();
+}
+
+Gamestate lose_screen(void){
+	music_stop();
+	
+	px_ppu_sync_disable();{
+		px_buffer_blit(PAL_ADDR, PALETTE, sizeof(PALETTE));
+		
+		px_addr(NT_ADDR(0, 0, 0));
+		px_fill(1024, 0);
+		
+		px_addr(NT_ADDR(0, 4, 16));
+		px_str("You either won or lost?");
+		
+		PX.scroll_x = 0;
+		PX.scroll_y = 0;
+		px_spr_clear();
+	} px_ppu_sync_enable();
+	
+	while(true){
+		read_gamepads();
+		if(JOY_START(pad1.press | pad2.press)) break;
+		
+		PX.scroll_x = 0;
+		PX.scroll_y = 0;
+		
+		px_spr_end();
+		px_wait_nmi();
+	}
+	
+	fade_to_black(PALETTE, 4);
+  return splash_screen();
 }
 
 void main(void){
