@@ -161,6 +161,7 @@ static void fix_building(u8 idx){
 	CITY_BLOCKS[idx] = tmp;
 	load_metatile(idx & 0xF, idx >> 4, tmp & META_BITS);
 	Score++;
+   if ( Score == 0xff ) ultimate_win_screen();
 }
 
 //#define BUILDING_BREAK_TIMEOUT 240
