@@ -1,3 +1,5 @@
+#include <string.h>
+
 #include "pixler.h"
 #include "common.h"
 #include "main.h"
@@ -27,7 +29,7 @@ static const u8 META_TILES[] = {
 #define D DESTROYED
 #define W NON_WALKABLE_BIT	
 
-static u8 CITY_BLOCKS[16*15] = {
+static const u8 MAP[16*15] = {
 	_, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _,
 	W, W, W, W, W, W, W, W, W, W, W, W, W, W, W, W, 
 	W, _, _, _, _, _, _, _, _, _, _, _, _, _, _, W,
@@ -50,6 +52,7 @@ static u8 CITY_BLOCKS[16*15] = {
 #undef W
 #undef D
 
+static u8 CITY_BLOCKS[16*15];
 static u8 ATTRIB_TABLE[64];
 
 static const u16 ROW_ADDR[] = {
@@ -260,6 +263,8 @@ Gamestate gameplay_screen(void){
 	px_wait_nmi();
 	
 	px_coro_init(gameplay_coro_body, gameplay_coro, sizeof(gameplay_coro));
+	memset(ATTRIB_TABLE, 0, sizeof(ATTRIB_TABLE));
+	memcpy(CITY_BLOCKS, MAP, sizeof(MAP));
 
 	music_stop();
 	
@@ -311,6 +316,7 @@ Gamestate gameplay_screen(void){
 			idx = MAP_BLOCK_AT_GRID(x,y); //idx = 16*y + x;
 			if (CITY_BLOCKS[idx] & ACTION_ALLOWED_BIT) {
 				//update the building
+				CITY_BLOCKS[idx] = BUILDING;
 				load_metatile(x, y, 1);
             Score++;
 			}
