@@ -1,108 +1,108 @@
 <?xml version='1.0' encoding='UTF-8'?>
-<nesicideproject version="0.3" target="nes" title="GGJ20">
- <properties sourcefilename="project_data.s" outputname="ggj20" headerfilename="project_data.h" customrulesfile="" chrrom="1" assembleradditionaloptions="" cartridgeoutputname="ggj20.nes" linkerconfigfile="ld65.cfg" chrromoutputbasepath="." compilerdefinedsymbols="" sourcesearchpaths="/Users/christopherpow/Projects/NES/nesicide/deps/cc65/libsrc/nes;/Users/christopherpow/Projects/NES/nesicide/deps/cc65/libsrc;../../../../../../Program Files (x86)/cc65-snapshot/libsrc/runtime;../../../../../../Program Files (x86)/cc65-snapshot/libsrc/common;ext/pixler/lib" linkeradditionaldependencies="ext/pixler/lib/px.lib" compilerincludepaths=" -I ext/famitone2 -I ext/pixler/lib" cartridgesavestatename="ggj20.sav" assemblerdefinedsymbols="" linkeradditionaloptions="" outputbasepath="obj/nes" assemblerincludepaths=" -I ext/pixler/lib" chrromoutputname="ggj20.chr" linkeroutputbasepath="obj/nes" debuginfoname="ggj20.dbg" compileradditionaloptions="-Oi" linkeroutputname="ggj20.prg">
+<nesicideproject version="0.3" title="GGJ20" target="nes">
+ <properties compileradditionaloptions="-Oi" assembleradditionaloptions="" chrromoutputname="ggj20.chr" linkeroutputname="ggj20.prg" chrromoutputbasepath="." linkeradditionaloptions="" debuginfoname="ggj20.dbg" linkerconfigfile="ld65.cfg" cartridgeoutputname="ggj20.nes" linkeradditionaldependencies="ext/pixler/lib/px.lib" assemblerincludepaths=" -I ext/pixler/lib" assemblerdefinedsymbols="" sourcefilename="project_data.s" cartridgesavestatename="ggj20.sav" sourcesearchpaths="/Users/christopherpow/Projects/NES/nesicide/deps/cc65/libsrc/nes;/Users/christopherpow/Projects/NES/nesicide/deps/cc65/libsrc;../../../../../../Program Files (x86)/cc65-snapshot/libsrc/runtime;../../../../../../Program Files (x86)/cc65-snapshot/libsrc/common;ext/pixler/lib" headerfilename="project_data.h" compilerincludepaths=" -I ext/famitone2 -I ext/pixler/lib" outputname="ggj20" chrrom="1" linkeroutputbasepath="obj/nes" customrulesfile="" compilerdefinedsymbols="" outputbasepath="obj/nes">
   <tileproperties/>
   <palette>
-   <entry b="102" g="102" index="0" r="102"/>
-   <entry b="136" g="42" index="1" r="0"/>
-   <entry b="167" g="18" index="2" r="20"/>
-   <entry b="164" g="0" index="3" r="59"/>
-   <entry b="126" g="0" index="4" r="92"/>
-   <entry b="64" g="0" index="5" r="110"/>
-   <entry b="0" g="6" index="6" r="108"/>
-   <entry b="0" g="29" index="7" r="86"/>
-   <entry b="0" g="53" index="8" r="51"/>
-   <entry b="0" g="72" index="9" r="11"/>
-   <entry b="0" g="82" index="10" r="0"/>
-   <entry b="8" g="79" index="11" r="0"/>
-   <entry b="77" g="64" index="12" r="0"/>
-   <entry b="0" g="0" index="13" r="0"/>
-   <entry b="0" g="0" index="14" r="0"/>
-   <entry b="0" g="0" index="15" r="0"/>
-   <entry b="173" g="173" index="16" r="173"/>
-   <entry b="217" g="95" index="17" r="21"/>
-   <entry b="255" g="64" index="18" r="66"/>
-   <entry b="254" g="39" index="19" r="117"/>
-   <entry b="204" g="26" index="20" r="160"/>
-   <entry b="123" g="30" index="21" r="183"/>
-   <entry b="32" g="49" index="22" r="181"/>
-   <entry b="0" g="78" index="23" r="153"/>
-   <entry b="0" g="109" index="24" r="107"/>
-   <entry b="0" g="135" index="25" r="56"/>
-   <entry b="0" g="147" index="26" r="12"/>
-   <entry b="50" g="143" index="27" r="0"/>
-   <entry b="141" g="124" index="28" r="0"/>
-   <entry b="0" g="0" index="29" r="0"/>
-   <entry b="0" g="0" index="30" r="0"/>
-   <entry b="0" g="0" index="31" r="0"/>
-   <entry b="255" g="254" index="32" r="255"/>
-   <entry b="255" g="176" index="33" r="100"/>
-   <entry b="255" g="144" index="34" r="146"/>
-   <entry b="255" g="118" index="35" r="198"/>
-   <entry b="255" g="106" index="36" r="243"/>
-   <entry b="204" g="110" index="37" r="254"/>
-   <entry b="112" g="129" index="38" r="254"/>
-   <entry b="34" g="158" index="39" r="234"/>
-   <entry b="0" g="190" index="40" r="188"/>
-   <entry b="0" g="216" index="41" r="136"/>
-   <entry b="48" g="228" index="42" r="92"/>
-   <entry b="130" g="224" index="43" r="69"/>
-   <entry b="222" g="205" index="44" r="72"/>
-   <entry b="79" g="79" index="45" r="79"/>
-   <entry b="0" g="0" index="46" r="0"/>
-   <entry b="0" g="0" index="47" r="0"/>
-   <entry b="255" g="254" index="48" r="255"/>
-   <entry b="255" g="223" index="49" r="192"/>
-   <entry b="255" g="210" index="50" r="211"/>
-   <entry b="255" g="200" index="51" r="232"/>
-   <entry b="255" g="194" index="52" r="251"/>
-   <entry b="234" g="196" index="53" r="254"/>
-   <entry b="197" g="204" index="54" r="254"/>
-   <entry b="165" g="216" index="55" r="247"/>
-   <entry b="148" g="229" index="56" r="228"/>
-   <entry b="150" g="239" index="57" r="207"/>
-   <entry b="171" g="244" index="58" r="189"/>
-   <entry b="204" g="243" index="59" r="179"/>
-   <entry b="242" g="235" index="60" r="181"/>
-   <entry b="184" g="184" index="61" r="184"/>
-   <entry b="0" g="0" index="62" r="0"/>
-   <entry b="0" g="0" index="63" r="0"/>
+   <entry index="0" g="102" b="102" r="102"/>
+   <entry index="1" g="42" b="136" r="0"/>
+   <entry index="2" g="18" b="167" r="20"/>
+   <entry index="3" g="0" b="164" r="59"/>
+   <entry index="4" g="0" b="126" r="92"/>
+   <entry index="5" g="0" b="64" r="110"/>
+   <entry index="6" g="6" b="0" r="108"/>
+   <entry index="7" g="29" b="0" r="86"/>
+   <entry index="8" g="53" b="0" r="51"/>
+   <entry index="9" g="72" b="0" r="11"/>
+   <entry index="10" g="82" b="0" r="0"/>
+   <entry index="11" g="79" b="8" r="0"/>
+   <entry index="12" g="64" b="77" r="0"/>
+   <entry index="13" g="0" b="0" r="0"/>
+   <entry index="14" g="0" b="0" r="0"/>
+   <entry index="15" g="0" b="0" r="0"/>
+   <entry index="16" g="173" b="173" r="173"/>
+   <entry index="17" g="95" b="217" r="21"/>
+   <entry index="18" g="64" b="255" r="66"/>
+   <entry index="19" g="39" b="254" r="117"/>
+   <entry index="20" g="26" b="204" r="160"/>
+   <entry index="21" g="30" b="123" r="183"/>
+   <entry index="22" g="49" b="32" r="181"/>
+   <entry index="23" g="78" b="0" r="153"/>
+   <entry index="24" g="109" b="0" r="107"/>
+   <entry index="25" g="135" b="0" r="56"/>
+   <entry index="26" g="147" b="0" r="12"/>
+   <entry index="27" g="143" b="50" r="0"/>
+   <entry index="28" g="124" b="141" r="0"/>
+   <entry index="29" g="0" b="0" r="0"/>
+   <entry index="30" g="0" b="0" r="0"/>
+   <entry index="31" g="0" b="0" r="0"/>
+   <entry index="32" g="254" b="255" r="255"/>
+   <entry index="33" g="176" b="255" r="100"/>
+   <entry index="34" g="144" b="255" r="146"/>
+   <entry index="35" g="118" b="255" r="198"/>
+   <entry index="36" g="106" b="255" r="243"/>
+   <entry index="37" g="110" b="204" r="254"/>
+   <entry index="38" g="129" b="112" r="254"/>
+   <entry index="39" g="158" b="34" r="234"/>
+   <entry index="40" g="190" b="0" r="188"/>
+   <entry index="41" g="216" b="0" r="136"/>
+   <entry index="42" g="228" b="48" r="92"/>
+   <entry index="43" g="224" b="130" r="69"/>
+   <entry index="44" g="205" b="222" r="72"/>
+   <entry index="45" g="79" b="79" r="79"/>
+   <entry index="46" g="0" b="0" r="0"/>
+   <entry index="47" g="0" b="0" r="0"/>
+   <entry index="48" g="254" b="255" r="255"/>
+   <entry index="49" g="223" b="255" r="192"/>
+   <entry index="50" g="210" b="255" r="211"/>
+   <entry index="51" g="200" b="255" r="232"/>
+   <entry index="52" g="194" b="255" r="251"/>
+   <entry index="53" g="196" b="234" r="254"/>
+   <entry index="54" g="204" b="197" r="254"/>
+   <entry index="55" g="216" b="165" r="247"/>
+   <entry index="56" g="229" b="148" r="228"/>
+   <entry index="57" g="239" b="150" r="207"/>
+   <entry index="58" g="244" b="171" r="189"/>
+   <entry index="59" g="243" b="204" r="179"/>
+   <entry index="60" g="235" b="242" r="181"/>
+   <entry index="61" g="184" b="184" r="184"/>
+   <entry index="62" g="0" b="0" r="0"/>
+   <entry index="63" g="0" b="0" r="0"/>
   </palette>
  </properties>
  <inspectors>
   <symbolinspector/>
   <breakpoints/>
   <markers>
-   <marker endabsaddr="0" startabsaddr="0" startaddr="0" index="0" state="0" endaddr="0"/>
-   <marker endabsaddr="0" startabsaddr="0" startaddr="0" index="1" state="0" endaddr="0"/>
-   <marker endabsaddr="0" startabsaddr="0" startaddr="0" index="2" state="0" endaddr="0"/>
-   <marker endabsaddr="0" startabsaddr="0" startaddr="0" index="3" state="0" endaddr="0"/>
-   <marker endabsaddr="0" startabsaddr="0" startaddr="0" index="4" state="0" endaddr="0"/>
-   <marker endabsaddr="0" startabsaddr="0" startaddr="0" index="5" state="0" endaddr="0"/>
-   <marker endabsaddr="0" startabsaddr="0" startaddr="0" index="6" state="0" endaddr="0"/>
-   <marker endabsaddr="0" startabsaddr="0" startaddr="0" index="7" state="0" endaddr="0"/>
+   <marker index="0" endabsaddr="0" state="0" startaddr="0" endaddr="0" startabsaddr="0"/>
+   <marker index="1" endabsaddr="0" state="0" startaddr="0" endaddr="0" startabsaddr="0"/>
+   <marker index="2" endabsaddr="0" state="0" startaddr="0" endaddr="0" startabsaddr="0"/>
+   <marker index="3" endabsaddr="0" state="0" startaddr="0" endaddr="0" startabsaddr="0"/>
+   <marker index="4" endabsaddr="0" state="0" startaddr="0" endaddr="0" startabsaddr="0"/>
+   <marker index="5" endabsaddr="0" state="0" startaddr="0" endaddr="0" startabsaddr="0"/>
+   <marker index="6" endabsaddr="0" state="0" startaddr="0" endaddr="0" startabsaddr="0"/>
+   <marker index="7" endabsaddr="0" state="0" startaddr="0" endaddr="0" startabsaddr="0"/>
   </markers>
  </inspectors>
- <cartridge mirrorMode="1" fourScreen="0" mapperNumber="2" hasBatteryBackedRam="0"/>
+ <cartridge mapperNumber="2" fourScreen="0" mirrorMode="1" hasBatteryBackedRam="0"/>
  <project>
   <primitives>
    <attributetables/>
    <tiles/>
   </primitives>
   <sources>
-   <source uuid="{ac7afda4-d1f4-4abc-8bb0-9c1423a1f39b}" path="audio/audio.s" name="audio/audio.s"/>
-   <source uuid="{3048b856-4fb7-4028-bea5-c03864298bc6}" path="ext/famitone2/famitone2.s" name="ext/famitone2/famitone2.s"/>
-   <source uuid="{faf01e75-4c50-4d91-8e36-c59d6497a4c9}" path="src/common.h" name="src/common.h"/>
-   <source uuid="{7c9a3a95-fcb2-4070-97c1-89ab8cb21c82}" path="src/data.s" name="src/data.s"/>
-   <source uuid="{c27a81ad-d402-44c6-97c6-b408ee67cadc}" path="src/main.c" name="src/main.c"/>
-   <source uuid="{c3ba8471-9010-4b5a-b3fa-0ca6288ebe95}" path="src/misc.s" name="src/misc.s"/>
-   <source uuid="{b2b69161-76f3-43f9-93c7-f3f994975715}" path="src/town.c" name="src/town.c"/>
-   <source uuid="{07609ca0-e6c6-4227-aefa-c9003917c815}" path="src/main.h" name="src/main.h"/>
-   <source uuid="{ae4ae56d-3e08-43c7-923f-2f9bf675c0ce}" path="chr/Metasprite.c" name="chr/Metasprite.c"/>
+   <source path="audio/audio.s" uuid="{ac7afda4-d1f4-4abc-8bb0-9c1423a1f39b}" name="audio/audio.s"/>
+   <source path="ext/famitone2/famitone2.s" uuid="{3048b856-4fb7-4028-bea5-c03864298bc6}" name="ext/famitone2/famitone2.s"/>
+   <source path="src/common.h" uuid="{faf01e75-4c50-4d91-8e36-c59d6497a4c9}" name="src/common.h"/>
+   <source path="src/data.s" uuid="{7c9a3a95-fcb2-4070-97c1-89ab8cb21c82}" name="src/data.s"/>
+   <source path="src/main.c" uuid="{c27a81ad-d402-44c6-97c6-b408ee67cadc}" name="src/main.c"/>
+   <source path="src/misc.s" uuid="{c3ba8471-9010-4b5a-b3fa-0ca6288ebe95}" name="src/misc.s"/>
+   <source path="src/town.c" uuid="{b2b69161-76f3-43f9-93c7-f3f994975715}" name="src/town.c"/>
+   <source path="src/main.h" uuid="{07609ca0-e6c6-4227-aefa-c9003917c815}" name="src/main.h"/>
+   <source path="chr/Metasprite.c" uuid="{ae4ae56d-3e08-43c7-923f-2f9bf675c0ce}" name="chr/Metasprite.c"/>
   </sources>
   <binaryfiles>
-   <binaryfile uuid="{ada92499-569a-4dad-bb6c-bce46bf6458d}" ysize="128" xsize="256" path="chr/Tileset.chr" name="chr/Tileset.chr"/>
-   <binaryfile uuid="{0b815a16-89fc-4953-9ea0-456c5741ec9b}" ysize="128" xsize="256" path="chr/Sprites.chr" name="chr/Sprites.chr"/>
+   <binaryfile path="chr/Tileset.chr" uuid="{ada92499-569a-4dad-bb6c-bce46bf6458d}" xsize="256" name="chr/Tileset.chr" ysize="128"/>
+   <binaryfile path="chr/Sprites.chr" uuid="{0b815a16-89fc-4953-9ea0-456c5741ec9b}" xsize="256" name="chr/Sprites.chr" ysize="128"/>
   </binaryfiles>
   <graphicsbanks/>
   <sounds>
