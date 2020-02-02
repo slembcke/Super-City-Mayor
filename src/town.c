@@ -178,6 +178,23 @@ static u8 META[][2][17] =
  }
 };
 
+#define REPAIR_SCORE 100
+
+u8 Score = 0;
+
+void paint_score()
+{
+   u8 temp = Score;
+
+   px_spr(128,  16, 1, '0'+((u8)temp%10));
+   temp /= 10;
+   px_spr(120,  16, 1, '0'+(u8)temp%10);
+   temp /= 10;
+   px_spr(112,  16, 1, '0'+(u8)temp);
+   px_spr(136,  16, 1, '0');
+   px_spr(144,  16, 1, '0');
+}
+
 u8 collision_check(u8 x, u8 y) {
 
 	//check requested move location
@@ -208,11 +225,10 @@ Gamestate gameplay_screen(void){
 	music_stop();
 	
 	px_ppu_sync_disable();{
-//		px_buffer_blit(PAL_ADDR, PALETTE, sizeof(PALETTE));
 		
 		px_addr(NT_ADDR(0, 0, 0));
 		px_blit(1024, GAMEPLAY_TILEMAP);
-		
+      
 		for(iy = 0; iy < 15; ++iy){
 			for(ix = 0; ix < 16; ++ix){
 				// Calculate tile index.
@@ -233,6 +249,8 @@ Gamestate gameplay_screen(void){
    
 	while(true){
 		read_gamepads();
+		
+      paint_score();
 		
 //PLAYER 1 REPAIRS
 		if(JOY_BTN_A (pad1.value)) {
@@ -255,6 +273,7 @@ Gamestate gameplay_screen(void){
 			if (CITY_BLOCKS[idx] & ACTION_ALLOWED_BIT) {
 				//update the building
 				load_metatile(x, y, 1);
+            Score++;
 			}
 
 		}	
@@ -271,8 +290,6 @@ Gamestate gameplay_screen(void){
 		//if(JOY_RIGHT(pad1.value)) x += 1;
 		//if(JOY_DOWN (pad1.value)) y += 1;
 		//if(JOY_UP   (pad1.value)) y -= 1;
-
-
 
 		if(JOY_LEFT (pad1.value))
       {
@@ -325,7 +342,6 @@ Gamestate gameplay_screen(void){
       			meta_spr(player1x, player1y, 2, META[dir1][a1]);
 		}
 
-
       if ( NumPlayers == 2 )
       {
 //PLAYER 2 REPAIRS
@@ -349,6 +365,7 @@ Gamestate gameplay_screen(void){
 			if (CITY_BLOCKS[idx] & ACTION_ALLOWED_BIT) {
 				//update the building
 				load_metatile(x, y, 1);
+            Score++;
 			}
 		}	
 
