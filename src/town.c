@@ -9,7 +9,7 @@ static const u8 META_TILES[] = {
 	0xE4, 0xE5, 0xF4, 0xF5, 2, //damaged
 	0xE4, 0xE5, 0xF4, 0xF5, 1, //fixed
 	0xE4, 0xE5, 0xF4, 0xF5, 3, //resource
-	0xE4, 0xE5, 0xF4, 0xF5, 2,
+	0xE4, 0xE5, 0xF4, 0xF5, 3, //resource hub
 	0xE4, 0xE5, 0xF4, 0xF5, 2,
 	0xE4, 0xE5, 0xF4, 0xF5, 2,
 	0xE4, 0xE5, 0xF4, 0xF5, 2,
@@ -29,6 +29,8 @@ static const u8 META_TILES[] = {
 #define B BUILDING
 #define RESOURCE (3 | ACTION_ALLOWED_BIT | NON_WALKABLE_BIT)  //resource
 #define S RESOURCE
+#define RESOURCE_HUB (4 | ACTION_ALLOWED_BIT | NON_WALKABLE_BIT)  //resource hub
+#define H RESOURCE_HUB
 #define DESTROYED (2 | ACTION_ALLOWED_BIT | NON_WALKABLE_BIT)  //damaged building
 #define D DESTROYED
 #define W NON_WALKABLE_BIT	
@@ -37,7 +39,7 @@ static const u8 MAP[16*15] = {
 	_, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _,
 	W, W, W, W, W, W, W, W, W, W, W, W, W, W, W, W, 
 	W, _, _, _, _, _, _, _, _, _, _, _, _, _, _, W,
-	_, _, S, _, B, _, B, B, _, B, B, B, _, S, _, _,
+	_, _, H, _, B, _, B, B, _, B, B, B, _, S, _, _,
 	W, _, D, _, _, _, _, _, _, _, _, _, _, _, _, W,
 	W, _, B, _, B, B, B, _, B, B, _, B, _, B, _, W,
 	_, _, _, _, B, _, _, _, B, B, _, _, _, B, _, _,
@@ -46,7 +48,7 @@ static const u8 MAP[16*15] = {
 	_, _, _, _, B, _, _, _, B, B, _, B, _, _, _, _,
 	W, _, D, _, B, B, B, _, _, B, _, B, _, B, _, W,
 	W, _, B, _, _, _, _, _, _, _, _, B, _, _, _, W,
-	_, _, S, _, B, _, B, B, _, B, _, B, _, S, _, _,
+	_, _, S, _, B, _, B, B, _, B, _, B, _, H, _, _,
 	W, _, _, _, _, _, _, _, _, _, _, _, _, _, _, W,
 	W, W, W, W, W, W, W, W, W, W, W, W, W, W, W, W, 
 };
@@ -242,9 +244,13 @@ Gamestate gameplay_screen(void){
 			if (tmp & ACTION_ALLOWED_BIT) {
 
 				//resource or damaged?
-				if (tmp == RESOURCE ) {
+				if (tmp == RESOURCE_HUB) {
+					player1item = RESOURCE;
+
+				} else if (tmp == RESOURCE ) {
 					//remove resource by making building red for now
 					load_metatile(x, y, 1); 
+					CITY_BLOCKS[idx] = BUILDING;
 					//player has item
 					player1item = RESOURCE;
 
@@ -352,10 +358,14 @@ Gamestate gameplay_screen(void){
 			if (tmp & ACTION_ALLOWED_BIT) {
 
 				//resource or damaged?
-				if (tmp == RESOURCE ) {
+				if (tmp == RESOURCE_HUB) {
+					player2item = RESOURCE;
+
+				} else if (tmp == RESOURCE ) {
 
 					//remove resource by making building red for now
 					load_metatile(x, y, 1); 
+					CITY_BLOCKS[idx] = BUILDING;
 					//player has item
 					player2item = RESOURCE;
 
