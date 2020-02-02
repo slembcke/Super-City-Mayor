@@ -5,50 +5,59 @@
 #include "main.h"
 
 static const u8 META_TILES[] = {
-	0x00, 0x00, 0x00, 0x00, 0, //road
-	0xE4, 0xE5, 0xF4, 0xF5, 2, //damaged
-	0xE4, 0xE5, 0xF4, 0xF5, 1, //fixed
-	0xE4, 0xE5, 0xF4, 0xF5, 3, //resource
-	0xE4, 0xE5, 0xF4, 0xF5, 3, //resource hub
-	0xE4, 0xE5, 0xF4, 0xF5, 2,
-	0xE4, 0xE5, 0xF4, 0xF5, 2,
-	0xE4, 0xE5, 0xF4, 0xF5, 2,
+	0x00, 0x00, 0x00, 0x00, 0, // 0 road
+	0x00, 0x00, 0x00, 0x00, 0, // 1 road
+	0xE0, 0xE1, 0xF0, 0xF1, 1, // 2 fixed 1
+	0xE2, 0xE3, 0xF2, 0xF3, 0, // 3 damaged 1
+	0xE4, 0xE5, 0xF4, 0xF5, 2, // 4 fixed 2
+	0xE6, 0xE7, 0xF6, 0xF7, 0, // 5 damaged 2
+	0xE8, 0xE9, 0xF8, 0xF9, 3, // 6 fixed 3
+	0xEA, 0xEB, 0xFA, 0xFB, 0, // 7 damaged 3
+	0xE4, 0xE5, 0xF4, 0xF5, 3, // 8 resource
+	0xE4, 0xE5, 0xF4, 0xF5, 3, // 9 resource hub
 };
 
 #define MAP_BLOCK_AT(x, y) ((y & 0xF0)| (x >> 4))	//pixel based
 #define MAP_BLOCK_AT_GRID(x, y) ((y << 4)| (x))	//grid based
 
 #define META_BITS 0x1F
+#define DESTROYED_BIT 0x01
 #define NON_WALKABLE_BIT 0x80
 #define ACTION_ALLOWED_BIT 0x40 //ie set when building damaged & player can fix
+
+#define BUILDING_BITS (META_BITS & ~DESTROYED_BIT)
 
 #define NOITEM 0  //player doesn't have item
 
 #define _ 0	//street
-#define BUILDING (1 | NON_WALKABLE_BIT)	//fixed building
-#define B BUILDING
-#define RESOURCE (3 | ACTION_ALLOWED_BIT | NON_WALKABLE_BIT)  //resource
+#define A (2 | NON_WALKABLE_BIT)	//fixed building
+#define a (3 | ACTION_ALLOWED_BIT | NON_WALKABLE_BIT)  //damaged building
+#define B (4 | NON_WALKABLE_BIT)	//fixed building
+#define b (5 | ACTION_ALLOWED_BIT | NON_WALKABLE_BIT)  //damaged building
+#define C (6 | NON_WALKABLE_BIT)	//fixed building
+#define c (7 | ACTION_ALLOWED_BIT | NON_WALKABLE_BIT)  //damaged building
+
+
+#define RESOURCE (8 | ACTION_ALLOWED_BIT | NON_WALKABLE_BIT)  //resource
 #define S RESOURCE
-#define RESOURCE_HUB (4 | ACTION_ALLOWED_BIT | NON_WALKABLE_BIT)  //resource hub
+#define RESOURCE_HUB (9 | ACTION_ALLOWED_BIT | NON_WALKABLE_BIT)  //resource hub
 #define H RESOURCE_HUB
-#define DESTROYED (2 | ACTION_ALLOWED_BIT | NON_WALKABLE_BIT)  //damaged building
-#define D DESTROYED
 #define W NON_WALKABLE_BIT	
 
 static const u8 MAP[16*15] = {
 	_, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _,
 	W, W, W, W, W, W, W, W, W, W, W, W, W, W, W, W, 
 	W, _, _, _, _, _, _, _, _, _, _, _, _, _, _, W,
-	_, _, B, _, B, _, B, B, _, B, B, B, _, B, _, _,
-	W, _, D, _, _, _, _, _, _, _, _, _, _, _, _, W,
-	W, _, B, _, B, B, B, _, B, B, _, B, _, B, _, W,
-	_, _, _, _, B, _, _, _, B, B, _, _, _, B, _, _,
-	W, _, D, _, _, _, B, _, _, _, _, B, _, B, _, W,
-	W, _, D, _, B, _, B, _, _, B, _, _, _, B, _, W,
-	_, _, _, _, B, _, _, _, B, B, _, B, _, _, _, _,
-	W, _, D, _, B, B, B, _, _, B, _, B, _, B, _, W,
-	W, _, B, _, _, _, _, _, _, _, _, B, _, _, _, W,
-	_, _, B, _, B, _, B, B, _, B, _, B, _, B, _, _,
+	_, _, A, _, B, _, B, B, _, B, B, C, _, B, _, _,
+	W, _, a, _, _, _, _, _, _, _, _, _, _, _, _, W,
+	W, _, B, _, A, C, B, _, A, B, _, A, _, B, _, W,
+	_, _, _, _, B, _, _, _, B, C, _, _, _, A, _, _,
+	W, _, C, _, _, _, A, _, _, _, _, B, _, B, _, W,
+	W, _, A, _, A, _, B, _, _, B, _, _, _, C, _, W,
+	_, _, _, _, C, _, _, _, B, A, _, C, _, _, _, _,
+	W, _, C, _, B, A, B, _, _, C, _, A, _, B, _, W,
+	W, _, B, _, _, _, _, _, _, _, _, C, _, _, _, W,
+	_, _, C, _, A, _, B, A, _, C, _, B, _, C, _, _,
 	W, _, _, _, _, _, _, _, _, _, _, _, _, _, _, W,
 	W, W, W, W, W, W, W, W, W, W, W, W, W, W, W, W, 
 };
@@ -127,11 +136,12 @@ static void break_building(void){
 		if(idx >= sizeof(CITY_BLOCKS)) goto yield;
 		
 		tmp = CITY_BLOCKS[idx];
-		if(tmp == BUILDING){
+		if(tmp & BUILDING_BITS){
 			count_rate += RATE_PER_BUILDING;
 			
-			CITY_BLOCKS[idx] = DESTROYED;
-			load_metatile(idx & 0xF, idx >> 4, DESTROYED & META_BITS);
+			tmp |= (DESTROYED_BIT | ACTION_ALLOWED_BIT);
+			CITY_BLOCKS[idx] = tmp;
+			load_metatile(idx & 0xF, idx >> 4, tmp & META_BITS);
 			return;
 		}
 		
@@ -142,9 +152,12 @@ static void break_building(void){
 static void fix_building(u8 idx){
 	count_rate -= RATE_PER_BUILDING;
 	
+	tmp = CITY_BLOCKS[idx];
+	tmp &= ~(DESTROYED_BIT | ACTION_ALLOWED_BIT);
+	
 	//update the building
-	CITY_BLOCKS[idx] = BUILDING;
-	load_metatile(idx & 0xF, idx >> 4, BUILDING & META_BITS);
+	CITY_BLOCKS[idx] = tmp;
+	load_metatile(idx & 0xF, idx >> 4, tmp & META_BITS);
 	Score++;
 }
 
@@ -230,7 +243,7 @@ Gamestate gameplay_screen(void){
 				idx = 16*iy + ix;
 				tmp = CITY_BLOCKS[idx];
 				
-				if(tmp == DESTROYED) count_rate += RATE_PER_BUILDING;
+				if(tmp & DESTROYED_BIT) count_rate += RATE_PER_BUILDING;
 				
 				tmp &= META_BITS;
 				if(tmp != 0) load_metatile(ix, iy, tmp);
