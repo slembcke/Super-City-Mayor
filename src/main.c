@@ -269,7 +269,7 @@ Gamestate win_screen(void){
 		if(--timeout == 0){
 			show_start = !show_start;
 			timeout = 30;
-			blit_string(NT_ADDR(0, 10, 16), show_start ? "press start" : "           ");
+			blit_string(NT_ADDR(0, 10, 18), show_start ? "press start" : "           ");
 		}
 		
 		px_wait_nmi();
