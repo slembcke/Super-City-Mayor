@@ -11,10 +11,14 @@ static const u8 META_TILES[] = {
 	0xE2, 0xE3, 0xF2, 0xF3, 1, // 3 damaged 1
 	0xE4, 0xE5, 0xF4, 0xF5, 2, // 4 fixed 2
 	0xE6, 0xE7, 0xF6, 0xF7, 1, // 5 damaged 2
+	0xE8, 0xE9, 0xF8, 0xF9, 2, // 6 fixed 3
+	0xEA, 0xEB, 0xFA, 0xFB, 1, // 7 damaged 3
+	0xE0, 0xE1, 0xF0, 0xF1, 3, // 2 fixed 1
+	0xE2, 0xE3, 0xF2, 0xF3, 1, // 3 damaged 1
+	0xE4, 0xE5, 0xF4, 0xF5, 3, // 4 fixed 2
+	0xE6, 0xE7, 0xF6, 0xF7, 1, // 5 damaged 2
 	0xE8, 0xE9, 0xF8, 0xF9, 3, // 6 fixed 3
 	0xEA, 0xEB, 0xFA, 0xFB, 1, // 7 damaged 3
-	0xE4, 0xE5, 0xF4, 0xF5, 3, // 8 resource
-	0xE4, 0xE5, 0xF4, 0xF5, 3, // 9 resource hub
 };
 
 #define MAP_BLOCK_AT(x, y) ((y & 0xF0)| (x >> 4))	//pixel based
@@ -36,28 +40,30 @@ static const u8 META_TILES[] = {
 #define b (5 | ACTION_ALLOWED_BIT | NON_WALKABLE_BIT)  //damaged building
 #define C (6 | NON_WALKABLE_BIT)	//fixed building
 #define c (7 | ACTION_ALLOWED_BIT | NON_WALKABLE_BIT)  //damaged building
+#define D (8 | NON_WALKABLE_BIT)	//fixed building
+#define d (9 | ACTION_ALLOWED_BIT | NON_WALKABLE_BIT)  //damaged building
+#define E (10 | NON_WALKABLE_BIT)	//fixed building
+#define e (11 | ACTION_ALLOWED_BIT | NON_WALKABLE_BIT)  //damaged building
+#define F (12 | NON_WALKABLE_BIT)	//fixed building
+#define f (13 | ACTION_ALLOWED_BIT | NON_WALKABLE_BIT)  //damaged building
 
 
-#define RESOURCE (8 | ACTION_ALLOWED_BIT | NON_WALKABLE_BIT)  //resource
-#define S RESOURCE
-#define RESOURCE_HUB (9 | ACTION_ALLOWED_BIT | NON_WALKABLE_BIT)  //resource hub
-#define H RESOURCE_HUB
 #define W NON_WALKABLE_BIT	
 
 static const u8 MAP[16*15] = {
 	_, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _,
 	W, W, W, W, W, W, W, W, W, W, W, W, W, W, W, W, 
 	W, _, _, _, _, _, _, _, _, _, _, _, _, _, _, W,
-	_, _, A, _, B, _, B, B, _, B, B, C, _, B, _, _,
-	W, _, a, _, _, _, _, _, _, _, _, _, _, _, _, W,
-	W, _, B, _, A, c, B, _, A, B, _, A, _, B, _, W,
-	_, _, _, _, B, _, _, _, B, C, _, _, _, a, _, _,
-	W, _, C, _, _, _, A, _, _, _, _, B, _, B, _, W,
-	W, _, A, _, A, _, B, _, _, b, _, _, _, C, _, W,
-	_, _, _, _, C, _, _, _, B, A, _, C, _, _, _, _,
-	W, _, C, _, B, A, B, _, _, C, _, A, _, B, _, W,
-	W, _, B, _, _, _, _, _, _, _, _, c, _, _, _, W,
-	_, _, C, _, A, _, B, A, _, C, _, B, _, C, _, _,
+	_, _, A, _, B, _, E, B, _, D, B, C, _, B, _, _,
+	W, _, A, _, _, _, _, _, _, _, _, _, _, _, _, W,
+	W, _, E, _, F, C, B, _, A, E, _, D, _, B, _, W,
+	_, _, _, _, B, _, _, _, F, C, _, _, _, A, _, _,
+	W, _, D, _, _, _, A, _, _, _, _, B, _, E, _, W,
+	W, _, A, _, A, _, F, _, _, b, _, _, _, C, _, W,
+	_, _, _, _, C, _, _, _, F, A, _, C, _, _, _, _,
+	W, _, C, _, E, A, B, _, _, C, _, E, _, B, _, W,
+	W, _, F, _, _, _, _, _, _, _, _, C, _, _, _, W,
+	_, _, C, _, A, _, B, A, _, F, _, B, _, c, _, _,
 	W, _, _, _, _, _, _, _, _, _, _, _, _, _, _, W,
 	W, W, W, W, W, W, W, W, W, W, W, W, W, W, W, W, 
 };
@@ -404,11 +410,11 @@ Gamestate gameplay_screen(u8 difficulty){
 		}
 
 		//Draw a sprite.
-		if( player1item == RESOURCE ) {
-      	meta_spr(player1x, player1y, 3, metasprite_list[(0*16)+(dir1*4)+a1]);
-		} else {
+		// if( player1item == RESOURCE ) {
+    //   	meta_spr(player1x, player1y, 3, metasprite_list[(0*16)+(dir1*4)+a1]);
+		// } else {
 			meta_spr(player1x, player1y, 0, metasprite_list[(0*16)+(dir1*4)+a1]);
-		}
+		// }
 		
 
       if ( NumPlayers == 2 )
@@ -522,11 +528,11 @@ Gamestate gameplay_screen(u8 difficulty){
 			player2y = y;
 		}
 		//Draw a sprite.
-		if( player2item == RESOURCE ) {
-            meta_spr(player2x, player2y, 3, metasprite_list[(1*16)+(dir2*4)+a2]);
-		} else {
+		// if( player2item == RESOURCE ) {
+    //         meta_spr(player2x, player2y, 3, metasprite_list[(1*16)+(dir2*4)+a2]);
+		// } else {
             meta_spr(player2x, player2y, 0, metasprite_list[(1*16)+(dir2*4)+a2]);
-		}
+		// }
       }
 		
 		if(count_broken() == 0){
