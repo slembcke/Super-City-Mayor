@@ -75,6 +75,7 @@ Gamestate splash_screen(void){
    static u16 c = 300;
    
    NumPlayers = 1;
+   Score = 0;
    
    ix = 0;
 	

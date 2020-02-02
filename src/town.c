@@ -323,6 +323,25 @@ Gamestate gameplay_screen(u8 difficulty){
 				//	}
 				//}
 			}
+         else
+         {
+            if ( dir1 == FACE_R )
+            {
+               idx = MAP_BLOCK_AT_GRID(x,y-8); //idx = 16*y + x;
+               tmp = CITY_BLOCKS[idx];
+               if (tmp & ACTION_ALLOWED_BIT) {
+						fix_building(idx);
+               }
+            }
+            else if ( dir1 == FACE_L )
+            {
+               idx = MAP_BLOCK_AT_GRID(x,y-8); //idx = 16*y + x;
+               tmp = CITY_BLOCKS[idx];
+               if (tmp & ACTION_ALLOWED_BIT) {
+						fix_building(idx);
+               }
+            }
+         }
 
 		}	
 		
@@ -433,6 +452,25 @@ Gamestate gameplay_screen(u8 difficulty){
 				//	}
 				//}
 			}
+         else
+         {
+            if ( dir2 == FACE_R )
+            {
+               idx = MAP_BLOCK_AT_GRID(x,y-8); //idx = 16*y + x;
+               tmp = CITY_BLOCKS[idx];
+               if (tmp & ACTION_ALLOWED_BIT) {
+						fix_building(idx);
+               }
+            }
+            else if ( dir2 == FACE_L )
+            {
+               idx = MAP_BLOCK_AT_GRID(x,y-8); //idx = 16*y + x;
+               tmp = CITY_BLOCKS[idx];
+               if (tmp & ACTION_ALLOWED_BIT) {
+						fix_building(idx);
+               }
+            }
+         }
 		}	
 
 //PLAYER 2 MOVEMENT
