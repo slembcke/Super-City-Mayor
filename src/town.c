@@ -198,10 +198,9 @@ Gamestate gameplay_screen(void){
 
 	register u8 x, y;
 
-   register u8 a1 = 0, dir1 = FACE_R, b1 = 0;
-   register u8 f = 0;  //don't think this is used.?
-   register u8 a2 = 0, dir2 = FACE_L, b2 = 0;
-	
+   register u8 a1 = 0, da1 = 1, dir1 = FACE_R;
+   register u8 a2 = 0, da2 = 1, dir2 = FACE_L;
+
 	PX.scroll_x = 0;
 	PX.scroll_y = 0;
 	px_spr_end();
@@ -273,9 +272,9 @@ Gamestate gameplay_screen(void){
 
 				} else if (tmp == RESOURCE ) {
 					//remove resource by making building red for now
-					load_metatile(x, y, 1); 
 					CITY_BLOCKS[idx] = BUILDING;
-					//player has item
+					load_metatile(x, y, 1); 
+					//player has item 
 					player1item = RESOURCE;
 
 				} else {
@@ -306,36 +305,39 @@ Gamestate gameplay_screen(void){
       {
          if ( x&8 ) a1++;
          dir1 = FACE_L;
-         a1 = (x>>3)&1;    
+         a1 = (x>>2)&3;    
          x -= 1;
-         if ( x < 5 ) b1++;
       }
 		else if(JOY_RIGHT (pad1.value))
       {
          if ( x&8 ) a1++;
          dir1 = FACE_R;
-         a1 = (x>>3)&1;    
+         a1 = (x>>2)&3;    
          x += 1;
-         if ( x > 250 ) b1++;
       }
 		else if(JOY_UP   (pad1.value))
       {
-         if ( y&8 ) a1++;
          dir1 = FACE_U;
-         a1 = (y>>3)&1;    
+         a1 += da1*((y>>2)&1);    
          y -= 1;
-         if ( y < 5 ) b1++;
       }
 		else if(JOY_DOWN (pad1.value))
       {
-         if ( y&8 ) a1++;
          dir1 = FACE_D;
-         a1 = (y>>3)&1;    
+         a1 += da1*((y>>2)&1);    
          y += 1;
-         if ( y > 235 ) b1++;
       }
-		
-
+		if ( a1 == 4 ) 
+      {
+         a1 = 3;
+         da1 = -1;
+      }
+      if ( a1 == 0xff ) 
+      {
+         a1 = 0;
+         da1 = 1;
+      }
+      
 		idx = collision_check(x, y);
 
 		if(!(idx & NON_WALKABLE_BIT)) {
@@ -380,10 +382,9 @@ Gamestate gameplay_screen(void){
 					player2item = RESOURCE;
 
 				} else if (tmp == RESOURCE ) {
-
 					//remove resource by making building red for now
-					load_metatile(x, y, 1); 
 					CITY_BLOCKS[idx] = BUILDING;
+					load_metatile(x, y, 1); 
 					//player has item
 					player2item = RESOURCE;
 
@@ -400,38 +401,42 @@ Gamestate gameplay_screen(void){
          x = player2x;
          y = player2y;
 
-         if(JOY_LEFT (pad2.value))
-         {
-            if ( x&8 ) a2++;
-            dir2 = FACE_L;
-            a2 = (x>>3)&1;    
-            x -= 1;
-            if ( x < 5 ) b2++;
-         }
-         else if(JOY_RIGHT (pad2.value))
-         {
-            if ( x&8 ) a2++;
-            dir2 = FACE_R;
-            a2 = (x>>3)&1;    
-            x += 1;
-            if ( x > 250 ) b2++;
-         }
-         else if(JOY_UP   (pad2.value))
-         {
-            if ( y&8 ) a2++;
-            dir2 = FACE_U;
-            a2 = (y>>3)&1;    
-            y -= 1;
-            if ( y < 5 ) b2++;
-         }
-         else if(JOY_DOWN (pad2.value))
-         {
-            if ( y&8 ) a2++;
-            dir2 = FACE_D;
-            a2 = (y>>3)&1;    
-            y += 1;
-            if ( y > 235 ) b2++;
-         }
+		if(JOY_LEFT (pad2.value))
+      {
+         if ( x&8 ) a2++;
+         dir2 = FACE_L;
+         a2 = (x>>2)&3;    
+         x -= 1;
+      }
+		else if(JOY_RIGHT (pad2.value))
+      {
+         if ( x&8 ) a2++;
+         dir2 = FACE_R;
+         a2 = (x>>2)&3;    
+         x += 1;
+      }
+		else if(JOY_UP   (pad2.value))
+      {
+         dir2 = FACE_U;
+         a2 += da2*((y>>2)&1);    
+         y -= 1;
+      }
+		else if(JOY_DOWN (pad2.value))
+      {
+         dir2 = FACE_D;
+         a2 += da2*((y>>2)&1);    
+         y += 1;
+      }
+		if ( a2 == 4 ) 
+      {
+         a2 = 3;
+         da2 = -1;
+      }
+      if ( a2 == 0xff ) 
+      {
+         a2 = 0;
+         da2 = 1;
+      }
          
 
          idx = collision_check(x, y);
