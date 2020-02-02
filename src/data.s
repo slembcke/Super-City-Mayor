@@ -13,7 +13,8 @@ _CHR0:
 
 .export _GAMEPLAY_CHR
 _GAMEPLAY_CHR:
-	.incbin "chr/Tileset.chr"
+	.incbin "chr/Sprites.chr",0,4096
+	.incbin "chr/Tileset.chr",0,4096
 
 .export _GAMEPLAY_PALETTE
 _GAMEPLAY_PALETTE:

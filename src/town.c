@@ -248,8 +248,8 @@ u8 collision_check(u8 x, u8 y) {
 #define FACE_R	0
 
 Gamestate gameplay_screen(void){
-	register u8 player1x = 32, player1y = 32;
-	register u8 player2x = 128, player2y = 32;
+	register u8 player1x = 8, player1y = 60;
+	register u8 player2x = 248, player2y = 60;
 
 	register u8 x, y;
 
@@ -297,32 +297,20 @@ Gamestate gameplay_screen(void){
       paint_score();
 		
 //PLAYER 1 REPAIRS
-		if(JOY_BTN_A (pad1.value)) {
+		if(JOY_BTN_A (pad1.press)) {
 			//map player position to city grid
 			x = player1x>>4;
 			y = player1y>>4;
 
 			//change to cell player is facing
 			if (dir1 == FACE_L)
-         {
-            player1x += 2;
 				x--;
-         }
 			else if (dir1 == FACE_R)
-         {
-            player1x -= 2;
 				x++;
-         }
 			else if (dir1 == FACE_D)
-         {
-            player1y -= 2;
 				y++;
-         }
 			else if (dir1 == FACE_U)
-         {
-            player1y += 2;
 				y--;
-         }
 
 			//is the building damaged?
 			idx = MAP_BLOCK_AT_GRID(x,y); //idx = 16*y + x;
@@ -331,6 +319,14 @@ Gamestate gameplay_screen(void){
 				CITY_BLOCKS[idx] = BUILDING;
 				load_metatile(x, y, 1);
             Score++;
+            if (dir1 == FACE_L)
+               player1x += 2;
+            else if (dir1 == FACE_R)
+               player1x -= 2;
+            else if (dir1 == FACE_D)
+               player1y -= 2;
+            else if (dir1 == FACE_U)
+               player1y += 2;
 			}
 
 		}	
@@ -402,7 +398,7 @@ Gamestate gameplay_screen(void){
       if ( NumPlayers == 2 )
       {
 //PLAYER 2 REPAIRS
-		if(JOY_BTN_A (pad2.value)) {
+		if(JOY_BTN_A (pad2.press)) {
 			//map player position to city grid
 			x = player2x>>4;
 			y = player2y>>4;
@@ -423,6 +419,14 @@ Gamestate gameplay_screen(void){
 				//update the building
 				load_metatile(x, y, 1);
             Score++;
+            if (dir1 == FACE_L)
+               player2x += 2;
+            else if (dir1 == FACE_R)
+               player2x -= 2;
+            else if (dir1 == FACE_D)
+               player2y -= 2;
+            else if (dir1 == FACE_U)
+               player2y += 2;
 			}
 		}	
 

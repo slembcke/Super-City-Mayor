@@ -103,12 +103,9 @@
   </sources>
   <binaryfiles>
    <binaryfile xsize="256" name="chr/Tileset.chr" ysize="128" uuid="{ada92499-569a-4dad-bb6c-bce46bf6458d}" path="chr/Tileset.chr"/>
+   <binaryfile xsize="256" name="chr/Sprites.chr" ysize="128" uuid="{0b815a16-89fc-4953-9ea0-456c5741ec9b}" path="chr/Sprites.chr"/>
   </binaryfiles>
-  <graphicsbanks>
-   <graphicsbank name="GGJ20" uuid="{39db3232-cb58-4909-b15d-a85167913a43}">
-    <graphicitem uuid="{ada92499-569a-4dad-bb6c-bce46bf6458d}"/>
-   </graphicsbank>
-  </graphicsbanks>
+  <graphicsbanks/>
   <sounds>
    <musics/>
   </sounds>

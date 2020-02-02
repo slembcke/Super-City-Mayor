@@ -160,16 +160,13 @@ void main(void){
 	// Decompress the tileset into character memory.
 //	px_lz4_to_vram(CHR_ADDR(0, 0), CHR0);
    px_addr(CHR_ADDR(0,0));
-   px_blit(0x1000,CHR0);
-	 
-   px_addr(CHR_ADDR(1,0));
-   px_blit(0x1000, GAMEPLAY_CHR);
+   px_blit(0x2000, GAMEPLAY_CHR);
 	
 	sound_init(SOUNDS);
 	music_init(MUSIC);
 	
 	rand_seed = 31394;
-	gameplay_screen();
+
 	// Jump to the splash screen state.
 	splash_screen();
 }
