@@ -135,6 +135,15 @@ Gamestate splash_screen(void){
       {
          NumPlayers = 3-NumPlayers;
       }
+		if(JOY_UP(pad1.press)) 
+      {
+         NumPlayers = 3-NumPlayers;
+      }
+		if(JOY_DOWN(pad1.press)) 
+      {
+         NumPlayers = 3-NumPlayers;
+      }
+      
 
 		px_spr_end();
 		px_wait_nmi();
