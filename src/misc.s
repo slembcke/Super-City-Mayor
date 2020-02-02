@@ -14,6 +14,7 @@
 .exportzp _player1x, _player1y
 .exportzp _player2x, _player2y
 .exportzp _player2item, _player1item
+.exportzp _break_timeout
 _ix: .word 0
 _iy: .word 0
 _iz: .word 0
@@ -25,6 +26,7 @@ _player2x: .byte 0
 _player2y: .byte 0
 _player1item: .byte 0
 _player2item: .byte 0
+_break_timeout: .byte 0
 
 .code
 

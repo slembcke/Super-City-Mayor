@@ -161,14 +161,17 @@ static void fix_building(u8 idx){
 	Score++;
 }
 
-#define BUILDING_BREAK_TIMEOUT 240
+//#define BUILDING_BREAK_TIMEOUT 240
 
 static uintptr_t gameplay_coro_body(uintptr_t){
-	static u8 timeout = BUILDING_BREAK_TIMEOUT;
+	//static u8 timeout = BUILDING_BREAK_TIMEOUT;
+	static u8 timeout;
+	timeout = break_timeout;
 	while(true){
 		if(--timeout == 0){
 			break_building();
-			timeout = BUILDING_BREAK_TIMEOUT;
+			//timeout = BUILDING_BREAK_TIMEOUT;
+			timeout = break_timeout;
 		}
 		px_coro_yield(0);
 	}
@@ -205,7 +208,7 @@ u8 collision_check(u8 x, u8 y) {
 #define FACE_L	1
 #define FACE_R	0
 
-Gamestate gameplay_screen(void){
+Gamestate gameplay_screen(u8 difficulty){
 	register u8 player1x = 8, player1y = 60;
 	register u8 player2x = 248, player2y = 60;
 
@@ -213,6 +216,8 @@ Gamestate gameplay_screen(void){
 
    register u8 a1 = 0, da1 = 1, dir1 = FACE_R;
    register u8 a2 = 0, da2 = 1, dir2 = FACE_L;
+
+	break_timeout = difficulty;
 
 	PX.scroll_x = 0;
 	PX.scroll_y = 0;
