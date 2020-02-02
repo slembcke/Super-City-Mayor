@@ -5,10 +5,10 @@
 #include "main.h"
 
 static const u8 META_TILES[] = {
-	0x00, 0x00, 0x00, 0x00, 0,
-	0xE4, 0xE5, 0xF4, 0xF5, 2,
-	0xE4, 0xE5, 0xF4, 0xF5, 1,
-	0xE4, 0xE5, 0xF4, 0xF5, 2,
+	0x00, 0x00, 0x00, 0x00, 0, //road
+	0xE4, 0xE5, 0xF4, 0xF5, 2, //damaged
+	0xE4, 0xE5, 0xF4, 0xF5, 1, //fixed
+	0xE4, 0xE5, 0xF4, 0xF5, 3, //resource
 	0xE4, 0xE5, 0xF4, 0xF5, 2,
 	0xE4, 0xE5, 0xF4, 0xF5, 2,
 	0xE4, 0xE5, 0xF4, 0xF5, 2,
@@ -22,9 +22,13 @@ static const u8 META_TILES[] = {
 #define NON_WALKABLE_BIT 0x80
 #define ACTION_ALLOWED_BIT 0x40 //ie set when building damaged & player can fix
 
+#define NOITEM 0  //player doesn't have item
+
 #define _ 0	//street
 #define BUILDING (1 | NON_WALKABLE_BIT)	//fixed building
 #define B BUILDING
+#define RESOURCE (3 | ACTION_ALLOWED_BIT | NON_WALKABLE_BIT)  //resource
+#define S RESOURCE
 #define DESTROYED (2 | ACTION_ALLOWED_BIT | NON_WALKABLE_BIT)  //damaged building
 #define D DESTROYED
 #define W NON_WALKABLE_BIT	
@@ -33,7 +37,7 @@ static const u8 MAP[16*15] = {
 	_, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _,
 	W, W, W, W, W, W, W, W, W, W, W, W, W, W, W, W, 
 	W, _, _, _, _, _, _, _, _, _, _, _, _, _, _, W,
-	_, _, B, _, B, _, B, B, _, B, B, B, _, B, _, _,
+	_, _, S, _, B, _, B, B, _, B, B, B, _, S, _, _,
 	W, _, D, _, _, _, _, _, _, _, _, _, _, _, _, W,
 	W, _, B, _, B, B, B, _, B, B, _, B, _, B, _, W,
 	_, _, _, _, B, _, _, _, B, B, _, _, _, B, _, _,
@@ -42,7 +46,7 @@ static const u8 MAP[16*15] = {
 	_, _, _, _, B, _, _, _, B, B, _, B, _, _, _, _,
 	W, _, D, _, B, B, B, _, _, B, _, B, _, B, _, W,
 	W, _, B, _, _, _, _, _, _, _, _, B, _, _, _, W,
-	_, _, B, _, B, _, B, B, _, B, _, B, _, B, _, _,
+	_, _, S, _, B, _, B, B, _, B, _, B, _, S, _, _,
 	W, _, _, _, _, _, _, _, _, _, _, _, _, _, _, W,
 	W, W, W, W, W, W, W, W, W, W, W, W, W, W, W, W, 
 };
@@ -163,8 +167,8 @@ u8 collision_check(u8 x, u8 y) {
 	return CITY_BLOCKS[iz];// & NON_WALKABLE_BIT;
 }
 
-#define FACE_U	2
-#define FACE_D	3
+#define FACE_U	3
+#define FACE_D	2
 #define FACE_L	1
 #define FACE_R	0
 
@@ -174,9 +178,9 @@ Gamestate gameplay_screen(void){
 
 	register u8 x, y;
 
-   register u8 a1 = 0, dir1 = 1 , b1 = 0;
+   register u8 a1 = 0, dir1 = FACE_R, b1 = 0;
    register u8 f = 0;  //don't think this is used.?
-   register u8 a2 = 0, dir2 = 1, b2 = 0;
+   register u8 a2 = 0, dir2 = FACE_L, b2 = 0;
 
 	PX.scroll_x = 0;
 	PX.scroll_y = 0;
@@ -233,21 +237,28 @@ Gamestate gameplay_screen(void){
 			else if (dir1 == FACE_U)
 				y--;
 
-			//is the building damaged?
+			//is the building actionable?
 			idx = MAP_BLOCK_AT_GRID(x,y); //idx = 16*y + x;
-			if (CITY_BLOCKS[idx] & ACTION_ALLOWED_BIT) {
-				//update the building
-				CITY_BLOCKS[idx] = BUILDING;
-				load_metatile(x, y, 1);
-            Score++;
-            if (dir1 == FACE_L)
-               player1x += 2;
-            else if (dir1 == FACE_R)
-               player1x -= 2;
-            else if (dir1 == FACE_D)
-               player1y -= 2;
-            else if (dir1 == FACE_U)
-               player1y += 2;
+			tmp = CITY_BLOCKS[idx];
+			if (tmp & ACTION_ALLOWED_BIT) {
+
+				//resource or damaged?
+				if (tmp == RESOURCE ) {
+					//remove resource by making building red for now
+					load_metatile(x, y, 1); 
+					//player has item
+					player1item = RESOURCE;
+
+				} else {
+
+					if (player1item == RESOURCE) {
+						//update the building
+						CITY_BLOCKS[idx] = BUILDING;
+						load_metatile(x, y, 1);
+						Score++;
+						player1item = NOITEM;
+					}
+				}
 			}
 
 		}	
@@ -268,7 +279,7 @@ Gamestate gameplay_screen(void){
 		if(JOY_LEFT (pad1.value))
       {
          if ( x&8 ) a1++;
-         dir1 = 1;
+         dir1 = FACE_L;
          a1 = (x>>3)&1;    
          x -= 1;
          if ( x < 5 ) b1++;
@@ -276,7 +287,7 @@ Gamestate gameplay_screen(void){
 		else if(JOY_RIGHT (pad1.value))
       {
          if ( x&8 ) a1++;
-         dir1 = 0;
+         dir1 = FACE_R;
          a1 = (x>>3)&1;    
          x += 1;
          if ( x > 250 ) b1++;
@@ -284,7 +295,7 @@ Gamestate gameplay_screen(void){
 		else if(JOY_UP   (pad1.value))
       {
          if ( y&8 ) a1++;
-         dir1 = 2;
+         dir1 = FACE_U;
          a1 = (y>>3)&1;    
          y -= 1;
          if ( y < 5 ) b1++;
@@ -292,7 +303,7 @@ Gamestate gameplay_screen(void){
 		else if(JOY_DOWN (pad1.value))
       {
          if ( y&8 ) a1++;
-         dir1 = 3;
+         dir1 = FACE_D;
          a1 = (y>>3)&1;    
          y += 1;
          if ( y > 235 ) b1++;
@@ -301,20 +312,19 @@ Gamestate gameplay_screen(void){
 
 		idx = collision_check(x, y);
 
-		
-		// Draw a sprite.
-		if(idx & NON_WALKABLE_BIT) {
-			//blocked
-			//meta_spr(player1x, player1y, 1, META);
-      	meta_spr(player1x, player1y, 0, metasprite_list[(0*16)+(dir1*4)+a1]);
-		}
-		else {
+		if(!(idx & NON_WALKABLE_BIT)) {
 			//allowed update player location to requested
 			player1x = x;
 			player1y = y;
-			//meta_spr(player1x, player1y, 2, META);
-      	meta_spr(player1x, player1y, 0, metasprite_list[(0*16)+(dir1*4)+a1]);
 		}
+
+		//Draw a sprite.
+		if( player1item == RESOURCE ) {
+      	meta_spr(player1x, player1y, 3, metasprite_list[(0*16)+(dir1*4)+a1]);
+		} else {
+			meta_spr(player1x, player1y, 0, metasprite_list[(0*16)+(dir1*4)+a1]);
+		}
+		
 
       if ( NumPlayers == 2 )
       {
@@ -334,20 +344,28 @@ Gamestate gameplay_screen(void){
 			else if (dir2 == FACE_U)
 				y--;
 
-			//is the building damaged?
+			//is the building actionable?
 			idx = MAP_BLOCK_AT_GRID(x,y); //idx = 16*y + x;
-			if (CITY_BLOCKS[idx] & ACTION_ALLOWED_BIT) {
-				//update the building
-				load_metatile(x, y, 1);
-            Score++;
-            if (dir1 == FACE_L)
-               player2x += 2;
-            else if (dir1 == FACE_R)
-               player2x -= 2;
-            else if (dir1 == FACE_D)
-               player2y -= 2;
-            else if (dir1 == FACE_U)
-               player2y += 2;
+			tmp = CITY_BLOCKS[idx];
+			if (tmp & ACTION_ALLOWED_BIT) {
+
+				//resource or damaged?
+				if (tmp == RESOURCE ) {
+
+					//remove resource by making building red for now
+					load_metatile(x, y, 1); 
+					//player has item
+					player2item = RESOURCE;
+
+				} else {
+					if (player2item == RESOURCE) {
+						//update the building
+						CITY_BLOCKS[idx] = BUILDING;
+						load_metatile(x, y, 1);
+						Score++;
+						player2item = NOITEM;
+					}
+				}
 			}
 		}	
 
@@ -358,7 +376,7 @@ Gamestate gameplay_screen(void){
          if(JOY_LEFT (pad2.value))
          {
             if ( x&8 ) a2++;
-            dir2 = 1;
+            dir2 = FACE_L;
             a2 = (x>>3)&1;    
             x -= 1;
             if ( x < 5 ) b2++;
@@ -366,7 +384,7 @@ Gamestate gameplay_screen(void){
          else if(JOY_RIGHT (pad2.value))
          {
             if ( x&8 ) a2++;
-            dir2 = 0;
+            dir2 = FACE_R;
             a2 = (x>>3)&1;    
             x += 1;
             if ( x > 250 ) b2++;
@@ -374,7 +392,7 @@ Gamestate gameplay_screen(void){
          else if(JOY_UP   (pad2.value))
          {
             if ( y&8 ) a2++;
-            dir2 = 2;
+            dir2 = FACE_U;
             a2 = (y>>3)&1;    
             y -= 1;
             if ( y < 5 ) b2++;
@@ -382,7 +400,7 @@ Gamestate gameplay_screen(void){
          else if(JOY_DOWN (pad2.value))
          {
             if ( y&8 ) a2++;
-            dir2 = 3;
+            dir2 = FACE_D;
             a2 = (y>>3)&1;    
             y += 1;
             if ( y > 235 ) b2++;
@@ -392,17 +410,17 @@ Gamestate gameplay_screen(void){
          idx = collision_check(x, y);
 
          
-         // Draw a sprite.
-         if(idx & NON_WALKABLE_BIT) {
-            //blocked
+		if(!(idx & NON_WALKABLE_BIT)) {
+			//allowed update player location to requested
+			player2x = x;
+			player2y = y;
+		}
+		//Draw a sprite.
+		if( player2item == RESOURCE ) {
+            meta_spr(player2x, player2y, 3, metasprite_list[(1*16)+(dir2*4)+a2]);
+		} else {
             meta_spr(player2x, player2y, 0, metasprite_list[(1*16)+(dir2*4)+a2]);
-         }
-         else {
-            //allowed update player location to requested
-            player2x = x;
-            player2y = y;
-            meta_spr(player2x, player2y, 0, metasprite_list[(1*16)+(dir2*4)+a2]);
-         }
+		}
       }
 		
 		
