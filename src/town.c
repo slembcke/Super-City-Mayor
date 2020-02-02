@@ -210,6 +210,17 @@ u8 collision_check(u8 x, u8 y) {
 #define FACE_L	1
 #define FACE_R	0
 
+u8 count_broken(void){
+	iz = 0;
+	
+	for(idx = 0; idx < 16*15; ++idx){
+		tmp = CITY_BLOCKS[idx];
+		if(tmp & DESTROYED_BIT) iz++;
+	}
+	
+	return iz;
+}
+
 Gamestate gameplay_screen(u8 difficulty){
 	register u8 player1x = 8, player1y = 60;
 	register u8 player2x = 248, player2y = 60;
@@ -480,7 +491,7 @@ Gamestate gameplay_screen(u8 difficulty){
 		}
       }
 		
-		if(count_rate == 0){
+		if(count_broken() == 0){
 			// This means there are no buildings left causing countdowns.
 			// You win!
 			return win_screen();
