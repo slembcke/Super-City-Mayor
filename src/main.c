@@ -149,7 +149,7 @@ Gamestate splash_screen(void){
 		px_wait_nmi();
 	}
 
-   return gameplay_screen(240);
+   return gameplay_screen(240, 1);
 }
 
 static void blit_string(u16 addr, const char* str){
@@ -195,7 +195,7 @@ Gamestate lose_screen(void){
   return splash_screen();
 }
 
-Gamestate win_screen(void){
+Gamestate win_screen(u8 difficulty, u8 level){
 	music_stop();
 	
 	px_ppu_sync_disable();{
@@ -225,7 +225,7 @@ Gamestate win_screen(void){
 	}
 	
 	sound_play(SOUND_MATCH);
-  return gameplay_screen(240);
+  return gameplay_screen(difficulty - difficulty/4, level + 1);
 }
 
 void main(void){

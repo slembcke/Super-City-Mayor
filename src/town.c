@@ -226,7 +226,7 @@ u8 count_broken(void){
 	return iz;
 }
 
-Gamestate gameplay_screen(u8 difficulty){
+Gamestate gameplay_screen(u8 difficulty, u8 level){
 	register u8 player1x = 8, player1y = 60;
 	register u8 player2x = 248, player2y = 60;
 
@@ -235,7 +235,7 @@ Gamestate gameplay_screen(u8 difficulty){
    register u8 a1 = 0, da1 = 1, dir1 = FACE_R;
    register u8 a2 = 0, da2 = 1, dir2 = FACE_L;
 	
-	u8 broken_count = 10;
+	u8 broken_count = 2*level;
 	break_timeout = difficulty;
 
 	PX.scroll_x = 0;
@@ -543,7 +543,7 @@ Gamestate gameplay_screen(u8 difficulty){
 		if(count_broken() == 0){
 			// This means there are no buildings left causing countdowns.
 			// You win!
-			return win_screen();
+			return win_screen(difficulty, level);
 		} else if(countdown < count_rate){
 			// Out of time, you lose!
 			return lose_screen();

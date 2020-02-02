@@ -69,9 +69,9 @@ void meta_spr(u8 x, u8 y, u8 pal, const u8* data);
 // Gamestates
 
 Gamestate splash_screen(void);
-Gamestate gameplay_screen(u8 difficulty);
+Gamestate gameplay_screen(u8 difficulty, u8 level);
 Gamestate lose_screen(void);
-Gamestate win_screen(void);
+Gamestate win_screen(u8 difficulty, u8 level);
 
 extern u8 GAMEPLAY_PALETTE[];
 extern u8 GAMEPLAY_CHR[];
