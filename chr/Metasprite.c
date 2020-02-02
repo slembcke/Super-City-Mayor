@@ -1,3 +1,6 @@
+#define OAM_FLIP_H 0x40
+#define OAM_FLIP_V 0x80
+
 const unsigned char metasprite_0_data[]={
 
 	  0,- 8,0xe1,0,

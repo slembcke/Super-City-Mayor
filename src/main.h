@@ -7,4 +7,6 @@ void fade_to_black(const u8* palette, u8 delay);
 extern u8 NumPlayers;
 extern u8 Score;
 
+unsigned char* const metasprite_list[];
+
 #endif // MAIN_H

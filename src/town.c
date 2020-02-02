@@ -141,85 +141,6 @@ static uintptr_t gameplay_coro_body(uintptr_t){
 	return 0;
 }
 
-/*
-static const u8 META[] = {
-	-8, -8, 0xD0, 0,
-	 0, -8, 0xD1, 0,
-	-8,  0, 0xD2, 0,
-	 0,  0, 0xD3, 0,
-	128,
-};
-*/
-static u8 META[][2][17] = 
-{
- {
-   {
-	-8, -8, 0xE0, 0,
-	 0, -8, 0xE1, 0,
-	-8,  0, 0xE2, 0,
-	 0,  0, 0xE3, 0,
-	128,
-   },
-   {
-	-8, -8, 0xE4, 0,
-	 0, -8, 0xE5, 0,
-	-8,  0, 0xE6, 0,
-	 0,  0, 0xE7, 0,
-	128,
-   }
- },
- {
-   {
-	0, -8, 0xE0, 0x40,
-	-8, -8, 0xE1, 0x40,
-	0,  0, 0xE2, 0x40,
-	-8,  0, 0xE3, 0x40,
-	128,
-   },
-   {
-	0, -8, 0xE4, 0x40,
-	-8, -8, 0xE5, 0x40,
-	0,  0, 0xE6, 0x40,
-	-8,  0, 0xE7, 0x40,
-	128,
-   }
- },
- {
-   {
-	-8, -8, 0xEC, 0,
-	0, -8, 0xED, 0,
-	-8,  0, 0xEE, 0,
-	0,  0, 0xEF, 0,
-	128,
-   },
-   {
-	-8, -8, 0xEC, 0,
-	0, -8, 0xED, 0,
-	-8,  0, 0xF2, 0,
-	0,  0, 0xF3, 0,
-	128,
-   }
- },
- {
-   {
-	-8, -8, 0xF0, 0,
-	0, -8, 0xF1, 0,
-	-8,  0, 0xEE, 0,
-	0,  0, 0xEF, 0,
-	128,
-   },
-   {
-	-8, -8, 0xF0, 0,
-	0, -8, 0xF1, 0,
-	-8,  0, 0xF2, 0,
-	0,  0, 0xF3, 0,
-	128,
-   }
- }
-};
-
-#define REPAIR_SCORE 100
-
 u8 Score = 0;
 
 void paint_score()
@@ -385,14 +306,14 @@ Gamestate gameplay_screen(void){
 		if(idx & NON_WALKABLE_BIT) {
 			//blocked
 			//meta_spr(player1x, player1y, 1, META);
-      			meta_spr(player1x, player1y, 1, META[dir1][a1]);
+      	meta_spr(player1x, player1y, 0, metasprite_list[(0*16)+(dir1*4)+a1]);
 		}
 		else {
 			//allowed update player location to requested
 			player1x = x;
 			player1y = y;
 			//meta_spr(player1x, player1y, 2, META);
-      			meta_spr(player1x, player1y, 2, META[dir1][a1]);
+      	meta_spr(player1x, player1y, 0, metasprite_list[(0*16)+(dir1*4)+a1]);
 		}
 
       if ( NumPlayers == 2 )
@@ -474,13 +395,13 @@ Gamestate gameplay_screen(void){
          // Draw a sprite.
          if(idx & NON_WALKABLE_BIT) {
             //blocked
-                  meta_spr(player2x, player2y, 1, META[dir2][a2]);
+            meta_spr(player2x, player2y, 0, metasprite_list[(1*16)+(dir2*4)+a2]);
          }
          else {
             //allowed update player location to requested
             player2x = x;
             player2y = y;
-                  meta_spr(player2x, player2y, 3, META[dir2][a2]);
+            meta_spr(player2x, player2y, 0, metasprite_list[(1*16)+(dir2*4)+a2]);
          }
       }
 		

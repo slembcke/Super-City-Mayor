@@ -100,6 +100,7 @@
    <source name="src/misc.s" uuid="{c3ba8471-9010-4b5a-b3fa-0ca6288ebe95}" path="src/misc.s"/>
    <source name="src/town.c" uuid="{b2b69161-76f3-43f9-93c7-f3f994975715}" path="src/town.c"/>
    <source name="src/main.h" uuid="{07609ca0-e6c6-4227-aefa-c9003917c815}" path="src/main.h"/>
+   <source name="chr/Metasprite.c" uuid="{ae4ae56d-3e08-43c7-923f-2f9bf675c0ce}" path="chr/Metasprite.c"/>
   </sources>
   <binaryfiles>
    <binaryfile xsize="256" name="chr/Tileset.chr" ysize="128" uuid="{ada92499-569a-4dad-bb6c-bce46bf6458d}" path="chr/Tileset.chr"/>
