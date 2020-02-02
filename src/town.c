@@ -483,7 +483,7 @@ Gamestate gameplay_screen(u8 difficulty){
 		if(count_rate == 0){
 			// This means there are no buildings left causing countdowns.
 			// You win!
-			return lose_screen();
+			return win_screen();
 		} else if(countdown < count_rate){
 			// Out of time, you lose!
 			return lose_screen();
