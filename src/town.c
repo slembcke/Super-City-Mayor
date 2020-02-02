@@ -177,7 +177,7 @@ static uintptr_t gameplay_coro_body(uintptr_t){
 	static u8 timeout;
 	timeout = break_timeout;
 	while(true){
-		if(--timeout == 0){
+		if((px_ticks & 1) && (--timeout == 0)){
 			break_building(true);
 			timeout = break_timeout;
 		}
@@ -236,7 +236,7 @@ Gamestate gameplay_screen(u8 difficulty, u8 level){
    register u8 a1 = 0, da1 = 1, dir1 = FACE_R;
    register u8 a2 = 0, da2 = 1, dir2 = FACE_L;
 	
-	u8 broken_count = 2*level;
+	u8 broken_count = 2 + level;
 	break_timeout = difficulty;
 
 	PX.scroll_x = 0;
