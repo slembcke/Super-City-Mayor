@@ -148,7 +148,7 @@ static void fix_building(u8 idx){
 	Score++;
 }
 
-#define BUILDING_BREAK_TIMEOUT 120
+#define BUILDING_BREAK_TIMEOUT 240
 
 static uintptr_t gameplay_coro_body(uintptr_t){
 	static u8 timeout = BUILDING_BREAK_TIMEOUT;
@@ -219,6 +219,10 @@ Gamestate gameplay_screen(void){
 		px_blit(1024, GAMEPLAY_TILEMAP);
 		px_addr(NT_ADDR(0, 0, 2));
       px_fill(32, 1);
+		px_addr(NT_ADDR(1, 0, 0));
+		px_blit(128, GAMEPLAY_TILEMAP);
+		px_addr(NT_ADDR(1, 0, 30));
+		px_blit(8, GAMEPLAY_TILEMAP+0x3c0);
       
 		for(iy = 0; iy < 15; ++iy){
 			for(ix = 0; ix < 16; ++ix){
@@ -245,7 +249,7 @@ Gamestate gameplay_screen(void){
 	while(true){
 		read_gamepads();
 		
-      px_spr(0,24,PX_SPR_BEHIND,145);
+      px_spr(0,23,PX_SPR_BEHIND,145);
       paint_score();
       
 //PLAYER 1 REPAIRS
@@ -469,7 +473,7 @@ Gamestate gameplay_screen(void){
 		px_spr_end();
 
       // adjust scroll position to slide timer
-      PX.scroll_x = 0xff-(countdown>>8);
+      PX.scroll_x = 0xff-((countdown>>8)&0xfe);
       PX.scroll_y = 0;
 		px_wait_nmi();
 
