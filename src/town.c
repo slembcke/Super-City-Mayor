@@ -132,12 +132,14 @@ static void break_building(void){
 	}
 }
 
+#define BUILDING_BREAK_TIMEOUT 120
+
 static uintptr_t gameplay_coro_body(uintptr_t){
-	static u8 timeout = 60;
+	static u8 timeout = BUILDING_BREAK_TIMEOUT;
 	while(true){
 		if(--timeout == 0){
 			break_building();
-			timeout = 60;
+			timeout = BUILDING_BREAK_TIMEOUT;
 		}
 		px_coro_yield(0);
 	}
