@@ -260,13 +260,25 @@ Gamestate gameplay_screen(void){
 
 			//change to cell player is facing
 			if (dir1 == FACE_L)
+         {
+            player1x += 2;
 				x--;
+         }
 			else if (dir1 == FACE_R)
+         {
+            player1x -= 2;
 				x++;
+         }
 			else if (dir1 == FACE_D)
+         {
+            player1y -= 2;
 				y++;
+         }
 			else if (dir1 == FACE_U)
+         {
+            player1y += 2;
 				y--;
+         }
 
 			//is the building damaged?
 			idx = MAP_BLOCK_AT_GRID(x,y); //idx = 16*y + x;
