@@ -292,7 +292,7 @@ Gamestate gameplay_screen(u8 difficulty, u8 level){
 	while(true){
 		read_gamepads();
 		
-      px_spr(0,23,PX_SPR_BEHIND,145);
+      px_spr(0,23,PX_SPR_BEHIND|2,145);
       paint_score();
       
 //PLAYER 1 REPAIRS
@@ -419,7 +419,7 @@ Gamestate gameplay_screen(u8 difficulty, u8 level){
 		// if( player1item == RESOURCE ) {
     //   	meta_spr(player1x, player1y, 3, metasprite_list[(0*16)+(dir1*4)+a1]);
 		// } else {
-			meta_spr(player1x, player1y, 0, metasprite_list[(0*16)+(dir1*4)+a1]);
+			meta_spr(player1x, player1y, 0, metasprite_list[(Player1*16)+(dir1*4)+a1]);
 		// }
 		
 
@@ -537,7 +537,7 @@ Gamestate gameplay_screen(u8 difficulty, u8 level){
 		// if( player2item == RESOURCE ) {
     //         meta_spr(player2x, player2y, 3, metasprite_list[(1*16)+(dir2*4)+a2]);
 		// } else {
-            meta_spr(player2x, player2y, 0, metasprite_list[(1*16)+(dir2*4)+a2]);
+            meta_spr(player2x, player2y, 0, metasprite_list[(Player2*16)+(dir2*4)+a2]);
 		// }
       }
 		

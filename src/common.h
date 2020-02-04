@@ -3,6 +3,9 @@
 
 #include "pixler.h"
 
+#define BG_COLOR 0x1D
+extern const u8 PALETTE[];
+
 // data.s declarations:
 extern u8 CHR0[];
 extern u8 MAP_SPLASH[];
@@ -69,6 +72,7 @@ void meta_spr(u8 x, u8 y, u8 pal, const u8* data);
 // Gamestates
 
 Gamestate splash_screen(void);
+Gamestate player_select_screen(void);
 Gamestate gameplay_screen(u8 difficulty, u8 level);
 Gamestate lose_screen(void);
 Gamestate win_screen(u8 difficulty, u8 level);

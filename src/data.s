@@ -21,7 +21,6 @@ _GAMEPLAY_PALETTE:
 	.incbin "chr/Tileset.pal", 0, 16
 	.incbin "chr/Sprites.pal", 0, 16
 
-
 .export _GAMEPLAY_TILEMAP
 _GAMEPLAY_TILEMAP:
 	.incbin "chr/Tileset.nam"
