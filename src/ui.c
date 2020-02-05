@@ -115,11 +115,6 @@ Gamestate player_select_screen(){
       if(JOY_LEFT(pad1.press) || JOY_RIGHT(pad1.press))
       {
          Player1 = !Player1;
-         PX.scroll_x += 256;
-      }
-		
-      if(JOY_LEFT(pad2.press) || JOY_RIGHT(pad2.press))
-      {
          Player2 = !Player2;
          PX.scroll_x += 256;
       }
