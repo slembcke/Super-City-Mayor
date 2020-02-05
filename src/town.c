@@ -365,10 +365,6 @@ Gamestate gameplay_screen(u8 difficulty, u8 level){
 
 		x = player1x;
 		y = player1y;
-		//if(JOY_LEFT (pad1.value)) x -= 1;
-		//if(JOY_RIGHT(pad1.value)) x += 1;
-		//if(JOY_DOWN (pad1.value)) y += 1;
-		//if(JOY_UP   (pad1.value)) y -= 1;
 
 		if(JOY_LEFT (pad1.value))
       {
@@ -384,7 +380,7 @@ Gamestate gameplay_screen(u8 difficulty, u8 level){
          a1 = (x>>2)&3;    
          x += 1;
       }
-		else if(JOY_UP   (pad1.value))
+		if(JOY_UP   (pad1.value))
       {
          dir1 = FACE_U;
          a1 += da1*((y>>2)&1);    
@@ -503,7 +499,7 @@ Gamestate gameplay_screen(u8 difficulty, u8 level){
          a2 = (x>>2)&3;    
          x += 1;
       }
-		else if(JOY_UP   (pad2.value))
+		if(JOY_UP   (pad2.value))
       {
          dir2 = FACE_U;
          a2 += da2*((y>>2)&1);    
