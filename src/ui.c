@@ -125,7 +125,7 @@ Gamestate player_select_screen(){
 	
 	sound_play(SOUND_MATCH);
 	
-	fade_to_black(PALETTE, 4);
+	fade_to_black(PLAYERSELECT_PALETTE, 4);
 
    return gameplay_screen(240, 1);
 }
@@ -139,7 +139,6 @@ Gamestate lose_screen(void){
 	px_ppu_sync_disable();{
       PX.scroll_x = 0;
       PX.scroll_y = 0;
-		px_buffer_blit(PAL_ADDR, PALETTE, sizeof(PALETTE));
 		
 		px_addr(NT_ADDR(0, 0, 0));
 		px_fill(1024, 0);
@@ -152,6 +151,8 @@ Gamestate lose_screen(void){
 		px_spr_clear();
 	} px_ppu_sync_enable();
 	
+   fade_from_black(PALETTE,4);
+
 	while(true){
 		read_gamepads();
 		if(JOY_START(pad1.press | pad2.press)) break;
@@ -168,6 +169,7 @@ Gamestate lose_screen(void){
 	sound_play(SOUND_MATCH);
 	
 	fade_to_black(PALETTE, 4);
+   
   return splash_screen();
 }
 
@@ -180,8 +182,7 @@ Gamestate ultimate_win_screen(void){
 	px_ppu_sync_disable();{
       PX.scroll_x = 0;
       PX.scroll_y = 0;
-		px_buffer_blit(PAL_ADDR, PALETTE, sizeof(PALETTE));
-		
+
 		px_addr(NT_ADDR(0, 0, 0));
 		px_fill(1024, 0);
 		
@@ -198,6 +199,8 @@ Gamestate ultimate_win_screen(void){
 		px_spr_clear();
 	} px_ppu_sync_enable();
 	
+   fade_from_black(PALETTE,4);
+
 	while(true){
 		read_gamepads();
 		if(JOY_START(pad1.press | pad2.press)) break;
@@ -212,6 +215,9 @@ Gamestate ultimate_win_screen(void){
 	}
 	
 	sound_play(SOUND_MATCH);
+   
+   fade_to_black(PALETTE,4);
+
   return splash_screen();
 }
 
@@ -223,7 +229,6 @@ Gamestate win_screen(u8 difficulty, u8 level){
 	px_ppu_sync_disable();{
       PX.scroll_x = 0;
       PX.scroll_y = 0;
-		px_buffer_blit(PAL_ADDR, PALETTE, sizeof(PALETTE));
 		
 		px_addr(NT_ADDR(0, 0, 0));
 		px_fill(1024, 0);
@@ -241,6 +246,8 @@ Gamestate win_screen(u8 difficulty, u8 level){
 		px_spr_clear();
 	} px_ppu_sync_enable();
 	
+   fade_from_black(PALETTE,4);
+
 	while(true){
 		read_gamepads();
 		if(JOY_START(pad1.press | pad2.press)) break;
@@ -255,5 +262,8 @@ Gamestate win_screen(u8 difficulty, u8 level){
 	}
 	
 	sound_play(SOUND_MATCH);
+      
+   fade_to_black(PALETTE,4);
+
   return gameplay_screen(difficulty - difficulty/4, level + 1);
 }

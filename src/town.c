@@ -247,12 +247,7 @@ Gamestate gameplay_screen(u8 difficulty, u8 level){
 	px_coro_init(gameplay_coro_body, gameplay_coro, sizeof(gameplay_coro));
 	memset(ATTRIB_TABLE, 0, sizeof(ATTRIB_TABLE));
 	memcpy(CITY_BLOCKS, MAP, sizeof(MAP));
-	
-	while(broken_count > 0){
-		break_building(false);
-		broken_count--;
-	}
-	
+		
 	countdown = ~0;
 	count_rate = 0;
 
@@ -288,6 +283,13 @@ Gamestate gameplay_screen(u8 difficulty, u8 level){
 	music_play(0);
 	
 	while(true){
+
+      if ( broken_count > 0 )
+      {
+         break_building(false);
+         broken_count--;
+      }
+      
 		read_gamepads();
 		
       px_spr(0,23,PX_SPR_BEHIND|2,145);
@@ -538,7 +540,7 @@ Gamestate gameplay_screen(u8 difficulty, u8 level){
             meta_spr(player2x, player2y, 0, metasprite_list[(Player2*16)+(dir2*4)+a2]);
 		// }
       }
-		
+      
 		if(count_broken() == 0){
 			// This means there are no buildings left causing countdowns.
 			// You win!
