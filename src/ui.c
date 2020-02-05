@@ -6,20 +6,20 @@
 #include "main.h"
 
 const u8 PALETTE[] = {
-	BG_COLOR, 0x00, 0x10, 0x20,
-	BG_COLOR, 0x06, 0x16, 0x26,
-	BG_COLOR, 0x09, 0x19, 0x29,
-	BG_COLOR, 0x01, 0x11, 0x21,
-	
-	BG_COLOR, 0x00, 0x10, 0x20,
-	BG_COLOR, 0x06, 0x16, 0x26,
-	BG_COLOR, 0x09, 0x19, 0x29,
-	BG_COLOR, 0x01, 0x11, 0x21,
+       BG_COLOR, 0x00, 0x10, 0x20,
+       BG_COLOR, 0x06, 0x16, 0x26,
+       BG_COLOR, 0x09, 0x19, 0x29,
+       BG_COLOR, 0x01, 0x11, 0x21,
+       
+       BG_COLOR, 0x00, 0x10, 0x20,
+       BG_COLOR, 0x06, 0x16, 0x26,
+       BG_COLOR, 0x09, 0x19, 0x29,
+       BG_COLOR, 0x01, 0x11, 0x21,
 };
 
 const u8* OFFICIALS[] = {
-   "MAYOR ",
-   "DEPUTY"
+   "Ernest",
+   "Bianca"
 };
 
 Gamepad pad1, pad2;
@@ -76,71 +76,28 @@ static void blit_string(u16 addr, const char* str){
 }
 
 Gamestate player_select_screen(){
-	u8 timeout = 60;
-	bool show_start = true;
-#define TLBR 134
-#define L 133
-#define TRBL 137
-#define B 140
-#define R 138
-#define T 131
-   const u8 tr[] = {TLBR,T,T,T,T,T,T,T,T,TRBL,0,0,TLBR,T,T,T,T,T,T,T,T,TRBL};
-   const u8 fr[] = {L,0,0,0,0,0,0,0,0,R,0,0,L,0,0,0,0,0,0,0,0,R};
-   const u8 mr[] = {L,0,0,0,0,0,0,0,0,R,0,0,L,0,0,0,0,0,0,0,0,R};
-   const u8 br[] = {TRBL,B,B,B,B,B,B,B,B,TLBR,0,0,TRBL,B,B,B,B,B,B,B,B,TLBR};
-#undef TLBR
-#undef L
-#undef TRBL
-#undef B
-#undef R
-#undef T
+
 	music_stop();
    
+   Player1 = MAYOR;
+   Player2 = DEPUTY;
+   
 	px_ppu_sync_disable();{
-		px_addr(NT_ADDR(0, 0, 0));
-		px_fill(1024, 0);
-		
-		px_addr(NT_ADDR(0, 8, 8));
-		px_str("SELECT OFFICIAL");
+      PX.scroll_x = 0;
+      PX.scroll_y = 0;
+      px_inc_h();
+      // Load the chr into ram.
+      px_lz4_to_vram(CHR_ADDR(0,0), SPRITES_CHR);
+      px_lz4_to_vram(CHR_ADDR(1,0), PLAYERSELECT_CHR);
       if ( NumPlayers == 2 )
       {
-         px_str("S");
+         px_lz4_to_vram(NT_ADDR(0, 0, 0), PLAYERSELECT_TILEMAP_21);
+         px_lz4_to_vram(NT_ADDR(1, 0, 0), PLAYERSELECT_TILEMAP_22);         
       }
-		
-		px_addr(NT_ADDR(0, 5, 12));
-		px_blit(22, tr);
-		px_addr(NT_ADDR(0, 5, 13));
-		px_blit(22, mr);
-		px_addr(NT_ADDR(0, 5, 14));
-		px_blit(22, mr);
-		px_addr(NT_ADDR(0, 5, 15));
-		px_blit(22, mr);
-		px_addr(NT_ADDR(0, 5, 16));
-		px_blit(22, mr);
-		px_addr(NT_ADDR(0, 5, 17));
-		px_blit(22, mr);
-		px_addr(NT_ADDR(0, 5, 18));
-		px_blit(22, mr);
-		px_addr(NT_ADDR(0, 5, 19));
-		px_blit(22, mr);
-		px_addr(NT_ADDR(0, 5, 20));
-		px_blit(22, mr);
-		px_addr(NT_ADDR(0, 5, 21));
-		px_blit(22, br);
-      px_addr(NT_ADDR(0, 6, 18));
-      px_fill(8, 13);
-      px_addr(NT_ADDR(0, 6, 19));
-      px_fill(8, 13);
-      px_addr(NT_ADDR(0, 6, 20));
-      px_fill(8, 13);
-      if ( NumPlayers == 2 )
+      else
       {
-         px_addr(NT_ADDR(0, 18, 18));
-         px_fill(8, 13);
-         px_addr(NT_ADDR(0, 18, 19));
-         px_fill(8, 13);
-         px_addr(NT_ADDR(0, 18, 20));
-         px_fill(8, 13);
+         px_lz4_to_vram(NT_ADDR(0, 0, 0), PLAYERSELECT_TILEMAP_11);
+         px_lz4_to_vram(NT_ADDR(1, 0, 0), PLAYERSELECT_TILEMAP_12);         
       }
 		
 		PX.scroll_x = 0;
@@ -148,42 +105,24 @@ Gamestate player_select_screen(){
 		px_spr_clear();
 	} px_ppu_sync_enable();
 	
-   fade_from_black(GAMEPLAY_PALETTE,4);
+   fade_from_black(PLAYERSELECT_PALETTE,4);
 	
 	while(true){
 		read_gamepads();
-      meta_spr(80, 136, 0, metasprite_list[(Player1*16)]);
-      px_spr(44, 132, 1, '<');
-      px_spr(108, 132, 1, '>');
-      if ( NumPlayers == 2 )
-      {
-         meta_spr(176, 136, 0, metasprite_list[(Player2*16)]);
-         px_spr(140, 132, 1, '<');
-         px_spr(204, 132, 1, '>');
-      }
-      blit_string(NT_ADDR(0,7,22), OFFICIALS[Player1]);
-      if ( NumPlayers == 2 )
-      {
-         blit_string(NT_ADDR(0,19,22), OFFICIALS[Player2]);
-      }         
       
 		if(JOY_START(pad1.press | pad2.press)) break;
 		
       if(JOY_LEFT(pad1.press) || JOY_RIGHT(pad1.press))
       {
          Player1 = !Player1;
+         PX.scroll_x += 256;
       }
 		
       if(JOY_LEFT(pad2.press) || JOY_RIGHT(pad2.press))
       {
          Player2 = !Player2;
+         PX.scroll_x += 256;
       }
-      
-		if(--timeout == 0){
-			show_start = !show_start;
-			timeout = 30;
-			blit_string(NT_ADDR(0, 10, 25), show_start ? "press start" : "           ");
-		}
       
 		px_spr_end();
 		px_wait_nmi();
@@ -203,6 +142,8 @@ Gamestate lose_screen(void){
 	music_stop();
 	
 	px_ppu_sync_disable();{
+      PX.scroll_x = 0;
+      PX.scroll_y = 0;
 		px_buffer_blit(PAL_ADDR, PALETTE, sizeof(PALETTE));
 		
 		px_addr(NT_ADDR(0, 0, 0));
@@ -242,6 +183,8 @@ Gamestate ultimate_win_screen(void){
 	music_stop();
 	
 	px_ppu_sync_disable();{
+      PX.scroll_x = 0;
+      PX.scroll_y = 0;
 		px_buffer_blit(PAL_ADDR, PALETTE, sizeof(PALETTE));
 		
 		px_addr(NT_ADDR(0, 0, 0));
@@ -283,6 +226,8 @@ Gamestate win_screen(u8 difficulty, u8 level){
 	music_stop();
 	
 	px_ppu_sync_disable();{
+      PX.scroll_x = 0;
+      PX.scroll_y = 0;
 		px_buffer_blit(PAL_ADDR, PALETTE, sizeof(PALETTE));
 		
 		px_addr(NT_ADDR(0, 0, 0));

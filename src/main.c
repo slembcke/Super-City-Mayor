@@ -10,33 +10,25 @@ u8 Player1 = MAYOR;
 u8 Player2 = DEPUTY;
 
 Gamestate splash_screen(void){
-   static u16 c = 300;
+   
+   const u8 selectors[2][2] = { {0x9F,0},{0,0x9F} };
    
    NumPlayers = 1;
    Score = 0;
    
-   ix = 0;
-	
 	px_ppu_sync_disable();{
-		// Clear nametable 0
-		px_addr(NT_ADDR(0, 0, 0));
-		px_fill(1024, 0);
-		
-		// Load the splash tilemap into nametable 1.
-		px_lz4_to_vram(NT_ADDR(1, 0, 0), MAP_SPLASH);
-      if ( c )
-      {
-         PX.scroll_x = ix;
-      }
-      else
-      {
-         PX.scroll_x = 256;
-      }
+      PX.scroll_x = 0;
+      PX.scroll_y = 0;
       px_inc_h();
+      // Load the title chr into ram.
+      px_lz4_to_vram(CHR_ADDR(0,0), SPRITES_CHR);
+      px_lz4_to_vram(CHR_ADDR(1,0), TITLE_CHR);
+      // Load the title tilemap into nametable 0.
+      px_lz4_to_vram(NT_ADDR(0, 0, 0), TITLE_TILEMAP);
 	} px_ppu_sync_enable();
 	
 	px_spr_end();
-	fade_from_black(PALETTE, 4);
+	fade_from_black(TITLE_PALETTE, 4);
 	
 	while(true){
 		// Randomize the seed based on player input.
@@ -44,28 +36,14 @@ Gamestate splash_screen(void){
 		
 		read_gamepads();
 
-      if ( c > 0 )
-      {
-         c -= 2;
-         if ( ix < 253 )
-         {
-            ix += 2;
-            PX.scroll_x = ix;
-         }
-      }
-		else
-      {
-         px_buffer_blit(NT_ADDR(1,8,7),"SUPER CITY MAYOR",16);
-         px_buffer_blit(NT_ADDR(1,12,22),"1 PLAYER",8);
-         px_buffer_blit(NT_ADDR(1,12,24),"2 PLAYER",8);
-         px_spr(80,  175+((NumPlayers-1)*16), 0, '>');
+      px_buffer_blit(NT_ADDR(0,9,19),&selectors[NumPlayers-1][0],1);
+      px_buffer_blit(NT_ADDR(0,9,21),&selectors[NumPlayers-1][1],1);
          if(JOY_START(pad1.press)) 
          {
             fade_to_black(PALETTE,4);
             sound_play(SOUND_JUMP);
             break;
          }
-      }
 
 		if(JOY_SELECT(pad1.press)) 
       {
@@ -109,7 +87,6 @@ void main(void){
 	px_wait_nmi();
 	
 	// Decompress the tileset into character memory.
-//	px_lz4_to_vram(CHR_ADDR(0, 0), CHR0);
    px_addr(CHR_ADDR(0,0));
    px_blit(0x2000, GAMEPLAY_CHR);
 	

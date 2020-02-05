@@ -78,6 +78,19 @@ Gamestate lose_screen(void);
 Gamestate win_screen(u8 difficulty, u8 level);
 Gamestate ultimate_win_screen(void);
 
+extern u8 SPRITES_CHR[];
+
+extern u8 TITLE_PALETTE[];
+extern u8 TITLE_CHR[];
+extern u8 TITLE_TILEMAP[];
+
+extern u8 PLAYERSELECT_PALETTE[];
+extern u8 PLAYERSELECT_CHR[];
+extern u8 PLAYERSELECT_TILEMAP_11[];
+extern u8 PLAYERSELECT_TILEMAP_12[];
+extern u8 PLAYERSELECT_TILEMAP_21[];
+extern u8 PLAYERSELECT_TILEMAP_22[];
+
 extern u8 GAMEPLAY_PALETTE[];
 extern u8 GAMEPLAY_CHR[];
 extern u8 GAMEPLAY_TILEMAP[];

@@ -1,7 +1,6 @@
 *.s
 *.o
 *.bin
-*.lz4
 *.nes
 *.dbg
 

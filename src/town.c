@@ -258,14 +258,12 @@ Gamestate gameplay_screen(u8 difficulty, u8 level){
 
 	px_ppu_sync_disable();{
 		
-		px_addr(NT_ADDR(0, 0, 0));
-		px_blit(1024, GAMEPLAY_TILEMAP);
+      px_lz4_to_vram(CHR_ADDR(0,0), SPRITES_CHR);
+      px_lz4_to_vram(CHR_ADDR(1,0), GAMEPLAY_CHR);
+      px_lz4_to_vram(NT_ADDR(0, 0, 0), GAMEPLAY_TILEMAP);
+      px_lz4_to_vram(NT_ADDR(1, 0, 0), GAMEPLAY_TILEMAP);
 		px_addr(NT_ADDR(0, 0, 2));
       px_fill(32, 1);
-		px_addr(NT_ADDR(1, 0, 0));
-		px_blit(128, GAMEPLAY_TILEMAP);
-		px_addr(NT_ADDR(1, 0, 30));
-		px_blit(8, GAMEPLAY_TILEMAP+0x3c0);
       
 		for(iy = 0; iy < 15; ++iy){
 			for(ix = 0; ix < 16; ++ix){
