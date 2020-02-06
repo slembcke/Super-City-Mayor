@@ -16,6 +16,7 @@ ASMINC = \
 
 SRC = \
 	src/main.c \
+	src/ui.c \
 	src/town.c \
 	chr/Metasprite.c \
 
