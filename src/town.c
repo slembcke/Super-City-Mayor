@@ -371,27 +371,57 @@ Gamestate gameplay_screen(u8 difficulty, u8 level){
          if ( x&8 ) a1++;
          dir1 = FACE_L;
          a1 = (x>>2)&3;    
-         x -= 1;
+         
+         idx = collision_check(x-1, y);
+
+         if(!(idx & NON_WALKABLE_BIT)) {
+            //allowed update player location to requested
+            player1x = x-1;
+            player1y = y;
+         }
       }
 		else if(JOY_RIGHT (pad1.value))
       {
          if ( x&8 ) a1++;
          dir1 = FACE_R;
          a1 = (x>>2)&3;    
-         x += 1;
+         
+         idx = collision_check(x+1, y);
+
+         if(!(idx & NON_WALKABLE_BIT)) {
+            //allowed update player location to requested
+            player1x = x+1;
+            player1y = y;
+         }
       }
+
 		if(JOY_UP   (pad1.value))
       {
          dir1 = FACE_U;
          a1 += da1*((y>>2)&1);    
-         y -= 1;
+         
+         idx = collision_check(x, y-1);
+
+         if(!(idx & NON_WALKABLE_BIT)) {
+            //allowed update player location to requested
+            player1x = x;
+            player1y = y-1;
+         }
       }
 		else if(JOY_DOWN (pad1.value))
       {
          dir1 = FACE_D;
          a1 += da1*((y>>2)&1);    
-         y += 1;
+         
+         idx = collision_check(x, y+1);
+
+         if(!(idx & NON_WALKABLE_BIT)) {
+            //allowed update player location to requested
+            player1x = x;
+            player1y = y+1;
+         }
       }
+      
 		if ( a1 == 4 ) 
       {
          a1 = 3;
@@ -402,14 +432,6 @@ Gamestate gameplay_screen(u8 difficulty, u8 level){
          a1 = 0;
          da1 = 1;
       }
-      
-		idx = collision_check(x, y);
-
-		if(!(idx & NON_WALKABLE_BIT)) {
-			//allowed update player location to requested
-			player1x = x;
-			player1y = y;
-		}
 
 		//Draw a sprite.
 		// if( player1item == RESOURCE ) {
@@ -490,26 +512,54 @@ Gamestate gameplay_screen(u8 difficulty, u8 level){
          if ( x&8 ) a2++;
          dir2 = FACE_L;
          a2 = (x>>2)&3;    
-         x -= 1;
+         
+         idx = collision_check(x-1, y);
+
+         if(!(idx & NON_WALKABLE_BIT)) {
+            //allowed update player location to requested
+            player2x = x-1;
+            player2y = y;
+         }
       }
 		else if(JOY_RIGHT (pad2.value))
       {
          if ( x&8 ) a2++;
          dir2 = FACE_R;
          a2 = (x>>2)&3;    
-         x += 1;
+         
+         idx = collision_check(x+1, y);
+
+         if(!(idx & NON_WALKABLE_BIT)) {
+            //allowed update player location to requested
+            player2x = x+1;
+            player2y = y;
+         }
       }
 		if(JOY_UP   (pad2.value))
       {
          dir2 = FACE_U;
          a2 += da2*((y>>2)&1);    
-         y -= 1;
+         
+         idx = collision_check(x, y-1);
+
+         if(!(idx & NON_WALKABLE_BIT)) {
+            //allowed update player location to requested
+            player2x = x;
+            player2y = y-1;
+         }
       }
 		else if(JOY_DOWN (pad2.value))
       {
          dir2 = FACE_D;
          a2 += da2*((y>>2)&1);    
-         y += 1;
+         
+         idx = collision_check(x, y+1);
+
+         if(!(idx & NON_WALKABLE_BIT)) {
+            //allowed update player location to requested
+            player2x = x;
+            player2y = y+1;
+         }
       }
 		if ( a2 == 4 ) 
       {
@@ -522,13 +572,6 @@ Gamestate gameplay_screen(u8 difficulty, u8 level){
          da2 = 1;
       }
 
-      idx = collision_check(x, y);
-   
-		if(!(idx & NON_WALKABLE_BIT)) {
-			//allowed update player location to requested
-			player2x = x;
-			player2y = y;
-		}
 		//Draw a sprite.
 		// if( player2item == RESOURCE ) {
     //         meta_spr(player2x, player2y, 3, metasprite_list[(1*16)+(dir2*4)+a2]);
@@ -563,7 +606,7 @@ Gamestate gameplay_screen(u8 difficulty, u8 level){
       
       PPU.scroll = 0;
       PPU.scroll = 0;
-      PPU.control = 0x90;      
+      PPU.control = 0x90;
 	}
    
    music_stop();
