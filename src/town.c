@@ -128,10 +128,17 @@ static void load_metatile(u8 x, u8 y, u8 tile){
 	PX.buffer[1] = (META_TILES + 3)[tile];
 }
 
-static u8 gameplay_coro[32];
+typedef struct {
+	u8 gameplay_coro[32];
 
-static u16 countdown = ~0;
-static u16 count_rate = 0;
+	u16 countdown;
+	u16 count_rate;
+	u8 break_timeout;
+	
+	u8 score;
+} Town;
+
+static Town TOWN;
 
 #define RATE_PER_BUILDING 3
 
@@ -144,7 +151,7 @@ static void break_building(bool should_yield){
 		tmp = CITY_BLOCKS[idx];
 		if(tmp & BUILDING_BITS){
 			sound_play(SOUND_DROP);
-			count_rate += RATE_PER_BUILDING;
+			TOWN.count_rate += RATE_PER_BUILDING;
 			
 			tmp |= (DESTROYED_BIT | ACTION_ALLOWED_BIT);
 			CITY_BLOCKS[idx] = tmp;
@@ -158,7 +165,7 @@ static void break_building(bool should_yield){
 
 static void fix_building(u8 idx){
 	sound_play(SOUND_MATCH);
-	count_rate -= RATE_PER_BUILDING;
+	TOWN.count_rate -= RATE_PER_BUILDING;
 	
 	tmp = CITY_BLOCKS[idx];
 	tmp &= ~(DESTROYED_BIT | ACTION_ALLOWED_BIT);
@@ -172,14 +179,14 @@ static void fix_building(u8 idx){
 
 //#define BUILDING_BREAK_TIMEOUT 240
 
-static uintptr_t gameplay_coro_body(uintptr_t){
+static uintptr_t gameplay_coro_body(uintptr_t _){
 	//static u8 timeout = BUILDING_BREAK_TIMEOUT;
 	static u8 timeout;
-	timeout = break_timeout;
+	timeout = TOWN.break_timeout;
 	while(true){
 		if((px_ticks & 1) && (--timeout == 0)){
 			break_building(true);
-			timeout = break_timeout;
+			timeout = TOWN.break_timeout;
 		}
 		px_coro_yield(0);
 	}
@@ -188,8 +195,6 @@ static uintptr_t gameplay_coro_body(uintptr_t){
 	
 	return 0;
 }
-
-u8 Score = 0;
 
 void paint_score()
 {
@@ -211,11 +216,6 @@ u8 collision_check(u8 x, u8 y) {
 	return CITY_BLOCKS[iz];// & NON_WALKABLE_BIT;
 }
 
-#define FACE_U	3
-#define FACE_D	2
-#define FACE_L	1
-#define FACE_R	0
-
 u8 count_broken(void){
 	iz = 0;
 	
@@ -227,6 +227,8 @@ u8 count_broken(void){
 	return iz;
 }
 
+enum FACE {FACE_R, FACE_L, FACE_D, FACE_U};
+
 Gamestate gameplay_screen(u8 difficulty, u8 level){
 	register u8 player1x = 8, player1y = 60;
 	register u8 player2x = 248, player2y = 60;
@@ -237,20 +239,20 @@ Gamestate gameplay_screen(u8 difficulty, u8 level){
    register u8 a2 = 0, da2 = 1, dir2 = FACE_L;
 	
 	u8 broken_count = 2 + level;
-	break_timeout = difficulty;
+	TOWN.break_timeout = difficulty;
 
 	PX.scroll_x = 0;
 	PX.scroll_y = 0;
 	px_spr_end();
 	px_wait_nmi();
 	
-	px_coro_init(gameplay_coro_body, gameplay_coro, sizeof(gameplay_coro));
+	memset(&TOWN, 0, sizeof(TOWN));
+	TOWN.countdown = ~0;
+	
+	px_coro_init(gameplay_coro_body, TOWN.gameplay_coro, sizeof(TOWN.gameplay_coro));
 	memset(ATTRIB_TABLE, 0, sizeof(ATTRIB_TABLE));
 	memcpy(CITY_BLOCKS, MAP, sizeof(MAP));
-		
-	countdown = ~0;
-	count_rate = 0;
-
+	
 	px_ppu_sync_disable();{
 		
       px_lz4_to_vram(CHR_ADDR(0,0), SPRITES_CHR);
@@ -266,7 +268,7 @@ Gamestate gameplay_screen(u8 difficulty, u8 level){
 				idx = 16*iy + ix;
 				tmp = CITY_BLOCKS[idx];
 				
-				if(tmp & DESTROYED_BIT) count_rate += RATE_PER_BUILDING;
+				if(tmp & DESTROYED_BIT) TOWN.count_rate += RATE_PER_BUILDING;
 				
 				tmp &= META_BITS;
 				if(tmp != 0) load_metatile(ix, iy, tmp);
@@ -584,19 +586,19 @@ Gamestate gameplay_screen(u8 difficulty, u8 level){
 			// This means there are no buildings left causing countdowns.
 			// You win!
 			return win_screen(difficulty, level);
-		} else if(countdown < count_rate){
+		} else if(TOWN.countdown < TOWN.count_rate){
 			// Out of time, you lose!
 			return lose_screen();
 		} else {
-			countdown -= count_rate;
+			TOWN.countdown -= TOWN.count_rate;
 		}
 		
-		px_coro_resume(gameplay_coro, 0);
+		px_coro_resume(TOWN.gameplay_coro, 0);
 
 		px_spr_end();
 
       // adjust scroll position to slide timer
-      PX.scroll_x = 0xff-((countdown>>8)&0xfe);
+      PX.scroll_x = 0xff-((TOWN.countdown>>8)&0xfe);
       PX.scroll_y = 0;
 		px_wait_nmi();
 
