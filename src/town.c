@@ -405,7 +405,7 @@ Gamestate bonus_screen(u8 difficulty, u8 level){
       PX.scroll_x = 0;
       PX.scroll_y = 0;
 
-      PPU.mask |= 0xE0;
+      PPU.mask |= 0x80;
       
 		px_spr_clear();
 	} px_ppu_sync_enable();
@@ -437,6 +437,8 @@ Gamestate bonus_screen(u8 difficulty, u8 level){
       PPU.control = 0x90;
 	}
 	
+   PPU.mask &= 0x7F;
+   
 	sound_play(SOUND_MATCH);
       
    fade_to_black(PALETTE,4);
