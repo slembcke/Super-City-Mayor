@@ -138,13 +138,6 @@ void paint_score()
    px_spr(144,  16, 1, '0');
 }
 
-u8 collision_check(u8 x, u8 y) {
-
-	//check requested move location
-	iz = LEVEL_TILE_AT_PIXEL(x,y);
-	return CITY_BLOCKS[iz];// & LEVEL_BITS_NON_WALKABLE;
-}
-
 u8 count_broken(void){
 	iz = 0;
 	
@@ -161,7 +154,7 @@ enum FACE {FACE_R, FACE_L, FACE_D, FACE_U};
 
 typedef struct {
 	Gamepad pad;
-	u8 x, y, dir;
+	u8 x, y, dir, character;
 } Player;
 
 // Player player1, player2;
@@ -186,21 +179,18 @@ static void player_update(Player* _player){
 
 		//is the building actionable?
 		idx = LEVEL_TILE_AT_GRID(ix,iy);
-		tmp = CITY_BLOCKS[idx];
-		if(tmp & LEVEL_BITS_ACTION_ALLOWED){
+		if(CITY_BLOCKS[idx] & LEVEL_BITS_ACTION_ALLOWED){
 			fix_building(idx);
 		} else {
 			if ( player.dir == FACE_R ) {
 				idx = LEVEL_TILE_AT_GRID(ix,iy-8);
-				tmp = CITY_BLOCKS[idx];
-				if (tmp & LEVEL_BITS_ACTION_ALLOWED) {
+				if (CITY_BLOCKS[idx] & LEVEL_BITS_ACTION_ALLOWED) {
 					fix_building(idx);
 				}
 			}
 			else if ( player.dir == FACE_L ) {
 				idx = LEVEL_TILE_AT_GRID(ix,iy-8);
-				tmp = CITY_BLOCKS[idx];
-				if (tmp & LEVEL_BITS_ACTION_ALLOWED) {
+				if (CITY_BLOCKS[idx] & LEVEL_BITS_ACTION_ALLOWED) {
 					fix_building(idx);
 				}
 			}
@@ -210,31 +200,31 @@ static void player_update(Player* _player){
 	if(JOY_LEFT (player.pad.value)) {
 		player.dir = FACE_L;
 
-		idx = collision_check(player.x - 1, player.y);
-		if(!(idx & LEVEL_BITS_NON_WALKABLE)) player.x--;
+		idx = LEVEL_TILE_AT_PIXEL(player.x - 1, player.y);
+		if(!(CITY_BLOCKS[idx] & LEVEL_BITS_NON_WALKABLE)) player.x--;
 	} else if(JOY_RIGHT (player.pad.value)){
 		player.dir = FACE_R;
 
-		idx = collision_check(player.x + 1, player.y);
-		if(!(idx & LEVEL_BITS_NON_WALKABLE)) player.x++;
+		idx = LEVEL_TILE_AT_PIXEL(player.x + 1, player.y);
+		if(!(CITY_BLOCKS[idx] & LEVEL_BITS_NON_WALKABLE)) player.x++;
 	}
 
 	if(JOY_UP(player.pad.value)) {
 		player.dir = FACE_U;
 
-		idx = collision_check(player.x, player.y - 1);
-		if(!(idx & LEVEL_BITS_NON_WALKABLE)) player.y--;
+		idx = LEVEL_TILE_AT_PIXEL(player.x, player.y - 1);
+		if(!(CITY_BLOCKS[idx] & LEVEL_BITS_NON_WALKABLE)) player.y--;
 	} else if(JOY_DOWN (player.pad.value)){
 		player.dir = FACE_D;
 
-		idx = collision_check(player.x, player.y + 1);
-		if(!(idx & LEVEL_BITS_NON_WALKABLE)) player.y++;
+		idx = LEVEL_TILE_AT_PIXEL(player.x, player.y + 1);
+		if(!(CITY_BLOCKS[idx] & LEVEL_BITS_NON_WALKABLE)) player.y++;
 	}
 	
 	
 	// Calculate sprite frame index.
 	idx = (player.x/4 + player.y/4) & 3;
-	idx += 16*Player1 + 4*player.dir;
+	idx += 16*player.character + 4*player.dir;
 	meta_spr(player.x, player.y, 0, metasprite_list[idx]);
 
 	(*_player) = player;
@@ -242,17 +232,12 @@ static void player_update(Player* _player){
 
 Gamestate gameplay_screen(u8 difficulty, u8 level){
 	static Player player1, player2;
-
-	register u8 x, y;
-
-	// static u8 a1 = 0, da1 = 1, dir1 = FACE_R;
-   register u8 a2 = 0, da2 = 1, dir2 = FACE_L;
 	
 	u8 broken_count = 2 + level;
 	TOWN.break_timeout = difficulty;
-
-	player1.x =   8; player1.y = 60;
-	player2.x = 248; player2.y = 60;
+	
+	player1.x =   8; player1.y = 60; player1.dir = FACE_R; player1.character = Player1;
+	player2.x = 248; player2.y = 60; player2.dir = FACE_L; player2.character = Player2;
 	
 	PX.scroll_x = 0;
 	PX.scroll_y = 0;
@@ -314,144 +299,10 @@ Gamestate gameplay_screen(u8 difficulty, u8 level){
 		player_update(&player1);
 		px_profile_end();
 
-      if ( NumPlayers == 2 )
-      {
-//PLAYER 2 REPAIRS
-		if(JOY_BTN_A (pad2.press)) {
-			//map player position to city grid
-			x = player2.x>>4;
-			y = player2.y>>4;
-
-			//change to cell player is facing
-			if (dir2 == FACE_L)
-				x--;
-			else if (dir2 == FACE_R)
-				x++;
-			else if (dir2 == FACE_D)
-				y++;
-			else if (dir2 == FACE_U)
-				y--;
-
-			//is the building actionable?
-			idx = LEVEL_TILE_AT_GRID(x,y); //idx = 16*y + x;
-			tmp = CITY_BLOCKS[idx];
-			if (tmp & LEVEL_BITS_ACTION_ALLOWED) {
-
-				//resource or damaged?
-				//if (tmp == RESOURCE_HUB) {
-				//	player2item = RESOURCE;
-
-				//} else if (tmp == RESOURCE ) {
-				//	//remove resource by making building red for now
-				//	CITY_BLOCKS[idx] = BUILDING;
-				//	load_metatile(x, y, 1); 
-				//	//player has item
-				//	player2item = RESOURCE;
-
-				//} else {
-				//	if (player2item == RESOURCE) {
-						fix_building(idx);
-				//		player2item = NOITEM;
-				//	}
-				//}
-			}
-         else
-         {
-            if ( dir2 == FACE_R )
-            {
-               idx = LEVEL_TILE_AT_GRID(x,y-8); //idx = 16*y + x;
-               tmp = CITY_BLOCKS[idx];
-               if (tmp & LEVEL_BITS_ACTION_ALLOWED) {
-						fix_building(idx);
-               }
-            }
-            else if ( dir2 == FACE_L )
-            {
-               idx = LEVEL_TILE_AT_GRID(x,y-8); //idx = 16*y + x;
-               tmp = CITY_BLOCKS[idx];
-               if (tmp & LEVEL_BITS_ACTION_ALLOWED) {
-						fix_building(idx);
-               }
-            }
-         }
-		}	
-
-//PLAYER 2 MOVEMENT
-         x = player2.x;
-         y = player2.y;
-
-		if(JOY_LEFT (pad2.value))
-      {
-         if ( x&8 ) a2++;
-         dir2 = FACE_L;
-         a2 = (x>>2)&3;    
-         
-         idx = collision_check(x-1, y);
-
-         if(!(idx & LEVEL_BITS_NON_WALKABLE)) {
-            //allowed update player location to requested
-            player2.x = x-1;
-            player2.y = y;
-         }
-      }
-		else if(JOY_RIGHT (pad2.value))
-      {
-         if ( x&8 ) a2++;
-         dir2 = FACE_R;
-         a2 = (x>>2)&3;    
-         
-         idx = collision_check(x+1, y);
-
-         if(!(idx & LEVEL_BITS_NON_WALKABLE)) {
-            //allowed update player location to requested
-            player2.x = x+1;
-            player2.y = y;
-         }
-      }
-		if(JOY_UP   (pad2.value))
-      {
-         dir2 = FACE_U;
-         a2 += da2*((y>>2)&1);    
-         
-         idx = collision_check(x, y-1);
-
-         if(!(idx & LEVEL_BITS_NON_WALKABLE)) {
-            //allowed update player location to requested
-            player2.x = x;
-            player2.y = y-1;
-         }
-      }
-		else if(JOY_DOWN (pad2.value))
-      {
-         dir2 = FACE_D;
-         a2 += da2*((y>>2)&1);    
-         
-         idx = collision_check(x, y+1);
-
-         if(!(idx & LEVEL_BITS_NON_WALKABLE)) {
-            //allowed update player location to requested
-            player2.x = x;
-            player2.y = y+1;
-         }
-      }
-		if ( a2 == 4 ) 
-      {
-         a2 = 3;
-         da2 = -1;
-      }
-      if ( a2 == 0xff ) 
-      {
-         a2 = 0;
-         da2 = 1;
-      }
-
-		//Draw a sprite.
-		// if( player2item == RESOURCE ) {
-    //         meta_spr(player2x, player2y, 3, metasprite_list[(1*16)+(dir2*4)+a2]);
-		// } else {
-            meta_spr(player2.x, player2.y, 0, metasprite_list[(Player2*16)+(dir2*4)+a2]);
-		// }
-      }
+		if ( NumPlayers == 2 ){
+			player2.pad = pad2;
+			player_update(&player2);
+		}
       
 		if(count_broken() == 0){
 			// This means there are no buildings left causing countdowns.
