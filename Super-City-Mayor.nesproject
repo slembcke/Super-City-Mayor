@@ -1,0 +1,114 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<nesicideproject version="0.3" target="nes" title="GGJ20">
+ <properties linkeroutputbasepath="obj/nes" debuginfoname="ggj20.dbg" linkeradditionaloptions="" customrulesfile="" headerfilename="project_data.h" sourcesearchpaths="/Users/christopherpow/Projects/NES/nesicide/deps/cc65/libsrc/nes;/Users/christopherpow/Projects/NES/nesicide/deps/cc65/libsrc;../../../../../../Program Files (x86)/cc65-snapshot/libsrc/runtime;../../../../../../Program Files (x86)/cc65-snapshot/libsrc/common;ext/pixler/lib" sourcefilename="project_data.s" assemblerdefinedsymbols="" compilerincludepaths=" -I ext/famitone2 -I ext/pixler/lib" assemblerincludepaths=" -I ext/pixler/lib" chrrom="1" linkeroutputname="ggj20.prg" chrromoutputbasepath="." assembleradditionaloptions="" outputname="ggj20" compilerdefinedsymbols="" linkerconfigfile="ld65.cfg" outputbasepath="obj/nes" linkeradditionaldependencies="ext/pixler/lib/px.lib" chrromoutputname="ggj20.chr" cartridgeoutputname="ggj20.nes" compileradditionaloptions="-Oi" cartridgesavestatename="ggj20.sav">
+  <tileproperties/>
+  <palette>
+   <entry g="102" b="102" index="0" r="102"/>
+   <entry g="42" b="136" index="1" r="0"/>
+   <entry g="18" b="167" index="2" r="20"/>
+   <entry g="0" b="164" index="3" r="59"/>
+   <entry g="0" b="126" index="4" r="92"/>
+   <entry g="0" b="64" index="5" r="110"/>
+   <entry g="6" b="0" index="6" r="108"/>
+   <entry g="29" b="0" index="7" r="86"/>
+   <entry g="53" b="0" index="8" r="51"/>
+   <entry g="72" b="0" index="9" r="11"/>
+   <entry g="82" b="0" index="10" r="0"/>
+   <entry g="79" b="8" index="11" r="0"/>
+   <entry g="64" b="77" index="12" r="0"/>
+   <entry g="0" b="0" index="13" r="0"/>
+   <entry g="0" b="0" index="14" r="0"/>
+   <entry g="0" b="0" index="15" r="0"/>
+   <entry g="173" b="173" index="16" r="173"/>
+   <entry g="95" b="217" index="17" r="21"/>
+   <entry g="64" b="255" index="18" r="66"/>
+   <entry g="39" b="254" index="19" r="117"/>
+   <entry g="26" b="204" index="20" r="160"/>
+   <entry g="30" b="123" index="21" r="183"/>
+   <entry g="49" b="32" index="22" r="181"/>
+   <entry g="78" b="0" index="23" r="153"/>
+   <entry g="109" b="0" index="24" r="107"/>
+   <entry g="135" b="0" index="25" r="56"/>
+   <entry g="147" b="0" index="26" r="12"/>
+   <entry g="143" b="50" index="27" r="0"/>
+   <entry g="124" b="141" index="28" r="0"/>
+   <entry g="0" b="0" index="29" r="0"/>
+   <entry g="0" b="0" index="30" r="0"/>
+   <entry g="0" b="0" index="31" r="0"/>
+   <entry g="254" b="255" index="32" r="255"/>
+   <entry g="176" b="255" index="33" r="100"/>
+   <entry g="144" b="255" index="34" r="146"/>
+   <entry g="118" b="255" index="35" r="198"/>
+   <entry g="106" b="255" index="36" r="243"/>
+   <entry g="110" b="204" index="37" r="254"/>
+   <entry g="129" b="112" index="38" r="254"/>
+   <entry g="158" b="34" index="39" r="234"/>
+   <entry g="190" b="0" index="40" r="188"/>
+   <entry g="216" b="0" index="41" r="136"/>
+   <entry g="228" b="48" index="42" r="92"/>
+   <entry g="224" b="130" index="43" r="69"/>
+   <entry g="205" b="222" index="44" r="72"/>
+   <entry g="79" b="79" index="45" r="79"/>
+   <entry g="0" b="0" index="46" r="0"/>
+   <entry g="0" b="0" index="47" r="0"/>
+   <entry g="254" b="255" index="48" r="255"/>
+   <entry g="223" b="255" index="49" r="192"/>
+   <entry g="210" b="255" index="50" r="211"/>
+   <entry g="200" b="255" index="51" r="232"/>
+   <entry g="194" b="255" index="52" r="251"/>
+   <entry g="196" b="234" index="53" r="254"/>
+   <entry g="204" b="197" index="54" r="254"/>
+   <entry g="216" b="165" index="55" r="247"/>
+   <entry g="229" b="148" index="56" r="228"/>
+   <entry g="239" b="150" index="57" r="207"/>
+   <entry g="244" b="171" index="58" r="189"/>
+   <entry g="243" b="204" index="59" r="179"/>
+   <entry g="235" b="242" index="60" r="181"/>
+   <entry g="184" b="184" index="61" r="184"/>
+   <entry g="0" b="0" index="62" r="0"/>
+   <entry g="0" b="0" index="63" r="0"/>
+  </palette>
+ </properties>
+ <inspectors>
+  <symbolinspector/>
+  <breakpoints/>
+  <markers>
+   <marker endaddr="0" startaddr="0" startabsaddr="0" index="0" state="0" endabsaddr="0"/>
+   <marker endaddr="0" startaddr="0" startabsaddr="0" index="1" state="0" endabsaddr="0"/>
+   <marker endaddr="0" startaddr="0" startabsaddr="0" index="2" state="0" endabsaddr="0"/>
+   <marker endaddr="0" startaddr="0" startabsaddr="0" index="3" state="0" endabsaddr="0"/>
+   <marker endaddr="0" startaddr="0" startabsaddr="0" index="4" state="0" endabsaddr="0"/>
+   <marker endaddr="0" startaddr="0" startabsaddr="0" index="5" state="0" endabsaddr="0"/>
+   <marker endaddr="0" startaddr="0" startabsaddr="0" index="6" state="0" endabsaddr="0"/>
+   <marker endaddr="0" startaddr="0" startabsaddr="0" index="7" state="0" endabsaddr="0"/>
+  </markers>
+ </inspectors>
+ <cartridge hasBatteryBackedRam="0" mapperNumber="2" mirrorMode="1" fourScreen="0"/>
+ <project>
+  <primitives>
+   <attributetables/>
+   <tiles/>
+  </primitives>
+  <sources>
+   <source path="audio/audio.s" name="audio/audio.s" uuid="{ac7afda4-d1f4-4abc-8bb0-9c1423a1f39b}"/>
+   <source path="ext/famitone2/famitone2.s" name="ext/famitone2/famitone2.s" uuid="{3048b856-4fb7-4028-bea5-c03864298bc6}"/>
+   <source path="src/common.h" name="src/common.h" uuid="{faf01e75-4c50-4d91-8e36-c59d6497a4c9}"/>
+   <source path="src/data.s" name="src/data.s" uuid="{7c9a3a95-fcb2-4070-97c1-89ab8cb21c82}"/>
+   <source path="src/main.c" name="src/main.c" uuid="{c27a81ad-d402-44c6-97c6-b408ee67cadc}"/>
+   <source path="src/misc.s" name="src/misc.s" uuid="{c3ba8471-9010-4b5a-b3fa-0ca6288ebe95}"/>
+   <source path="src/town.c" name="src/town.c" uuid="{b2b69161-76f3-43f9-93c7-f3f994975715}"/>
+   <source path="src/main.h" name="src/main.h" uuid="{07609ca0-e6c6-4227-aefa-c9003917c815}"/>
+   <source path="chr/Metasprite.c" name="chr/Metasprite.c" uuid="{ae4ae56d-3e08-43c7-923f-2f9bf675c0ce}"/>
+   <source path="src/ui.c" name="src/ui.c" uuid="{97046cc8-1fdf-4cc5-b3fc-34a1e5ea6a8d}"/>
+   <source path="src/levels.c" name="src/levels.c" uuid="{4c5d97b0-09da-473b-8e4d-1cb495b1b74d}"/>
+  </sources>
+  <binaryfiles>
+   <binaryfile path="chr/Tileset.chr" xsize="128" name="chr/Tileset.chr" uuid="{ada92499-569a-4dad-bb6c-bce46bf6458d}" ysize="128"/>
+   <binaryfile path="chr/Sprites.chr" xsize="128" name="chr/Sprites.chr" uuid="{0b815a16-89fc-4953-9ea0-456c5741ec9b}" ysize="128"/>
+  </binaryfiles>
+  <graphicsbanks/>
+  <sounds>
+   <musics/>
+  </sounds>
+ </project>
+</nesicideproject>
