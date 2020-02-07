@@ -294,10 +294,8 @@ Gamestate gameplay_screen(u8 difficulty, u8 level){
 		px_spr(0,23,PX_SPR_BEHIND|2,145);
 		paint_score();
     
-		px_profile_start();
 		player1.pad = pad1;
 		player_update(&player1);
-		px_profile_end();
 
 		if ( NumPlayers == 2 ){
 			player2.pad = pad2;
