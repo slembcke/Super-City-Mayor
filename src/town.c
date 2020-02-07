@@ -21,6 +21,23 @@ static const u8 META_TILES[] = {
 	0xEA, 0xEB, 0xFA, 0xFB, 1, // 7 damaged 3
 };
 
+static const u8 MASK_TILES[] = {
+   0x00, 0x00, 0, // 0 dummy for alignment
+   0x00, 0x00, 0, // 1 dummy for alignment
+	0xA0, 0xA1, 2, // 2 fixed 1
+	0xA2, 0xA3, 1, // 3 damaged 1
+	0xA4, 0xA5, 2, // 4 fixed 2
+	0xA6, 0xA7, 1, // 5 damaged 2
+	0xA8, 0xA9, 2, // 6 fixed 3
+	0xAA, 0xAB, 1, // 7 damaged 3
+	0xA0, 0xA1, 3, // 2 fixed 1
+	0xA2, 0xA3, 1, // 3 damaged 1
+	0xA4, 0xA5, 3, // 4 fixed 2
+	0xA6, 0xA7, 1, // 5 damaged 2
+	0xA8, 0xA9, 3, // 6 fixed 3
+	0xAA, 0xAB, 1, // 7 damaged 3
+};
+
 #define MAP_BLOCK_AT(x, y) ((y & 0xF0)| (x >> 4))	//pixel based
 #define MAP_BLOCK_AT_GRID(x, y) ((y << 4)| (x))	//grid based
 
@@ -126,6 +143,15 @@ static void load_metatile(u8 x, u8 y, u8 tile){
 	px_buffer_data(2, addr + 32);
 	PX.buffer[0] = (META_TILES + 2)[tile];
 	PX.buffer[1] = (META_TILES + 3)[tile];
+}
+
+static void load_mask(u8 x, u8 y, u8 tile){
+	
+	tile *= 3;
+		
+	// Load sprites.
+   px_spr(x<<4,y<<4,MASK_TILES[tile+2]|PX_SPR_BEHIND,MASK_TILES[tile]);
+   px_spr((x<<4)+8,y<<4,MASK_TILES[tile+2]|PX_SPR_BEHIND,MASK_TILES[tile+1]);
 }
 
 static u8 gameplay_coro[32];
@@ -290,11 +316,18 @@ Gamestate gameplay_screen(u8 difficulty, u8 level){
          broken_count--;
       }
       
-		read_gamepads();
-		
       px_spr(0,23,PX_SPR_BEHIND|2,145);
       paint_score();
       
+		read_gamepads();
+		
+//PLAYER 1 MASKING
+      idx = MAP_BLOCK_AT(player1x,player1y+8); 
+      tmp = CITY_BLOCKS[idx];
+      if (tmp & BUILDING_BITS) {
+         load_mask(idx&0xF,idx>>4,tmp&META_BITS);
+      }
+            
 //PLAYER 1 REPAIRS
 		if(JOY_BTN_A (pad1.press)) {
 			//map player position to city grid
@@ -443,6 +476,13 @@ Gamestate gameplay_screen(u8 difficulty, u8 level){
 
       if ( NumPlayers == 2 )
       {
+//PLAYER 2 MASKING
+      idx = MAP_BLOCK_AT(player2x,player2y+8); 
+      tmp = CITY_BLOCKS[idx];
+      if (tmp & BUILDING_BITS) {
+         load_mask(idx&0xF,idx>>4,tmp&META_BITS);
+      }
+            
 //PLAYER 2 REPAIRS
 		if(JOY_BTN_A (pad2.press)) {
 			//map player position to city grid
