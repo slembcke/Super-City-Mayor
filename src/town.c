@@ -4,100 +4,30 @@
 #include "common.h"
 #include "main.h"
 
-static const u8 META_TILES[] = {
-	0x00, 0x00, 0x00, 0x00, 0, // 0 road
-	0x00, 0x00, 0x00, 0x00, 0, // 1 road
-	0xE0, 0xE1, 0xF0, 0xF1, 2, // 2 fixed 1
-	0xE2, 0xE3, 0xF2, 0xF3, 1, // 3 damaged 1
-	0xE4, 0xE5, 0xF4, 0xF5, 2, // 4 fixed 2
-	0xE6, 0xE7, 0xF6, 0xF7, 1, // 5 damaged 2
-	0xE8, 0xE9, 0xF8, 0xF9, 2, // 6 fixed 3
-	0xEA, 0xEB, 0xFA, 0xFB, 1, // 7 damaged 3
-	0xE0, 0xE1, 0xF0, 0xF1, 3, // 2 fixed 1
-	0xE2, 0xE3, 0xF2, 0xF3, 1, // 3 damaged 1
-	0xE4, 0xE5, 0xF4, 0xF5, 3, // 4 fixed 2
-	0xE6, 0xE7, 0xF6, 0xF7, 1, // 5 damaged 2
-	0xE8, 0xE9, 0xF8, 0xF9, 3, // 6 fixed 3
-	0xEA, 0xEB, 0xFA, 0xFB, 1, // 7 damaged 3
-};
-
-#define MAP_BLOCK_AT(x, y) ((y & 0xF0)| (x >> 4))	//pixel based
-#define MAP_BLOCK_AT_GRID(x, y) ((y << 4)| (x))	//grid based
-
-#define META_BITS 0x1F
-#define DESTROYED_BIT 0x01
-#define NON_WALKABLE_BIT 0x80
-#define ACTION_ALLOWED_BIT 0x40 //ie set when building damaged & player can fix
-
-#define BUILDING_BITS (META_BITS & ~DESTROYED_BIT)
-
-#define NOITEM 0  //player doesn't have item
-
-#define _ 0	//street
-#define A (2 | NON_WALKABLE_BIT)	//fixed building
-#define a (3 | ACTION_ALLOWED_BIT | NON_WALKABLE_BIT)  //damaged building
-#define B (4 | NON_WALKABLE_BIT)	//fixed building
-#define b (5 | ACTION_ALLOWED_BIT | NON_WALKABLE_BIT)  //damaged building
-#define C (6 | NON_WALKABLE_BIT)	//fixed building
-#define c (7 | ACTION_ALLOWED_BIT | NON_WALKABLE_BIT)  //damaged building
-#define D (8 | NON_WALKABLE_BIT)	//fixed building
-#define d (9 | ACTION_ALLOWED_BIT | NON_WALKABLE_BIT)  //damaged building
-#define E (10 | NON_WALKABLE_BIT)	//fixed building
-#define e (11 | ACTION_ALLOWED_BIT | NON_WALKABLE_BIT)  //damaged building
-#define F (12 | NON_WALKABLE_BIT)	//fixed building
-#define f (13 | ACTION_ALLOWED_BIT | NON_WALKABLE_BIT)  //damaged building
-
-
-#define W NON_WALKABLE_BIT	
-
-static const u8 MAP[16*15] = {
-	_, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _,
-	W, W, W, W, W, W, W, W, W, W, W, W, W, W, W, W, 
-	W, _, _, _, _, _, _, _, _, _, _, _, _, _, _, W,
-	_, _, A, _, B, _, E, B, _, D, B, C, _, B, _, _,
-	W, _, A, _, _, _, _, _, _, _, _, _, _, _, _, W,
-	W, _, E, _, F, C, B, _, A, E, _, D, _, B, _, W,
-	_, _, _, _, B, _, _, _, F, C, _, _, _, A, _, _,
-	W, _, D, _, _, _, A, _, _, _, _, B, _, E, _, W,
-	W, _, A, _, A, _, F, _, _, b, _, _, _, C, _, W,
-	_, _, _, _, C, _, _, _, F, A, _, C, _, _, _, _,
-	W, _, C, _, E, A, B, _, _, C, _, E, _, B, _, W,
-	W, _, F, _, _, _, _, _, _, _, _, C, _, _, _, W,
-	_, _, C, _, A, _, B, A, _, F, _, B, _, c, _, _,
-	W, _, _, _, _, _, _, _, _, _, _, _, _, _, _, W,
-	W, W, W, W, W, W, W, W, W, W, W, W, W, W, W, W, 
-};
-
-#undef _
-#undef B
-#undef W
-#undef D
-
-static u8 CITY_BLOCKS[16*15];
+static u8 CITY_BLOCKS[LEVEL_SIZE];
 static u8 ATTRIB_TABLE[64];
 
-static const u16 ROW_ADDR[] = {
-	NT_ADDR(0, 0,  0),
-	NT_ADDR(0, 0,  2),
-	NT_ADDR(0, 0,  4),
-	NT_ADDR(0, 0,  6),
-	NT_ADDR(0, 0,  8),
-	NT_ADDR(0, 0, 10),
-	NT_ADDR(0, 0, 12),
-	NT_ADDR(0, 0, 14),
-	NT_ADDR(0, 0, 16),
-	NT_ADDR(0, 0, 18),
-	NT_ADDR(0, 0, 20),
-	NT_ADDR(0, 0, 22),
-	NT_ADDR(0, 0, 24),
-	NT_ADDR(0, 0, 26),
-	NT_ADDR(0, 0, 28),
-};
-
-static u8 META_MASK[] = {0x03, 0x0C, 0x30, 0xC0};
-static u8 PAL[] = {0x00, 0x55, 0xAA, 0xFF};
-
 static void load_metatile(u8 x, u8 y, u8 tile){
+	static const u8 META_MASK[] = {0x03, 0x0C, 0x30, 0xC0};
+	static const u8 PAL[] = {0x00, 0x55, 0xAA, 0xFF};
+	static const u16 ROW_ADDR[] = {
+		NT_ADDR(0, 0,  0),
+		NT_ADDR(0, 0,  2),
+		NT_ADDR(0, 0,  4),
+		NT_ADDR(0, 0,  6),
+		NT_ADDR(0, 0,  8),
+		NT_ADDR(0, 0, 10),
+		NT_ADDR(0, 0, 12),
+		NT_ADDR(0, 0, 14),
+		NT_ADDR(0, 0, 16),
+		NT_ADDR(0, 0, 18),
+		NT_ADDR(0, 0, 20),
+		NT_ADDR(0, 0, 22),
+		NT_ADDR(0, 0, 24),
+		NT_ADDR(0, 0, 26),
+		NT_ADDR(0, 0, 28),
+	};
+
 	static u16 addr;
 	static u8 mask, pal;
 	
@@ -106,7 +36,7 @@ static void load_metatile(u8 x, u8 y, u8 tile){
 	// Load the attribute quadrant mask and palette.
 	idx = 2*(y & 1) + (x & 1);
 	mask = META_MASK[idx];
-	idx = (META_TILES + 4)[tile];
+	idx = (LEVEL_META_TILES + 4)[tile];
 	pal = PAL[idx];
 	
 	// Calculate atrrib table byte index.
@@ -121,14 +51,14 @@ static void load_metatile(u8 x, u8 y, u8 tile){
 	// Load metatile.
 	addr = ROW_ADDR[y] + 2*x;
 	px_buffer_data(2, addr);
-	PX.buffer[0] = (META_TILES + 0)[tile];
-	PX.buffer[1] = (META_TILES + 1)[tile];
+	PX.buffer[0] = (LEVEL_META_TILES + 0)[tile];
+	PX.buffer[1] = (LEVEL_META_TILES + 1)[tile];
 	px_buffer_data(2, addr + 32);
-	PX.buffer[0] = (META_TILES + 2)[tile];
-	PX.buffer[1] = (META_TILES + 3)[tile];
+	PX.buffer[0] = (LEVEL_META_TILES + 2)[tile];
+	PX.buffer[1] = (LEVEL_META_TILES + 3)[tile];
 }
 
-typedef struct {
+struct {
 	u8 gameplay_coro[32];
 
 	u16 countdown;
@@ -136,9 +66,7 @@ typedef struct {
 	u8 break_timeout;
 	
 	u8 score;
-} Town;
-
-static Town TOWN;
+} TOWN;
 
 #define RATE_PER_BUILDING 3
 
@@ -149,13 +77,13 @@ static void break_building(bool should_yield){
 		if(idx >= sizeof(CITY_BLOCKS)) goto yield;
 		
 		tmp = CITY_BLOCKS[idx];
-		if(tmp & BUILDING_BITS){
+		if(tmp & LEVEL_BITS_BUILDING){
 			sound_play(SOUND_DROP);
 			TOWN.count_rate += RATE_PER_BUILDING;
 			
-			tmp |= (DESTROYED_BIT | ACTION_ALLOWED_BIT);
+			tmp |= (LEVEL_BITS_DESTROYED | LEVEL_BITS_ACTION_ALLOWED);
 			CITY_BLOCKS[idx] = tmp;
-			load_metatile(idx & 0xF, idx >> 4, tmp & META_BITS);
+			load_metatile(idx & 0xF, idx >> 4, tmp & LEVEL_BITS_METATILE);
 			return;
 		}
 		
@@ -168,18 +96,18 @@ static void fix_building(u8 idx){
 	TOWN.count_rate -= RATE_PER_BUILDING;
 	
 	tmp = CITY_BLOCKS[idx];
-	tmp &= ~(DESTROYED_BIT | ACTION_ALLOWED_BIT);
+	tmp &= ~(LEVEL_BITS_DESTROYED | LEVEL_BITS_ACTION_ALLOWED);
 	
 	//update the building
 	CITY_BLOCKS[idx] = tmp;
-	load_metatile(idx & 0xF, idx >> 4, tmp & META_BITS);
+	load_metatile(idx & 0xF, idx >> 4, tmp & LEVEL_BITS_METATILE);
 	Score++;
    if ( Score == 0xff ) ultimate_win_screen();
 }
 
 //#define BUILDING_BREAK_TIMEOUT 240
 
-static uintptr_t gameplay_coro_body(uintptr_t _){
+static uintptr_t gameplay_coro_body(uintptr_t unused){
 	//static u8 timeout = BUILDING_BREAK_TIMEOUT;
 	static u8 timeout;
 	timeout = TOWN.break_timeout;
@@ -193,6 +121,7 @@ static uintptr_t gameplay_coro_body(uintptr_t _){
 	
 	while(true) px_coro_yield(0);
 	
+	(void)unused;
 	return 0;
 }
 
@@ -212,8 +141,8 @@ void paint_score()
 u8 collision_check(u8 x, u8 y) {
 
 	//check requested move location
-	iz = MAP_BLOCK_AT(x,y);
-	return CITY_BLOCKS[iz];// & NON_WALKABLE_BIT;
+	iz = LEVEL_TILE_AT_PIXEL(x,y);
+	return CITY_BLOCKS[iz];// & LEVEL_BITS_NON_WALKABLE;
 }
 
 u8 count_broken(void){
@@ -221,7 +150,7 @@ u8 count_broken(void){
 	
 	for(idx = 0; idx < 16*15; ++idx){
 		tmp = CITY_BLOCKS[idx];
-		if(tmp & DESTROYED_BIT) iz++;
+		if(tmp & LEVEL_BITS_DESTROYED) iz++;
 	}
 	
 	return iz;
@@ -251,7 +180,7 @@ Gamestate gameplay_screen(u8 difficulty, u8 level){
 	
 	px_coro_init(gameplay_coro_body, TOWN.gameplay_coro, sizeof(TOWN.gameplay_coro));
 	memset(ATTRIB_TABLE, 0, sizeof(ATTRIB_TABLE));
-	memcpy(CITY_BLOCKS, MAP, sizeof(MAP));
+	memcpy(CITY_BLOCKS, LEVEL0, sizeof(CITY_BLOCKS));
 	
 	px_ppu_sync_disable();{
 		
@@ -268,9 +197,9 @@ Gamestate gameplay_screen(u8 difficulty, u8 level){
 				idx = 16*iy + ix;
 				tmp = CITY_BLOCKS[idx];
 				
-				if(tmp & DESTROYED_BIT) TOWN.count_rate += RATE_PER_BUILDING;
+				if(tmp & LEVEL_BITS_DESTROYED) TOWN.count_rate += RATE_PER_BUILDING;
 				
-				tmp &= META_BITS;
+				tmp &= LEVEL_BITS_METATILE;
 				if(tmp != 0) load_metatile(ix, iy, tmp);
 			}
 			
@@ -314,9 +243,9 @@ Gamestate gameplay_screen(u8 difficulty, u8 level){
 				y--;
 
 			//is the building actionable?
-			idx = MAP_BLOCK_AT_GRID(x,y); //idx = 16*y + x;
+			idx = LEVEL_TILE_AT_GRID(x,y); //idx = 16*y + x;
 			tmp = CITY_BLOCKS[idx];
-			if (tmp & ACTION_ALLOWED_BIT) {
+			if (tmp & LEVEL_BITS_ACTION_ALLOWED) {
 
 				//resource or damaged?
 				//if (tmp == RESOURCE_HUB) {
@@ -341,17 +270,17 @@ Gamestate gameplay_screen(u8 difficulty, u8 level){
          {
             if ( dir1 == FACE_R )
             {
-               idx = MAP_BLOCK_AT_GRID(x,y-8); //idx = 16*y + x;
+               idx = LEVEL_TILE_AT_GRID(x,y-8); //idx = 16*y + x;
                tmp = CITY_BLOCKS[idx];
-               if (tmp & ACTION_ALLOWED_BIT) {
+               if (tmp & LEVEL_BITS_ACTION_ALLOWED) {
 						fix_building(idx);
                }
             }
             else if ( dir1 == FACE_L )
             {
-               idx = MAP_BLOCK_AT_GRID(x,y-8); //idx = 16*y + x;
+               idx = LEVEL_TILE_AT_GRID(x,y-8); //idx = 16*y + x;
                tmp = CITY_BLOCKS[idx];
-               if (tmp & ACTION_ALLOWED_BIT) {
+               if (tmp & LEVEL_BITS_ACTION_ALLOWED) {
 						fix_building(idx);
                }
             }
@@ -376,7 +305,7 @@ Gamestate gameplay_screen(u8 difficulty, u8 level){
          
          idx = collision_check(x-1, y);
 
-         if(!(idx & NON_WALKABLE_BIT)) {
+         if(!(idx & LEVEL_BITS_NON_WALKABLE)) {
             //allowed update player location to requested
             player1x = x-1;
             player1y = y;
@@ -390,7 +319,7 @@ Gamestate gameplay_screen(u8 difficulty, u8 level){
          
          idx = collision_check(x+1, y);
 
-         if(!(idx & NON_WALKABLE_BIT)) {
+         if(!(idx & LEVEL_BITS_NON_WALKABLE)) {
             //allowed update player location to requested
             player1x = x+1;
             player1y = y;
@@ -404,7 +333,7 @@ Gamestate gameplay_screen(u8 difficulty, u8 level){
          
          idx = collision_check(x, y-1);
 
-         if(!(idx & NON_WALKABLE_BIT)) {
+         if(!(idx & LEVEL_BITS_NON_WALKABLE)) {
             //allowed update player location to requested
             player1x = x;
             player1y = y-1;
@@ -417,7 +346,7 @@ Gamestate gameplay_screen(u8 difficulty, u8 level){
          
          idx = collision_check(x, y+1);
 
-         if(!(idx & NON_WALKABLE_BIT)) {
+         if(!(idx & LEVEL_BITS_NON_WALKABLE)) {
             //allowed update player location to requested
             player1x = x;
             player1y = y+1;
@@ -462,9 +391,9 @@ Gamestate gameplay_screen(u8 difficulty, u8 level){
 				y--;
 
 			//is the building actionable?
-			idx = MAP_BLOCK_AT_GRID(x,y); //idx = 16*y + x;
+			idx = LEVEL_TILE_AT_GRID(x,y); //idx = 16*y + x;
 			tmp = CITY_BLOCKS[idx];
-			if (tmp & ACTION_ALLOWED_BIT) {
+			if (tmp & LEVEL_BITS_ACTION_ALLOWED) {
 
 				//resource or damaged?
 				//if (tmp == RESOURCE_HUB) {
@@ -488,17 +417,17 @@ Gamestate gameplay_screen(u8 difficulty, u8 level){
          {
             if ( dir2 == FACE_R )
             {
-               idx = MAP_BLOCK_AT_GRID(x,y-8); //idx = 16*y + x;
+               idx = LEVEL_TILE_AT_GRID(x,y-8); //idx = 16*y + x;
                tmp = CITY_BLOCKS[idx];
-               if (tmp & ACTION_ALLOWED_BIT) {
+               if (tmp & LEVEL_BITS_ACTION_ALLOWED) {
 						fix_building(idx);
                }
             }
             else if ( dir2 == FACE_L )
             {
-               idx = MAP_BLOCK_AT_GRID(x,y-8); //idx = 16*y + x;
+               idx = LEVEL_TILE_AT_GRID(x,y-8); //idx = 16*y + x;
                tmp = CITY_BLOCKS[idx];
-               if (tmp & ACTION_ALLOWED_BIT) {
+               if (tmp & LEVEL_BITS_ACTION_ALLOWED) {
 						fix_building(idx);
                }
             }
@@ -517,7 +446,7 @@ Gamestate gameplay_screen(u8 difficulty, u8 level){
          
          idx = collision_check(x-1, y);
 
-         if(!(idx & NON_WALKABLE_BIT)) {
+         if(!(idx & LEVEL_BITS_NON_WALKABLE)) {
             //allowed update player location to requested
             player2x = x-1;
             player2y = y;
@@ -531,7 +460,7 @@ Gamestate gameplay_screen(u8 difficulty, u8 level){
          
          idx = collision_check(x+1, y);
 
-         if(!(idx & NON_WALKABLE_BIT)) {
+         if(!(idx & LEVEL_BITS_NON_WALKABLE)) {
             //allowed update player location to requested
             player2x = x+1;
             player2y = y;
@@ -544,7 +473,7 @@ Gamestate gameplay_screen(u8 difficulty, u8 level){
          
          idx = collision_check(x, y-1);
 
-         if(!(idx & NON_WALKABLE_BIT)) {
+         if(!(idx & LEVEL_BITS_NON_WALKABLE)) {
             //allowed update player location to requested
             player2x = x;
             player2y = y-1;
@@ -557,7 +486,7 @@ Gamestate gameplay_screen(u8 difficulty, u8 level){
          
          idx = collision_check(x, y+1);
 
-         if(!(idx & NON_WALKABLE_BIT)) {
+         if(!(idx & LEVEL_BITS_NON_WALKABLE)) {
             //allowed update player location to requested
             player2x = x;
             player2y = y+1;
