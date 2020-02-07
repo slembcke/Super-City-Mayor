@@ -148,6 +148,7 @@ u8 collision_check(u8 x, u8 y) {
 u8 count_broken(void){
 	iz = 0;
 	
+	// TODO this loop is super expensive.
 	for(idx = 0; idx < 16*15; ++idx){
 		tmp = CITY_BLOCKS[idx];
 		if(tmp & LEVEL_BITS_DESTROYED) iz++;
@@ -158,18 +159,101 @@ u8 count_broken(void){
 
 enum FACE {FACE_R, FACE_L, FACE_D, FACE_U};
 
+typedef struct {
+	Gamepad pad;
+	u8 x, y, dir;
+} Player;
+
+// Player player1, player2;
+
+static void player_update(Player* _player){
+	static Player player;
+	player = *_player;
+	
+	// Repairs.
+	if(JOY_BTN_A(player.pad.press)){
+		//map player position to city grid
+		ix = player.x/16;
+		iy = player.y/16;
+
+		//change to cell player is facing
+		switch(player.dir){
+			case FACE_L: ix--; break;
+			case FACE_R: ix++; break;
+			case FACE_D: iy++; break;
+			case FACE_U: iy--; break;
+		}
+
+		//is the building actionable?
+		idx = LEVEL_TILE_AT_GRID(ix,iy);
+		tmp = CITY_BLOCKS[idx];
+		if(tmp & LEVEL_BITS_ACTION_ALLOWED){
+			fix_building(idx);
+		} else {
+			if ( player.dir == FACE_R ) {
+				idx = LEVEL_TILE_AT_GRID(ix,iy-8);
+				tmp = CITY_BLOCKS[idx];
+				if (tmp & LEVEL_BITS_ACTION_ALLOWED) {
+					fix_building(idx);
+				}
+			}
+			else if ( player.dir == FACE_L ) {
+				idx = LEVEL_TILE_AT_GRID(ix,iy-8);
+				tmp = CITY_BLOCKS[idx];
+				if (tmp & LEVEL_BITS_ACTION_ALLOWED) {
+					fix_building(idx);
+				}
+			}
+		}
+	}	
+		
+	if(JOY_LEFT (player.pad.value)) {
+		player.dir = FACE_L;
+
+		idx = collision_check(player.x - 1, player.y);
+		if(!(idx & LEVEL_BITS_NON_WALKABLE)) player.x--;
+	} else if(JOY_RIGHT (player.pad.value)){
+		player.dir = FACE_R;
+
+		idx = collision_check(player.x + 1, player.y);
+		if(!(idx & LEVEL_BITS_NON_WALKABLE)) player.x++;
+	}
+
+	if(JOY_UP(player.pad.value)) {
+		player.dir = FACE_U;
+
+		idx = collision_check(player.x, player.y - 1);
+		if(!(idx & LEVEL_BITS_NON_WALKABLE)) player.y--;
+	} else if(JOY_DOWN (player.pad.value)){
+		player.dir = FACE_D;
+
+		idx = collision_check(player.x, player.y + 1);
+		if(!(idx & LEVEL_BITS_NON_WALKABLE)) player.y++;
+	}
+	
+	
+	// Calculate sprite frame index.
+	idx = (player.x/4 + player.y/4) & 3;
+	idx += 16*Player1 + 4*player.dir;
+	meta_spr(player.x, player.y, 0, metasprite_list[idx]);
+
+	(*_player) = player;
+}
+
 Gamestate gameplay_screen(u8 difficulty, u8 level){
-	register u8 player1x = 8, player1y = 60;
-	register u8 player2x = 248, player2y = 60;
+	static Player player1, player2;
 
 	register u8 x, y;
 
-   register u8 a1 = 0, da1 = 1, dir1 = FACE_R;
+	// static u8 a1 = 0, da1 = 1, dir1 = FACE_R;
    register u8 a2 = 0, da2 = 1, dir2 = FACE_L;
 	
 	u8 broken_count = 2 + level;
 	TOWN.break_timeout = difficulty;
 
+	player1.x =   8; player1.y = 60;
+	player2.x = 248; player2.y = 60;
+	
 	PX.scroll_x = 0;
 	PX.scroll_y = 0;
 	px_spr_end();
@@ -214,7 +298,6 @@ Gamestate gameplay_screen(u8 difficulty, u8 level){
 	music_play(0);
 	
 	while(true){
-
       if ( broken_count > 0 )
       {
          break_building(false);
@@ -223,162 +306,21 @@ Gamestate gameplay_screen(u8 difficulty, u8 level){
       
 		read_gamepads();
 		
-      px_spr(0,23,PX_SPR_BEHIND|2,145);
-      paint_score();
-      
-//PLAYER 1 REPAIRS
-		if(JOY_BTN_A (pad1.press)) {
-			//map player position to city grid
-			x = player1x>>4;
-			y = player1y>>4;
-
-			//change to cell player is facing
-			if (dir1 == FACE_L)
-				x--;
-			else if (dir1 == FACE_R)
-				x++;
-			else if (dir1 == FACE_D)
-				y++;
-			else if (dir1 == FACE_U)
-				y--;
-
-			//is the building actionable?
-			idx = LEVEL_TILE_AT_GRID(x,y); //idx = 16*y + x;
-			tmp = CITY_BLOCKS[idx];
-			if (tmp & LEVEL_BITS_ACTION_ALLOWED) {
-
-				//resource or damaged?
-				//if (tmp == RESOURCE_HUB) {
-				//	player1item = RESOURCE;
-
-				//} else if (tmp == RESOURCE ) {
-				//	//remove resource by making building red for now
-				//	CITY_BLOCKS[idx] = BUILDING;
-				//	load_metatile(x, y, 1); 
-				//	//player has item 
-				//	player1item = RESOURCE;
-
-				//} else {
-
-				//	if (player1item == RESOURCE) {
-						fix_building(idx);
-				//		player1item = NOITEM;
-				//	}
-				//}
-			}
-         else
-         {
-            if ( dir1 == FACE_R )
-            {
-               idx = LEVEL_TILE_AT_GRID(x,y-8); //idx = 16*y + x;
-               tmp = CITY_BLOCKS[idx];
-               if (tmp & LEVEL_BITS_ACTION_ALLOWED) {
-						fix_building(idx);
-               }
-            }
-            else if ( dir1 == FACE_L )
-            {
-               idx = LEVEL_TILE_AT_GRID(x,y-8); //idx = 16*y + x;
-               tmp = CITY_BLOCKS[idx];
-               if (tmp & LEVEL_BITS_ACTION_ALLOWED) {
-						fix_building(idx);
-               }
-            }
-         }
-
-		}	
-		
-//PLAYER 1 MOVEMENT
-		if(JOY_START(pad1.press)) {
-         fade_to_black(GAMEPLAY_PALETTE,4);
-			break;
-		}
-
-		x = player1x;
-		y = player1y;
-
-		if(JOY_LEFT (pad1.value))
-      {
-         if ( x&8 ) a1++;
-         dir1 = FACE_L;
-         a1 = (x>>2)&3;    
-         
-         idx = collision_check(x-1, y);
-
-         if(!(idx & LEVEL_BITS_NON_WALKABLE)) {
-            //allowed update player location to requested
-            player1x = x-1;
-            player1y = y;
-         }
-      }
-		else if(JOY_RIGHT (pad1.value))
-      {
-         if ( x&8 ) a1++;
-         dir1 = FACE_R;
-         a1 = (x>>2)&3;    
-         
-         idx = collision_check(x+1, y);
-
-         if(!(idx & LEVEL_BITS_NON_WALKABLE)) {
-            //allowed update player location to requested
-            player1x = x+1;
-            player1y = y;
-         }
-      }
-
-		if(JOY_UP   (pad1.value))
-      {
-         dir1 = FACE_U;
-         a1 += da1*((y>>2)&1);    
-         
-         idx = collision_check(x, y-1);
-
-         if(!(idx & LEVEL_BITS_NON_WALKABLE)) {
-            //allowed update player location to requested
-            player1x = x;
-            player1y = y-1;
-         }
-      }
-		else if(JOY_DOWN (pad1.value))
-      {
-         dir1 = FACE_D;
-         a1 += da1*((y>>2)&1);    
-         
-         idx = collision_check(x, y+1);
-
-         if(!(idx & LEVEL_BITS_NON_WALKABLE)) {
-            //allowed update player location to requested
-            player1x = x;
-            player1y = y+1;
-         }
-      }
-      
-		if ( a1 == 4 ) 
-      {
-         a1 = 3;
-         da1 = -1;
-      }
-      if ( a1 == 0xff ) 
-      {
-         a1 = 0;
-         da1 = 1;
-      }
-
-		//Draw a sprite.
-		// if( player1item == RESOURCE ) {
-    //   	meta_spr(player1x, player1y, 3, metasprite_list[(0*16)+(dir1*4)+a1]);
-		// } else {
-			meta_spr(player1x, player1y, 0, metasprite_list[(Player1*16)+(dir1*4)+a1]);
-		// }
-		
+		px_spr(0,23,PX_SPR_BEHIND|2,145);
+		paint_score();
+    
+		px_profile_start();
+		player1.pad = pad1;
+		player_update(&player1);
+		px_profile_end();
 
       if ( NumPlayers == 2 )
       {
 //PLAYER 2 REPAIRS
 		if(JOY_BTN_A (pad2.press)) {
 			//map player position to city grid
-			x = player2x>>4;
-			y = player2y>>4;
+			x = player2.x>>4;
+			y = player2.y>>4;
 
 			//change to cell player is facing
 			if (dir2 == FACE_L)
@@ -435,8 +377,8 @@ Gamestate gameplay_screen(u8 difficulty, u8 level){
 		}	
 
 //PLAYER 2 MOVEMENT
-         x = player2x;
-         y = player2y;
+         x = player2.x;
+         y = player2.y;
 
 		if(JOY_LEFT (pad2.value))
       {
@@ -448,8 +390,8 @@ Gamestate gameplay_screen(u8 difficulty, u8 level){
 
          if(!(idx & LEVEL_BITS_NON_WALKABLE)) {
             //allowed update player location to requested
-            player2x = x-1;
-            player2y = y;
+            player2.x = x-1;
+            player2.y = y;
          }
       }
 		else if(JOY_RIGHT (pad2.value))
@@ -462,8 +404,8 @@ Gamestate gameplay_screen(u8 difficulty, u8 level){
 
          if(!(idx & LEVEL_BITS_NON_WALKABLE)) {
             //allowed update player location to requested
-            player2x = x+1;
-            player2y = y;
+            player2.x = x+1;
+            player2.y = y;
          }
       }
 		if(JOY_UP   (pad2.value))
@@ -475,8 +417,8 @@ Gamestate gameplay_screen(u8 difficulty, u8 level){
 
          if(!(idx & LEVEL_BITS_NON_WALKABLE)) {
             //allowed update player location to requested
-            player2x = x;
-            player2y = y-1;
+            player2.x = x;
+            player2.y = y-1;
          }
       }
 		else if(JOY_DOWN (pad2.value))
@@ -488,8 +430,8 @@ Gamestate gameplay_screen(u8 difficulty, u8 level){
 
          if(!(idx & LEVEL_BITS_NON_WALKABLE)) {
             //allowed update player location to requested
-            player2x = x;
-            player2y = y+1;
+            player2.x = x;
+            player2.y = y+1;
          }
       }
 		if ( a2 == 4 ) 
@@ -507,7 +449,7 @@ Gamestate gameplay_screen(u8 difficulty, u8 level){
 		// if( player2item == RESOURCE ) {
     //         meta_spr(player2x, player2y, 3, metasprite_list[(1*16)+(dir2*4)+a2]);
 		// } else {
-            meta_spr(player2x, player2y, 0, metasprite_list[(Player2*16)+(dir2*4)+a2]);
+            meta_spr(player2.x, player2.y, 0, metasprite_list[(Player2*16)+(dir2*4)+a2]);
 		// }
       }
       
