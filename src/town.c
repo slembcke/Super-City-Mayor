@@ -131,7 +131,10 @@ static void fix_building(u8 idx){
 	CITY_BLOCKS[idx] = tmp;
 	load_metatile(idx & 0xF, idx >> 4, tmp & LEVEL_BITS_METATILE);
 	Score++;
-   if ( Score == 0xff ) ultimate_win_screen();
+   if ( Score == 0x00 ) 
+   {
+      NumTerms++;
+   }
 }
 
 //#define BUILDING_BREAK_TIMEOUT 240
@@ -154,17 +157,22 @@ static uintptr_t gameplay_coro_body(uintptr_t unused){
 	return 0;
 }
 
-void paint_score()
-{
-   u8 temp = Score;
-
-   px_spr(128,  16, 1, '0'+((u8)temp%10));
-   temp /= 10;
-   px_spr(120,  16, 1, '0'+(u8)temp%10);
-   temp /= 10;
-   px_spr(112,  16, 1, '0'+(u8)temp);
-   px_spr(136,  16, 1, '0');
-   px_spr(144,  16, 1, '0');
+#define PAINT_STATS \
+{ \
+   register u8 i; \
+   register u8 temp = Score; \
+\
+   px_spr(128,  16, 1, '0'+((u8)temp%10)); \
+   temp /= 10; \
+   px_spr(120,  16, 1, '0'+(u8)temp%10); \
+   temp /= 10; \
+   px_spr(112,  16, 1, '0'+(u8)temp); \
+   px_spr(136,  16, 1, '0'); \
+   px_spr(144,  16, 1, '0'); \
+   for ( i = 0; i < NumTerms; i++ ) \
+   { \
+      px_spr(152+(i<<3),  16, 1, 21); \
+   } \
 }
 
 u8 count_broken(void){
@@ -334,7 +342,7 @@ Gamestate gameplay_screen(u8 difficulty, u8 level){
       }
       
       px_spr(0,23,PX_SPR_BEHIND|2,145);
-      paint_score();
+      PAINT_STATS;
       
 		read_gamepads();
     
@@ -349,10 +357,18 @@ Gamestate gameplay_screen(u8 difficulty, u8 level){
 		if(count_broken() == 0){
 			// This means there are no buildings left causing countdowns.
 			// You win!
-			return win_screen(difficulty, level);
+         return bonus_screen(difficulty, level);
 		} else if(TOWN.countdown < TOWN.count_rate){
-			// Out of time, you lose!
-			return lose_screen();
+         NumTerms--;
+         if ( NumTerms == 0 )
+         {
+            // Out of time, you lose!
+            return lose_screen();
+         }
+         else
+         {
+            TOWN.countdown = ~0;
+         }
 		} else {
 			TOWN.countdown -= TOWN.count_rate;
 		}
@@ -378,4 +394,52 @@ Gamestate gameplay_screen(u8 difficulty, u8 level){
    music_stop();
 	
 	return splash_screen();
+}
+
+Gamestate bonus_screen(u8 difficulty, u8 level){
+	u8 timeout = 60;
+
+	music_stop();
+	
+	px_ppu_sync_disable();{
+      PX.scroll_x = 0;
+      PX.scroll_y = 0;
+
+      PPU.mask |= 0xE0;
+      
+		px_spr_clear();
+	} px_ppu_sync_enable();
+	
+	while(true){
+      px_spr(0,23,PX_SPR_BEHIND|2,145);
+      
+      PAINT_STATS;
+
+		px_spr_end();
+
+      // adjust scroll position to slide timer
+      PX.scroll_x = 0xff-((TOWN.countdown>>8)&0xfe);
+      PX.scroll_y = 0;
+      if ( TOWN.countdown < 0xff ) break;
+      TOWN.countdown -= 0xff;
+      
+      Score++;
+      if ( Score == 0x00 ) NumTerms++;
+      
+		px_wait_nmi();
+
+      // wait for sprite 0 hit to adjust back to normal playfield for game
+      while(PPU.status&0x40){}
+      while(!(PPU.status&0x40)){}
+      
+      PPU.scroll = 0;
+      PPU.scroll = 0;
+      PPU.control = 0x90;
+	}
+	
+	sound_play(SOUND_MATCH);
+      
+   fade_to_black(PALETTE,4);
+
+  return win_screen(difficulty, level);
 }

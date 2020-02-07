@@ -9,13 +9,14 @@ u8 Score = 0;
 u8 NumPlayers = 1;
 u8 Player1 = MAYOR;
 u8 Player2 = DEPUTY;
+u8 NumTerms = 1;
 
 Gamestate splash_screen(void){
    
    const u8 selectors[2][2] = { {0x9F,0},{0,0x9F} };
    
    NumPlayers = 1;
-   Score = 0;
+   Score = 255;
    
 	px_ppu_sync_disable();{
       PX.scroll_x = 0;

@@ -173,54 +173,6 @@ Gamestate lose_screen(void){
   return splash_screen();
 }
 
-Gamestate ultimate_win_screen(void){
-	u8 timeout = 60;
-	bool show_start = true;
-	
-	music_stop();
-	
-	px_ppu_sync_disable();{
-      PX.scroll_x = 0;
-      PX.scroll_y = 0;
-
-		px_addr(NT_ADDR(0, 0, 0));
-		px_fill(1024, 0);
-		
-		px_addr(NT_ADDR(0, 3, 14));
-		px_str("You're the world's superest");
-		px_addr(NT_ADDR(0, 10, 15));
-		px_str("mayor! Congrats!");
-		
-		px_addr(NT_ADDR(0, 10, 18));
-		px_str("press start");
-		
-		PX.scroll_x = 0;
-		PX.scroll_y = 0;
-		px_spr_clear();
-	} px_ppu_sync_enable();
-	
-   fade_from_black(PALETTE,4);
-
-	while(true){
-		read_gamepads();
-		if(JOY_START(pad1.press | pad2.press)) break;
-		
-		if(--timeout == 0){
-			show_start = !show_start;
-			timeout = 30;
-			blit_string(NT_ADDR(0, 10, 18), show_start ? "press start" : "           ");
-		}
-		
-		px_wait_nmi();
-	}
-	
-	sound_play(SOUND_MATCH);
-   
-   fade_to_black(PALETTE,4);
-
-  return splash_screen();
-}
-
 Gamestate win_screen(u8 difficulty, u8 level){
 	u8 timeout = 60;
 	bool show_start = true;

@@ -66,7 +66,7 @@ Gamestate player_select_screen(void);
 Gamestate gameplay_screen(u8 difficulty, u8 level);
 Gamestate lose_screen(void);
 Gamestate win_screen(u8 difficulty, u8 level);
-Gamestate ultimate_win_screen(void);
+Gamestate bonus_screen(u8 difficulty, u8 level);
 
 // Level declarations.
 

@@ -6,6 +6,7 @@ void fade_to_black(const u8* palette, u8 delay);
 
 extern u8 NumPlayers;
 extern u8 Score;
+extern u8 NumTerms;
 
 #define MAYOR 0
 #define DEPUTY 1
