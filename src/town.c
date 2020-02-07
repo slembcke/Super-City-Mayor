@@ -239,8 +239,15 @@ static void player_update(Player* _player){
 	} else if(JOY_RIGHT (player.pad.value)){
 		player.dir = FACE_R;
 
-		idx = LEVEL_TILE_AT_PIXEL(player.x + 1, player.y);
-		if(!(CITY_BLOCKS[idx] & LEVEL_BITS_NON_WALKABLE)) player.x++;
+      if ( player.x < 250 )
+      { 
+         idx = LEVEL_TILE_AT_PIXEL(player.x + 1, player.y);
+         if(!(CITY_BLOCKS[idx] & LEVEL_BITS_NON_WALKABLE)) player.x++;
+      }
+      else
+      {
+         player.x++;
+      }
 	}
 
 	if(JOY_UP(player.pad.value)) {
