@@ -76,12 +76,15 @@ static void load_metatile(u8 x, u8 y, u8 tile){
 }
 
 static void load_mask(u8 x, u8 y, u8 tile){
-	
 	tile *= 3;
 		
 	// Load sprites.
    px_spr(x<<4,y<<4,MASK_TILES[tile+2]|PX_SPR_BEHIND,MASK_TILES[tile]);
    px_spr((x<<4)+8,y<<4,MASK_TILES[tile+2]|PX_SPR_BEHIND,MASK_TILES[tile+1]);
+	 
+	// Maybe sorta better masking. More subtle color changes anyway.
+	// px_spr(16*x + 0, 16*y, PX_SPR_BEHIND | 2, 0xA8);
+	// px_spr(16*x + 8, 16*y, PX_SPR_BEHIND | 2, 0xA9);
 }
 
 struct {
