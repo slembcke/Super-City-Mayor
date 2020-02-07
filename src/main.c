@@ -5,6 +5,7 @@
 #include "common.h"
 #include "main.h"
 
+u8 Score = 0;
 u8 NumPlayers = 1;
 u8 Player1 = MAYOR;
 u8 Player2 = DEPUTY;
