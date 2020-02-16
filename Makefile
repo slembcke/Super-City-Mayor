@@ -107,7 +107,14 @@ $(ROM): ld65.cfg $(OBJS) $(PX_LIB)
 	$(PX_TOOLS_PATH)/lz4x -f9 $< $@
 	touch $@
 
-src/data.o: $(CHR:.png=.lz4) map/splash.lz4
+%.lz4: % px-tools
+	$(PX_TOOLS_PATH)/lz4x -f9 $< $@
+	touch $@
+
+src/data.o: $(CHR:.png=.lz4) map/splash.lz4 chr/*
+
+chr/%: chr/%.xxd
+	xxd -r $< > $@
 
 audio/sounds.s: audio/sounds.nsf
 	$(FT2_TOOLS_PATH)/nsf2data $< -ca65 -ntsc

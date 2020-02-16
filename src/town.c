@@ -4,23 +4,6 @@
 #include "common.h"
 #include "main.h"
 
-static const u8 MASK_TILES[] = {
-   0x00, 0x00, 0, // 0 dummy for alignment
-   0x00, 0x00, 0, // 1 dummy for alignment
-	0xA0, 0xA1, 2, // 2 fixed 1
-	0xA2, 0xA3, 1, // 3 damaged 1
-	0xA4, 0xA5, 2, // 4 fixed 2
-	0xA6, 0xA7, 1, // 5 damaged 2
-	0xA8, 0xA9, 2, // 6 fixed 3
-	0xAA, 0xAB, 1, // 7 damaged 3
-	0xA0, 0xA1, 3, // 2 fixed 1
-	0xA2, 0xA3, 1, // 3 damaged 1
-	0xA4, 0xA5, 3, // 4 fixed 2
-	0xA6, 0xA7, 1, // 5 damaged 2
-	0xA8, 0xA9, 3, // 6 fixed 3
-	0xAA, 0xAB, 1, // 7 damaged 3
-};
-
 static u8 CITY_BLOCKS[LEVEL_SIZE];
 static u8 ATTRIB_TABLE[64];
 
@@ -73,18 +56,6 @@ static void load_metatile(u8 x, u8 y, u8 tile){
 	px_buffer_data(2, addr + 32);
 	PX.buffer[0] = (LEVEL_META_TILES + 2)[tile];
 	PX.buffer[1] = (LEVEL_META_TILES + 3)[tile];
-}
-
-static void load_mask(u8 x, u8 y, u8 tile){
-	tile *= 3;
-		
-	// Load sprites.
-   px_spr(x<<4,y<<4,MASK_TILES[tile+2]|PX_SPR_BEHIND,MASK_TILES[tile]);
-   px_spr((x<<4)+8,y<<4,MASK_TILES[tile+2]|PX_SPR_BEHIND,MASK_TILES[tile+1]);
-	 
-	// Maybe sorta better masking. More subtle color changes anyway.
-	// px_spr(16*x + 0, 16*y, PX_SPR_BEHIND | 2, 0xA8);
-	// px_spr(16*x + 8, 16*y, PX_SPR_BEHIND | 2, 0xA9);
 }
 
 struct {
@@ -201,13 +172,15 @@ static void player_update(Player* _player){
    u8 idx;
 	player = *_player;
 	
-   // Masking
-   idx = LEVEL_TILE_AT_PIXEL(player.x,player.y+8); 
-   tmp = CITY_BLOCKS[idx];
-   if (tmp & LEVEL_BITS_BUILDING) {
-      load_mask(idx&0xF,idx>>4,tmp&LEVEL_BITS_METATILE);
-   }
-      
+	// Masking
+	idx = LEVEL_TILE_AT_PIXEL(player.x,player.y+8); 
+	if(CITY_BLOCKS[idx] & LEVEL_BITS_BUILDING) {
+		ix = (idx << 4) & 0xF0;
+		iy = (idx << 0) & 0xF0;
+		px_spr(ix + 0, iy - 1, PX_SPR_BEHIND|3, 0xA0);
+		px_spr(ix + 8, iy - 1, PX_SPR_BEHIND|3, 0xA1);
+	}
+	
 	// Repairs.
 	if(JOY_BTN_A(player.pad.press)){
 		//map player position to city grid
