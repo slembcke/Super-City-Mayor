@@ -258,7 +258,7 @@ static void player_update(Player* _player){
 Gamestate gameplay_screen(u8 difficulty, u8 level){
 	static Player player1, player2;
 	
-	u8 broken_count = 2 + level;
+	u8 broken_count = level;
 	TOWN.break_timeout = difficulty;
 	
 	player1.x =   8; player1.y = 60; player1.dir = FACE_R; player1.character = Player1;
@@ -333,6 +333,10 @@ Gamestate gameplay_screen(u8 difficulty, u8 level){
          return bonus_screen(difficulty, level);
 		} else if(TOWN.countdown < TOWN.count_rate){
          NumTerms--;
+         if ( NumTerms == 0xff )
+         {
+            NumTerms = 0;
+         }
          if ( NumTerms == 0 )
          {
             // Out of time, you lose!

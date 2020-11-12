@@ -15,6 +15,6 @@ extern u8 Player2;
 
 void meta_spr(u8 x, u8 y, u8 pal, const u8* data);
 
-unsigned char* const metasprite_list[];
+extern unsigned char* const metasprite_list[];
 
 #endif // MAIN_H

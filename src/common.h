@@ -19,9 +19,9 @@ extern u8 ix, iy, iz, idx, tmp;
 #pragma zpsym("tmp");
 
 // audio.s declarations:
-typedef struct {} AudioChunk;
-extern const AudioChunk MUSIC[];
-extern const AudioChunk SOUNDS[];
+typedef struct AudioChunk AudioChunk;
+extern const AudioChunk MUSIC;
+extern const AudioChunk SOUNDS;
 
 void music_init(const AudioChunk *music);
 void music_play(u8 song);
@@ -59,7 +59,7 @@ void meta_spr(u8 x, u8 y, u8 pal, const u8* data);
 
 // Gamestates
 
-typedef struct {} Gamestate;
+typedef struct {u8 _;} Gamestate;
 
 Gamestate splash_screen(void);
 Gamestate player_select_screen(void);
@@ -85,8 +85,8 @@ enum LEVEL_BITS {
 };
 
 #define LEVEL_SIZE (16*15)
-const u8 LEVEL_META_TILES[];
-const u8 LEVEL0[];
+extern const u8 LEVEL_META_TILES[70];
+extern const u8 LEVEL0[LEVEL_SIZE];
 
 // data.s declarations:
 

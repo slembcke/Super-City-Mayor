@@ -481,7 +481,7 @@ const unsigned char metasprite_47_data[]={
 
 };
 
-const unsigned char* const metasprite_list[]={
+const unsigned char* const metasprite_list[48]={
 
 	metasprite_0_data,
 	metasprite_1_data,

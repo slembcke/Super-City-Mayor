@@ -79,8 +79,8 @@ void main(void){
 	px_spr_table(0);
 	
 	px_uxrom_select(1);
-	sound_init(SOUNDS);
-	music_init(MUSIC);
+	sound_init(&SOUNDS);
+	music_init(&MUSIC);
 	
 	px_uxrom_select(0);
 	

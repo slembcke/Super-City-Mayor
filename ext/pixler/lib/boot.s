@@ -23,7 +23,7 @@
 	.res 8, 0 ; Remainder of header is unused space.
 
 .segment "STARTUP"
-
+ 
 .proc start
 	sei ; Disable interrupts.
 	cld ; Disable decimal mode.
