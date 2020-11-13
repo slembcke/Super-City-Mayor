@@ -102,7 +102,7 @@ static void fix_building(u8 idx){
 	CITY_BLOCKS[idx] = tmp;
 	load_metatile(idx & 0xF, idx >> 4, tmp & LEVEL_BITS_METATILE);
 	Score++;
-   if ( Score == 0x00 ) 
+   if ( Score == 0x00 && NumTerms < 3) 
    {
       NumTerms++;
    }
@@ -402,7 +402,7 @@ Gamestate bonus_screen(){
       TOWN.countdown -= 0xff;
       
       Score++;
-      if ( Score == 0x00 ) NumTerms++;
+      if ( Score == 0x00 && NumTerms < 3) NumTerms++;
       
 		px_wait_nmi();
 
