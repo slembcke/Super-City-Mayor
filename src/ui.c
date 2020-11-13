@@ -127,12 +127,16 @@ Gamestate player_select_screen(){
 	
 	fade_to_black(PLAYERSELECT_PALETTE, 4);
 
-   return gameplay_screen(240, 1);
+	Difficulty = 240;
+	Level = 1;
+   return gameplay_screen();
 }
 
 Gamestate lose_screen(void){
-	u8 timeout = 60;
-	bool show_start = true;
+	static u8 timeout;
+	static bool show_start;
+	timeout = 60;
+	show_start = true;
 	
 	music_stop();
 	
@@ -173,9 +177,11 @@ Gamestate lose_screen(void){
   return splash_screen();
 }
 
-Gamestate win_screen(u8 difficulty, u8 level){
-	u8 timeout = 60;
-	bool show_start = true;
+Gamestate win_screen(void){
+	static u8 timeout;
+	static bool show_start;
+	timeout = 60;
+	show_start = true;
 	music_stop();
 	
 	px_ppu_sync_disable();{
@@ -216,6 +222,8 @@ Gamestate win_screen(u8 difficulty, u8 level){
 	sound_play(SOUND_MATCH);
       
    fade_to_black(PALETTE,4);
-
-  return gameplay_screen(difficulty - difficulty/4, level + 1);
+	
+	Difficulty -= Difficulty/4;
+	Level += 1;
+  return gameplay_screen();
 }

@@ -255,11 +255,12 @@ static void player_update(Player* _player){
 	(*_player) = player;
 }
 
-Gamestate gameplay_screen(u8 difficulty, u8 level){
+Gamestate gameplay_screen(void){
 	static Player player1, player2;
 	
-	u8 broken_count = level;
-	TOWN.break_timeout = difficulty;
+	static u8 broken_count;
+	broken_count = Level;
+	TOWN.break_timeout = Difficulty;
 	
 	player1.x =   8; player1.y = 60; player1.dir = FACE_R; player1.character = Player1;
 	player2.x = 248; player2.y = 60; player2.dir = FACE_L; player2.character = Player2;
@@ -330,7 +331,7 @@ Gamestate gameplay_screen(u8 difficulty, u8 level){
 		if(count_broken() == 0){
 			// This means there are no buildings left causing countdowns.
 			// You win!
-         return bonus_screen(difficulty, level);
+         return bonus_screen();
 		} else if(TOWN.countdown < TOWN.count_rate){
          NumTerms--;
          if ( NumTerms == 0xff )
@@ -373,8 +374,8 @@ Gamestate gameplay_screen(u8 difficulty, u8 level){
 	return splash_screen();
 }
 
-Gamestate bonus_screen(u8 difficulty, u8 level){
-	u8 timeout = 60;
+Gamestate bonus_screen(){
+	static u8 timeout = 60;
 
 	music_stop();
 	
@@ -420,5 +421,5 @@ Gamestate bonus_screen(u8 difficulty, u8 level){
       
    fade_to_black(PALETTE,4);
 
-  return win_screen(difficulty, level);
+  return win_screen();
 }

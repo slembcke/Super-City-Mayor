@@ -10,10 +10,11 @@ u8 NumPlayers = 1;
 u8 Player1 = MAYOR;
 u8 Player2 = DEPUTY;
 u8 NumTerms = 1;
+u8 Difficulty;
+u8 Level;
 
 Gamestate splash_screen(void){
-   
-   const u8 selectors[2][2] = { {0x9F,0},{0,0x9F} };
+   static const u8 selectors[2][2] = { {0x9F,0},{0,0x9F} };
    
    NumPlayers = 1;
    Score = 0;

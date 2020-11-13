@@ -61,12 +61,15 @@ void meta_spr(u8 x, u8 y, u8 pal, const u8* data);
 
 typedef struct {u8 _;} Gamestate;
 
+extern u8 Difficulty;
+extern u8 Level;
+
 Gamestate splash_screen(void);
 Gamestate player_select_screen(void);
-Gamestate gameplay_screen(u8 difficulty, u8 level);
+Gamestate gameplay_screen(void);
 Gamestate lose_screen(void);
-Gamestate win_screen(u8 difficulty, u8 level);
-Gamestate bonus_screen(u8 difficulty, u8 level);
+Gamestate win_screen(void);
+Gamestate bonus_screen(void);
 
 // Level declarations.
 
