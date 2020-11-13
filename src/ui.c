@@ -173,6 +173,10 @@ Gamestate lose_screen(void){
   return splash_screen();
 }
 
+// So there's totally a stack overflow with gamestates due to non-tail calls.
+// Limit the total levels in the game to work around it. Tada! :-/
+#define LEVEL_MAX 10
+
 Gamestate win_screen(u8 difficulty, u8 level){
 	u8 timeout = 60;
 	bool show_start = true;
@@ -185,10 +189,17 @@ Gamestate win_screen(u8 difficulty, u8 level){
 		px_addr(NT_ADDR(0, 0, 0));
 		px_fill(1024, 0);
 		
-		px_addr(NT_ADDR(0, 6, 14));
-		px_str("Your approval rating");
-		px_addr(NT_ADDR(0, 10, 15));
-		px_str("is improving.");
+		if(level != LEVEL_MAX){
+			px_addr(NT_ADDR(0, 6, 14));
+			px_str("Your approval rating");
+			px_addr(NT_ADDR(0, 10, 15));
+			px_str("is improving.");
+		} else {
+			px_addr(NT_ADDR(0, 4, 13));
+			px_str("You finished your term.");
+			px_addr(NT_ADDR(0, 11, 15));
+			px_str("You win!");
+		}
 		
 		px_addr(NT_ADDR(0, 10, 18));
 		px_str("press start");
@@ -212,6 +223,8 @@ Gamestate win_screen(u8 difficulty, u8 level){
 		
 		px_wait_nmi();
 	}
+	
+	if(level == LEVEL_MAX) exit(EXIT_SUCCESS);
 	
 	sound_play(SOUND_MATCH);
       
